@@ -12,6 +12,7 @@ using System.Windows.Input;
 using DriveFlip.Models;
 using DriveFlip.Services;
 using Microsoft.Win32;
+using LicenseStatusEnum = DriveFlip.Models.LicenseStatus;
 
 namespace DriveFlip.ViewModels;
 
@@ -48,12 +49,42 @@ public class MainViewModel : INotifyPropertyChanged
         set { _globalStatus = value; OnPropertyChanged(); }
     }
 
+    // ── Operations Dashboard (aggregated from all running drives) ──
+    private double _aggregateSpeedMBps;
+    public double AggregateSpeedMBps
+    {
+        get => _aggregateSpeedMBps;
+        set { _aggregateSpeedMBps = value; OnPropertyChanged(); OnPropertyChanged(nameof(AggregateSpeedDisplay)); OnPropertyChanged(nameof(SpeedGaugePercent)); }
+    }
+
+    public string AggregateSpeedDisplay => $"{_aggregateSpeedMBps:F1}";
+
+    // Gauge as percent of a reasonable max (500 MB/s for SATA SSD ceiling)
+    private const double MaxExpectedMBps = 500.0;
+    public double SpeedGaugePercent => Math.Min(100, _aggregateSpeedMBps / MaxExpectedMBps * 100);
+
+
+
+    private string _operationSummary = "";
+    public string OperationSummary
+    {
+        get => _operationSummary;
+        set { _operationSummary = value; OnPropertyChanged(); }
+    }
+
+    private double _aggregateProgress;
+    public double AggregateProgress
+    {
+        get => _aggregateProgress;
+        set { _aggregateProgress = value; OnPropertyChanged(); }
+    }
+
     // ── Drive Info Selection ──
     private DriveItemViewModel? _selectedDriveItem;
     public DriveItemViewModel? SelectedDriveItem
     {
         get => _selectedDriveItem;
-        private set
+        set
         {
             if (_selectedDriveItem == value) return;
             if (_selectedDriveItem != null) _selectedDriveItem.IsInfoSelected = false;
@@ -66,6 +97,13 @@ public class MainViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(SmartDataQueried));
             CommandManager.InvalidateRequerySuggested();
         }
+    }
+
+    private int _selectedInfoTab;
+    public int SelectedInfoTab
+    {
+        get => _selectedInfoTab;
+        set { _selectedInfoTab = value; OnPropertyChanged(); }
     }
 
     public PhysicalDrive? SelectedDrive => _selectedDriveItem?.Drive;
@@ -82,7 +120,105 @@ public class MainViewModel : INotifyPropertyChanged
 
     public bool SmartDataQueried => SelectedDriveHealth?.SmartDataQueried == true;
 
-    // ── External-Only Filter ──
+    // ── License State ──
+    private LicenseStatusEnum _licenseStatus = LicenseStatusEnum.Unknown;
+    public LicenseStatusEnum LicenseStatusValue
+    {
+        get => _licenseStatus;
+        set
+        {
+            _licenseStatus = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsLicensed));
+            OnPropertyChanged(nameof(LicenseBannerVisible));
+            OnPropertyChanged(nameof(LicenseStatusText));
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    private LicensePayload? _licensePayload;
+    public LicensePayload? LicensePayloadValue
+    {
+        get => _licensePayload;
+        set
+        {
+            _licensePayload = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(LicenseeDisplay));
+            OnPropertyChanged(nameof(LicenseEditionDisplay));
+            OnPropertyChanged(nameof(LicenseExpiresDisplay));
+        }
+    }
+
+    public bool IsLicensed => _licenseStatus is LicenseStatusEnum.Valid or LicenseStatusEnum.CachedOffline;
+    public bool LicenseBannerVisible => !IsLicensed;
+
+    public string LicenseStatusText => _licenseStatus switch
+    {
+        LicenseStatusEnum.Valid => "Licensed",
+        LicenseStatusEnum.CachedOffline => "Licensed (offline)",
+        LicenseStatusEnum.Expired => "License expired",
+        LicenseStatusEnum.Invalid => "Invalid license",
+        _ => "Unlicensed"
+    };
+
+    public string LicenseeDisplay => _licensePayload?.Licensee ?? "";
+    public string LicenseEditionDisplay => _licensePayload?.Edition ?? "";
+    public string LicenseExpiresDisplay => _licensePayload != null
+        ? _licensePayload.ExpiresUtc.ToLocalTime().ToString("yyyy-MM-dd") : "";
+
+    private string _licenseKeyInput = "";
+    public string LicenseKeyInput
+    {
+        get => _licenseKeyInput;
+        set
+        {
+            _licenseKeyInput = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsLicenseKeyValid));
+            // Clear error when user edits
+            if (!string.IsNullOrEmpty(LicenseErrorMessage))
+                LicenseErrorMessage = "";
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public bool IsLicenseKeyValid => LicenseService.IsWellFormedLicenseKey(_licenseKeyInput?.Trim() ?? "");
+
+    private string _licenseErrorMessage = "";
+    public string LicenseErrorMessage
+    {
+        get => _licenseErrorMessage;
+        set { _licenseErrorMessage = value; OnPropertyChanged(); OnPropertyChanged(nameof(HasLicenseError)); }
+    }
+
+    public bool HasLicenseError => !string.IsNullOrEmpty(_licenseErrorMessage);
+
+    // ── Activation rate limiter ──
+    private const int MaxActivationAttempts = 5;
+    private static readonly TimeSpan ActivationLockoutDuration = TimeSpan.FromMinutes(10);
+    private readonly System.Collections.Generic.HashSet<string> _attemptedKeys = new(StringComparer.OrdinalIgnoreCase);
+    private DateTime? _lockoutUntil;
+
+    private bool IsActivationLockedOut => _lockoutUntil.HasValue && DateTime.UtcNow < _lockoutUntil.Value;
+
+    private bool CanActivate => IsLicenseKeyValid && !IsActivatingLicense && !IsActivationLockedOut;
+
+    private bool _isActivatingLicense;
+    public bool IsActivatingLicense
+    {
+        get => _isActivatingLicense;
+        set { _isActivatingLicense = value; OnPropertyChanged(); CommandManager.InvalidateRequerySuggested(); }
+    }
+
+    private bool _isLicenseSettingsOpen;
+    public bool IsLicenseSettingsOpen
+    {
+        get => _isLicenseSettingsOpen;
+        set { _isLicenseSettingsOpen = value; OnPropertyChanged(); }
+    }
+
+    // ── Filters ──
     private bool _showExternalOnly;
     public bool ShowExternalOnly
     {
@@ -92,6 +228,34 @@ public class MainViewModel : INotifyPropertyChanged
             _showExternalOnly = value;
             OnPropertyChanged();
             CollectionViewSource.GetDefaultView(Drives).Refresh();
+        }
+    }
+
+    // ── Drive Protection ──
+    private bool _protectSystemDrives = true;
+    public bool ProtectSystemDrives
+    {
+        get => _protectSystemDrives;
+        set { _protectSystemDrives = value; OnPropertyChanged(); UpdateDriveProtection(); }
+    }
+
+    private bool _protectInternalDrives = true;
+    public bool ProtectInternalDrives
+    {
+        get => _protectInternalDrives;
+        set { _protectInternalDrives = value; OnPropertyChanged(); UpdateDriveProtection(); }
+    }
+
+    private void UpdateDriveProtection()
+    {
+        foreach (var driveVm in Drives)
+        {
+            driveVm.IsProtected =
+                (ProtectSystemDrives && driveVm.Drive.IsSystemDrive) ||
+                (ProtectInternalDrives && !driveVm.Drive.IsRemovable);
+
+            if (driveVm.IsProtected && driveVm.IsSelected)
+                driveVm.IsSelected = false;
         }
     }
 
@@ -150,9 +314,6 @@ public class MainViewModel : INotifyPropertyChanged
         set { _selectedWipeMode = value; OnPropertyChanged(); }
     }
 
-    // ── Animation ──
-    public string AnimationEmoji { get; }
-
     // ── Commands ──
     public ICommand RefreshDrivesCommand { get; }
     public ICommand RunSurfaceCheckCommand { get; }
@@ -166,16 +327,16 @@ public class MainViewModel : INotifyPropertyChanged
     public ICommand SelectDriveCommand { get; }
     public ICommand ToggleExternalFilterCommand { get; }
     public ICommand GetSmartDataCommand { get; }
+    public ICommand ActivateLicenseCommand { get; }
+    public ICommand RevalidateLicenseCommand { get; }
+    public ICommand ToggleLicenseSettingsCommand { get; }
 
     public MainViewModel()
     {
-        // Pick a random animal at launch
-        AnimationEmoji = Random.Shared.Next(2) == 0 ? "\U0001F43F" : "\U0001F436";
-
         RefreshDrivesCommand = new RelayCommand(async () => await SafeAsync(RefreshDrivesAsync), () => IsIdle);
-        RunSurfaceCheckCommand = new RelayCommand(async () => await SafeAsync(RunSurfaceCheck), () => IsIdle && HasSelection);
-        RunWipeCommand = new RelayCommand(async () => await SafeAsync(RunWipe), () => IsIdle && HasSelection);
-        RunCheckAndWipeCommand = new RelayCommand(async () => await SafeAsync(RunCheckAndWipe), () => IsIdle && HasSelection);
+        RunSurfaceCheckCommand = new RelayCommand(async () => await SafeAsync(RunSurfaceCheck), () => IsIdle && HasSelection && IsLicensed);
+        RunWipeCommand = new RelayCommand(async () => await SafeAsync(RunWipe), () => IsIdle && HasSelection && IsLicensed);
+        RunCheckAndWipeCommand = new RelayCommand(async () => await SafeAsync(RunCheckAndWipe), () => IsIdle && HasSelection && IsLicensed);
         CancelCommand = new RelayCommand(Cancel, () => IsScanning);
         SaveReportCommand = new RelayCommand(SaveReport, () => Drives.Any(d => !string.IsNullOrEmpty(d.ReportText)));
         SelectAllCommand = new RelayCommand(SelectAll);
@@ -185,12 +346,157 @@ public class MainViewModel : INotifyPropertyChanged
         ToggleExternalFilterCommand = new RelayCommand(() => ShowExternalOnly = !ShowExternalOnly);
         GetSmartDataCommand = new RelayCommand(async () => await SafeAsync(GetSmartData),
             () => HasSelectedDrive && !IsLoadingSmartData && !SmartDataQueried);
+        ActivateLicenseCommand = new RelayCommand(async () => await SafeAsync(ActivateLicense), () => CanActivate);
+        RevalidateLicenseCommand = new RelayCommand(async () => await SafeAsync(RevalidateLicense), () => !IsActivatingLicense);
+        ToggleLicenseSettingsCommand = new RelayCommand(() => IsLicenseSettingsOpen = !IsLicenseSettingsOpen);
 
         Logger.Info("DriveFlip started.");
         _ = RefreshDrivesAsync();
     }
 
+    // ── License Methods ──
+
+    public void InitializeLicense(LicenseStatusEnum status, LicensePayload? payload)
+    {
+        LicenseStatusValue = status;
+        LicensePayloadValue = payload;
+
+        var settings = LicenseService.LoadSettings();
+        LicenseKeyInput = settings.LicenseKey;
+    }
+
+    public async Task RevalidateLicenseInBackgroundAsync()
+    {
+        try
+        {
+            var (status, payload) = await LicenseService.RevalidateAsync();
+            if (status == LicenseStatusEnum.Valid)
+            {
+                LicenseStatusValue = status;
+                LicensePayloadValue = payload;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Warning($"Background license revalidation failed: {ex.Message}");
+        }
+    }
+
+    private async Task ActivateLicense()
+    {
+        LicenseErrorMessage = "";
+
+        if (IsActivationLockedOut)
+        {
+            var remaining = _lockoutUntil!.Value - DateTime.UtcNow;
+            LicenseErrorMessage = $"Too many attempts. Try again in {remaining.Minutes}m {remaining.Seconds}s.";
+            return;
+        }
+
+        var key = LicenseKeyInput.Trim();
+
+        // Track distinct keys attempted
+        _attemptedKeys.Add(key);
+        if (_attemptedKeys.Count > MaxActivationAttempts)
+        {
+            _lockoutUntil = DateTime.UtcNow.Add(ActivationLockoutDuration);
+            var remaining = ActivationLockoutDuration;
+            LicenseErrorMessage = $"Too many attempts. Try again in {remaining.Minutes} minutes.";
+            Logger.Warning($"License activation locked out until {_lockoutUntil.Value:u} after {_attemptedKeys.Count} distinct keys.");
+            CommandManager.InvalidateRequerySuggested();
+            return;
+        }
+
+        var settings = LicenseService.LoadSettings();
+        var endpointUrl = settings.EndpointUrl;
+        if (string.IsNullOrWhiteSpace(endpointUrl))
+        {
+            LicenseErrorMessage = "No license endpoint configured.";
+            Logger.Warning("License activation attempted without endpoint URL configured.");
+            return;
+        }
+
+        IsActivatingLicense = true;
+
+        try
+        {
+            var (status, payload) = await LicenseService.ActivateLicenseAsync(key, endpointUrl);
+
+            LicenseStatusValue = status;
+            LicensePayloadValue = payload;
+
+            if (IsLicensed)
+            {
+                LicenseErrorMessage = "";
+                GlobalStatus = "License activated successfully!";
+                IsLicenseSettingsOpen = false;
+                // Reset rate limiter on success
+                _attemptedKeys.Clear();
+                _lockoutUntil = null;
+            }
+            else
+            {
+                LicenseErrorMessage = status switch
+                {
+                    LicenseStatusEnum.Expired => "This license key has expired.",
+                    _ => "Invalid license key or signature verification failed."
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("License activation error", ex);
+            LicenseErrorMessage = $"Activation failed: {ex.Message}";
+        }
+        finally
+        {
+            IsActivatingLicense = false;
+        }
+    }
+
+    private async Task RevalidateLicense()
+    {
+        IsActivatingLicense = true;
+        GlobalStatus = "Revalidating license...";
+
+        try
+        {
+            var (status, payload) = await LicenseService.RevalidateAsync();
+            LicenseStatusValue = status;
+            LicensePayloadValue = payload;
+            GlobalStatus = IsLicensed ? "License revalidated." : "Revalidation failed.";
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("License revalidation error", ex);
+            GlobalStatus = $"Revalidation error: {ex.Message}";
+        }
+        finally
+        {
+            IsActivatingLicense = false;
+        }
+    }
+
     private bool HasSelection => Drives.Any(d => d.IsSelected);
+
+    private void UpdateDashboard()
+    {
+        var running = Drives.Where(d => d.IsRunning).ToList();
+        var completed = Drives.Where(d => d.IsComplete && !d.IsRunning).ToList();
+        var total = running.Count + completed.Count;
+
+        AggregateSpeedMBps = running.Sum(d =>
+        {
+            if (double.TryParse(d.SpeedText.Replace(" MB/s", ""), out var s)) return s;
+            return 0;
+        });
+
+        AggregateProgress = total > 0
+            ? (running.Sum(d => d.Progress) + completed.Count * 100.0) / total
+            : 0;
+
+        OperationSummary = $"{completed.Count} of {total} drive(s) complete";
+    }
 
     private WipeSettings BuildSettings() => new()
     {
@@ -230,13 +536,57 @@ public class MainViewModel : INotifyPropertyChanged
                 Drives.Add(vm);
             }
 
-            // Set up collection view filter for external-only toggle
+            // Set up collection view filter
             var view = CollectionViewSource.GetDefaultView(Drives);
             view.Filter = o =>
             {
-                if (!ShowExternalOnly) return true;
-                return o is DriveItemViewModel vm && vm.Drive.IsRemovable;
+                if (o is not DriveItemViewModel vm) return false;
+                if (ShowExternalOnly && !vm.Drive.IsRemovable) return false;
+                return true;
             };
+
+            // Apply drive protection and compute size indicators
+            UpdateDriveProtection();
+            if (Drives.Count > 0)
+            {
+                long maxSize = Drives.Max(d => d.Drive.SizeBytes);
+                foreach (var vm in Drives)
+                    vm.SizePercent = maxSize > 0 ? (double)vm.Drive.SizeBytes / maxSize * 100.0 : 0;
+            }
+
+            GlobalStatus = $"Found {detected.Count} drive(s). Querying health data...";
+
+            // Auto-query SMART/health for each drive sequentially with fault isolation
+            foreach (var driveVm in Drives.ToList())
+            {
+                driveVm.IsQueryingHealth = true;
+                try
+                {
+                    var devNum = driveVm.Drive.DeviceNumber;
+                    var health = await Task.Run(() => DriveDetectionService.QueryHealthInfo(devNum));
+                    driveVm.Drive.Health = health;
+
+                    // Query detailed SMART data for risk assessment
+                    await Task.Run(() =>
+                        DriveDetectionService.QueryDetailedSmartData(devNum, health, health.BusType));
+
+                    driveVm.RiskLevel = health.RiskLevel;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warning($"Health query failed for disk {driveVm.Drive.DeviceNumber}: {ex.Message}");
+                    driveVm.Drive.Health = new DriveHealthInfo { HealthStatus = "Query failed" };
+                    driveVm.RiskLevel = DriveRiskLevel.Unknown;
+                }
+                finally
+                {
+                    driveVm.IsQueryingHealth = false;
+                }
+            }
+
+            // Refresh selected drive health bindings if applicable
+            OnPropertyChanged(nameof(SelectedDriveHealth));
+            OnPropertyChanged(nameof(SmartDataQueried));
 
             GlobalStatus = $"Found {detected.Count} physical drive(s). Select drives and choose an action.";
         }
@@ -291,6 +641,8 @@ public class MainViewModel : INotifyPropertyChanged
         GlobalStatus = "Running surface check...";
 
         foreach (var d in selected) { d.Reset(); d.IsRunning = true; }
+        SelectedDriveItem = selected[0];
+        SelectedInfoTab = 2;
 
         await RunSurfaceCheckOnDrives(selected);
 
@@ -301,6 +653,15 @@ public class MainViewModel : INotifyPropertyChanged
 
     private async Task RunSurfaceCheckOnDrives(System.Collections.Generic.List<DriveItemViewModel> selected)
     {
+        // Init visualization for surface check (phases only if not already set by Check & Wipe)
+        foreach (var driveVm in selected)
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                driveVm.InitVisualization(0, 0, false, true);
+                if (driveVm.Phases.Count == 0)
+                    driveVm.InitPhases(false, true, false);
+            });
+
         var tasks = selected.Select(async driveVm =>
         {
             var progress = new Progress<OperationProgress>(p =>
@@ -313,9 +674,9 @@ public class MainViewModel : INotifyPropertyChanged
                     driveVm.ErrorCount = p.ErrorCount;
                     driveVm.DataPresencePercent = p.TotalSectorsToProcess > 0
                         ? (double)p.DataSectorsFound / Math.Max(1, p.SectorsProcessed) * 100 : 0;
-                    driveVm.TimeRemainingText = p.EstimatedRemaining.TotalSeconds > 0
-                        ? $"{p.EstimatedRemaining:mm\\:ss} remaining" : "";
                     driveVm.IsComplete = p.IsComplete;
+                    driveVm.UpdateVisualization(p.PercentComplete, p.StatusMessage);
+                    UpdateDashboard();
                 });
             });
 
@@ -404,6 +765,8 @@ public class MainViewModel : INotifyPropertyChanged
         GlobalStatus = "Wiping drives...";
 
         foreach (var d in selected) { d.Reset(); d.IsRunning = true; }
+        SelectedDriveItem = selected[0];
+        SelectedInfoTab = 2;
 
         await RunWipeOnDrives(selected);
 
@@ -415,6 +778,25 @@ public class MainViewModel : INotifyPropertyChanged
     private async Task RunWipeOnDrives(System.Collections.Generic.List<DriveItemViewModel> selected)
     {
         var settings = BuildSettings();
+        bool isSmartWipe = SelectedWipeMode == WipeMode.SmartWipe;
+
+        // Init visualization for wipe
+        foreach (var driveVm in selected)
+        {
+            int headSegs = 0, tailSegs = 0;
+            if (isSmartWipe && driveVm.Drive.SizeBytes > 0)
+            {
+                long headBytes = (long)HeadTailSizeGB * 1024L * 1024L * 1024L;
+                headSegs = (int)(headBytes * 200.0 / driveVm.Drive.SizeBytes);
+                tailSegs = headSegs;
+            }
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                driveVm.InitVisualization(headSegs, tailSegs, isSmartWipe, false);
+                if (driveVm.Phases.Count == 0)
+                    driveVm.InitPhases(isSmartWipe, false, VerifyAfterWipe);
+            });
+        }
 
         var tasks = selected.Select(async driveVm =>
         {
@@ -426,9 +808,9 @@ public class MainViewModel : INotifyPropertyChanged
                     driveVm.StatusText = p.StatusMessage;
                     driveVm.SpeedText = $"{p.SpeedMBps:F1} MB/s";
                     driveVm.ErrorCount = p.ErrorCount;
-                    driveVm.TimeRemainingText = p.EstimatedRemaining.TotalSeconds > 0
-                        ? $"{p.EstimatedRemaining:hh\\:mm\\:ss} remaining" : "";
                     driveVm.IsComplete = p.IsComplete;
+                    driveVm.UpdateVisualization(p.PercentComplete, p.StatusMessage);
+                    UpdateDashboard();
                 });
             });
 
@@ -509,7 +891,12 @@ public class MainViewModel : INotifyPropertyChanged
 
         // ── Phase 1: Surface Check ──
         GlobalStatus = "Phase 1: Running surface check...";
+        bool isSmartWipe = SelectedWipeMode == WipeMode.SmartWipe;
         foreach (var d in selected) { d.Reset(); d.IsRunning = true; }
+        foreach (var d in selected)
+            d.InitPhases(isSmartWipe, false, VerifyAfterWipe, isCheckAndWipe: true);
+        SelectedDriveItem = selected[0];
+        SelectedInfoTab = 2;
 
         await RunSurfaceCheckOnDrives(selected);
 
@@ -541,7 +928,18 @@ public class MainViewModel : INotifyPropertyChanged
 
         // ── Phase 2: Wipe ──
         GlobalStatus = "Phase 2: Wiping drives...";
-        foreach (var d in selected) { d.Reset(); d.IsRunning = true; }
+        foreach (var d in selected)
+        {
+            d.MarkSurfaceCheckDone();
+            d.IsRunning = true;
+            d.Progress = 0;
+            d.StatusText = "";
+            d.SpeedText = "";
+            d.ErrorCount = 0;
+            d.IsComplete = false;
+        }
+        SelectedDriveItem = selected[0];
+        SelectedInfoTab = 2;
 
         await RunWipeOnDrives(selected);
 
@@ -660,7 +1058,7 @@ public class MainViewModel : INotifyPropertyChanged
     private void SelectAll()
     {
         foreach (var d in Drives)
-            if (!d.Drive.IsSystemDrive && (!ShowExternalOnly || d.Drive.IsRemovable))
+            if (d.IsSelectable && (!ShowExternalOnly || d.Drive.IsRemovable))
                 d.IsSelected = true;
     }
 

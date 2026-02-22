@@ -19,4 +19,8 @@
     <PackageReference Include="WPF-UI" Version="4.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Assets\fliplogo.jpeg" />
+  </ItemGroup>
+
 </Project>

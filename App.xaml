@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:converters="clr-namespace:DriveFlip.Converters"
-             StartupUri="Views/MainWindow.xaml">
+>
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -20,6 +20,10 @@
             <converters:EnumToBoolConverter x:Key="EnumToBool"/>
             <converters:RiskLevelToColorConverter x:Key="RiskLevelColor"/>
             <converters:RiskLevelToTextConverter x:Key="RiskLevelText"/>
+            <converters:LicenseTooltipConverter x:Key="LicenseTooltip"/>
+            <converters:PercentToWidthConverter x:Key="PercentToWidth"/>
+            <converters:PhaseStatusToColorConverter x:Key="PhaseColor"/>
+            <converters:PhaseStatusToIconConverter x:Key="PhaseIcon"/>
 
             <!-- App accent colors -->
             <Color x:Key="AccentBlue">#4A8AC4</Color>

@@ -153,6 +153,63 @@ public class RiskLevelToTextConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
+public class LicenseTooltipConverter : IValueConverter
+{
+    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool unlicensed && unlicensed)
+            return "License required to use this feature";
+        return null;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+public class PhaseStatusToColorConverter : IValueConverter
+{
+    private static readonly SolidColorBrush DoneBrush = new(Color.FromRgb(76, 175, 80));    // Green
+    private static readonly SolidColorBrush ActiveBrush = new(Color.FromRgb(74, 138, 196)); // AccentBlue
+    private static readonly SolidColorBrush PendingBrush = new(Color.FromRgb(80, 80, 106)); // Dim
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is DriveFlip.ViewModels.PhaseStatus status)
+        {
+            return status switch
+            {
+                DriveFlip.ViewModels.PhaseStatus.Done => DoneBrush,
+                DriveFlip.ViewModels.PhaseStatus.Active => ActiveBrush,
+                _ => PendingBrush
+            };
+        }
+        return PendingBrush;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+public class PhaseStatusToIconConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is DriveFlip.ViewModels.PhaseStatus status)
+        {
+            return status switch
+            {
+                DriveFlip.ViewModels.PhaseStatus.Done => "\u2713",     // checkmark
+                DriveFlip.ViewModels.PhaseStatus.Active => "\u25B6",   // play triangle
+                _ => "\u2022"                                           // bullet
+            };
+        }
+        return "\u2022";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
 /// <summary>
 /// Returns Visible when IsComplete=true AND IsRunning=false.
 /// </summary>

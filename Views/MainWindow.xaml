@@ -110,6 +110,16 @@
                                                   ItemsSource="{Binding PassOptions}"
                                                   SelectedItem="{Binding NumberOfPasses}"/>
                                     </Grid>
+
+                                    <Border Height="1" Background="#50506A" Margin="0,12,0,10"/>
+                                    <CheckBox Content="Protect system drive"
+                                              IsChecked="{Binding ProtectSystemDrives}"
+                                              FontSize="11.5" Margin="0,0,0,4"
+                                              ToolTip="Prevents the system drive (C:) from being selected for operations."/>
+                                    <CheckBox Content="Protect internal drives"
+                                              IsChecked="{Binding ProtectInternalDrives}"
+                                              FontSize="11.5"
+                                              ToolTip="Prevents all non-removable (internal) drives from being selected for operations."/>
                                 </StackPanel>
                             </Border>
                         </Popup>
@@ -120,6 +130,33 @@
 
         <!-- MAIN CONTENT -->
         <Grid Grid.Row="1" Margin="20,16,20,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- License Banner (visible when unlicensed) -->
+            <Border Grid.Row="0" CornerRadius="6" Padding="14,10" Margin="0,0,0,10"
+                    Background="#33D32F2F" BorderBrush="{StaticResource AccentRedBrush}" BorderThickness="1"
+                    Visibility="{Binding LicenseBannerVisible, Converter={StaticResource BoolToVis}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="License Required" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{StaticResource AccentRedBrush}"/>
+                        <TextBlock Text="Activate a license to unlock surface check, wipe, and check &amp; wipe operations."
+                                   FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <ui:Button Grid.Column="1" Content="Activate License" Appearance="Primary"
+                               Command="{Binding ToggleLicenseSettingsCommand}"
+                               VerticalAlignment="Center" Padding="12,6"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="380"/>
                 <ColumnDefinition Width="310"/>
@@ -196,6 +233,18 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
 
+                                                <!-- Size indicator overlay (behind content, columns 1-2) -->
+                                                <Border Grid.Column="1" Grid.ColumnSpan="2" CornerRadius="3"
+                                                        Background="#0DFFFFFF" HorizontalAlignment="Left"
+                                                        VerticalAlignment="Stretch" IsHitTestVisible="False">
+                                                    <Border.Width>
+                                                        <MultiBinding Converter="{StaticResource PercentToWidth}">
+                                                            <Binding Path="SizePercent"/>
+                                                            <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid}"/>
+                                                        </MultiBinding>
+                                                    </Border.Width>
+                                                </Border>
+
                                                 <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}"
                                                           IsEnabled="{Binding IsSelectable}"
                                                           VerticalAlignment="Center" Margin="0,0,10,0"/>
@@ -219,32 +268,49 @@
                                                     </StackPanel>
                                                 </StackPanel>
 
-                                                <!-- Status badge -->
-                                                <Border Grid.Column="2" CornerRadius="4" Padding="8,3"
-                                                        Visibility="{Binding IsComplete, Converter={StaticResource BoolToVis}}">
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="{StaticResource AccentGreenBrush}"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Passed}" Value="False">
-                                                                    <Setter Property="Background" Value="{StaticResource AccentRedBrush}"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
-                                                    <TextBlock FontSize="11" FontWeight="Bold" Foreground="White">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock">
-                                                                <Setter Property="Text" Value="PASS"/>
+                                                <!-- Inline risk badge / health spinner -->
+                                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <!-- SMART loading spinner -->
+                                                    <ui:ProgressRing IsIndeterminate="True" Width="14" Height="14"
+                                                                     Visibility="{Binding IsQueryingHealth, Converter={StaticResource BoolToVis}}"
+                                                                     Margin="0,0,6,0"/>
+
+                                                    <!-- Risk badge (shown when health is known) -->
+                                                    <Border CornerRadius="4" Padding="6,2"
+                                                            Visibility="{Binding HasRiskLevel, Converter={StaticResource BoolToVis}}"
+                                                            Background="{Binding RiskLevel, Converter={StaticResource RiskLevelColor}}"
+                                                            Margin="0,0,6,0">
+                                                        <TextBlock Text="{Binding RiskLevel, Converter={StaticResource RiskLevelText}}"
+                                                                   FontSize="9" FontWeight="Bold" Foreground="White"/>
+                                                    </Border>
+
+                                                    <!-- Operation status badge -->
+                                                    <Border CornerRadius="4" Padding="8,3"
+                                                            Visibility="{Binding IsComplete, Converter={StaticResource BoolToVis}}">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Background" Value="{StaticResource AccentGreenBrush}"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding Passed}" Value="False">
-                                                                        <Setter Property="Text" Value="ISSUES"/>
+                                                                        <Setter Property="Background" Value="{StaticResource AccentRedBrush}"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
-                                                        </TextBlock.Style>
-                                                    </TextBlock>
-                                                </Border>
+                                                        </Border.Style>
+                                                        <TextBlock FontSize="11" FontWeight="Bold" Foreground="White">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Text" Value="PASS"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Passed}" Value="False">
+                                                                            <Setter Property="Text" Value="ISSUES"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </Border>
+                                                </StackPanel>
                                             </Grid>
 
                                             <!-- Row 1: Progress bar (when running) -->
@@ -281,9 +347,6 @@
                                                                FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                                     <TextBlock Grid.Column="1" Text="{Binding SpeedText}"
                                                                FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                               Margin="12,0,0,0"/>
-                                                    <TextBlock Grid.Column="2" Text="{Binding TimeRemainingText}"
-                                                               FontSize="11" Foreground="{StaticResource AccentBlueBrush}"
                                                                Margin="12,0,0,0"/>
                                                 </Grid>
                                             </Grid>
@@ -328,7 +391,8 @@
                     <Border Grid.Row="2" BorderBrush="{DynamicResource ControlElevationBorderBrush}" BorderThickness="0,1,0,0"
                             MaxHeight="400"
                             Visibility="{Binding DataContext.HasSelectedDrive, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource BoolToVis}}">
-                        <TabControl BorderThickness="0" Padding="0">
+                        <TabControl BorderThickness="0" Padding="0"
+                                    SelectedIndex="{Binding DataContext.SelectedInfoTab, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}">
 
                             <!-- Info Tab -->
                             <TabItem Header="Info">
@@ -594,6 +658,82 @@
                                     </StackPanel>
                                 </ScrollViewer>
                             </TabItem>
+
+                            <!-- Progress Tab (visible when selected drive is running) -->
+                            <TabItem Header="Progress"
+                                     DataContext="{Binding DataContext.SelectedDriveItem, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                     Visibility="{Binding IsRunning, FallbackValue=Collapsed, Converter={StaticResource BoolToVis}}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,10">
+                                    <StackPanel Margin="14,10">
+
+                                        <!-- Phase steps -->
+                                        <ItemsControl ItemsSource="{Binding Phases}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                                                        <TextBlock Text="{Binding Status, Converter={StaticResource PhaseIcon}}"
+                                                                   FontSize="12" Width="18"
+                                                                   Foreground="{Binding Status, Converter={StaticResource PhaseColor}}"
+                                                                   VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Name}" FontSize="12"
+                                                                   Foreground="{Binding Status, Converter={StaticResource PhaseColor}}"
+                                                                   VerticalAlignment="Center">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <!-- Visualization bitmap -->
+                                        <Border Background="#1A1A2E" CornerRadius="4"
+                                                Height="32" ClipToBounds="True" Margin="0,10,0,0">
+                                            <Image Source="{Binding VisualizationBitmap}"
+                                                   Stretch="Fill"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                   Visibility="{Binding VisualizationBitmap, Converter={StaticResource NullToVis}}"/>
+                                        </Border>
+
+                                        <!-- Stats -->
+                                        <Grid Margin="0,10,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="Progress" FontSize="10"
+                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                <TextBlock Text="{Binding Progress, StringFormat={}{0:F1}%}"
+                                                           FontSize="13" FontWeight="SemiBold"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Speed" FontSize="10"
+                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                <TextBlock Text="{Binding SpeedText}" FontSize="13" FontWeight="SemiBold"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2">
+                                                <TextBlock Text="Errors" FontSize="10"
+                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                <TextBlock Text="{Binding ErrorCount}" FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{Binding ErrorCount, Converter={StaticResource HealthColor}}"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem>
                         </TabControl>
                     </Border>
                 </Grid>
@@ -605,61 +745,21 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="16,14">
 
-                        <!-- Spinning Disk Animation (visible during operations) -->
-                        <Grid Width="130" Height="130" HorizontalAlignment="Center" Margin="0,0,0,16"
-                              Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}">
-                            <!-- Disk platter -->
-                            <Ellipse Width="120" Height="120" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Ellipse.Fill>
-                                    <RadialGradientBrush>
-                                        <GradientStop Color="#4A4A60" Offset="0"/>
-                                        <GradientStop Color="#3A3A50" Offset="0.5"/>
-                                        <GradientStop Color="#2E2E42" Offset="1"/>
-                                    </RadialGradientBrush>
-                                </Ellipse.Fill>
-                            </Ellipse>
-                            <!-- Track rings -->
-                            <Ellipse Width="100" Height="100" Stroke="#45456A" StrokeThickness="0.5"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <Ellipse Width="80" Height="80" Stroke="#45456A" StrokeThickness="0.5"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <Ellipse Width="60" Height="60" Stroke="#45456A" StrokeThickness="0.5"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <Ellipse Width="40" Height="40" Stroke="#45456A" StrokeThickness="0.5"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <!-- Center spindle -->
-                            <Ellipse Width="14" Height="14" Fill="{StaticResource AccentBlueBrush}"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <!-- Spinning animal -->
-                            <Canvas Width="130" Height="130" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    RenderTransformOrigin="0.5,0.5">
-                                <Canvas.RenderTransform>
-                                    <RotateTransform x:Name="DiskRotation" Angle="0"/>
-                                </Canvas.RenderTransform>
-                                <TextBlock Text="{Binding AnimationEmoji}" FontSize="18"
-                                           Canvas.Left="56" Canvas.Top="2"/>
-                            </Canvas>
-                            <Grid.Triggers>
-                                <EventTrigger RoutedEvent="Loaded">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                                                Storyboard.TargetName="DiskRotation"
-                                                Storyboard.TargetProperty="Angle"
-                                                From="0" To="360"
-                                                Duration="0:0:2.5"
-                                                RepeatBehavior="Forever"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </Grid.Triggers>
-                        </Grid>
+                        <!-- Operations Dashboard (visible during scanning) -->
+                        <StackPanel Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}">
 
-                        <!-- Cancel (when running) -->
-                        <ui:Button Content="Cancel Operation" Appearance="Secondary"
-                                Command="{Binding CancelCommand}"
-                                HorizontalAlignment="Stretch" Margin="0,0,0,12"
-                                Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}"/>
+                            <!-- Overall Progress -->
+                            <ProgressBar Value="{Binding AggregateProgress}" Minimum="0" Maximum="100"
+                                         Height="8" Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding OperationSummary}" FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       HorizontalAlignment="Center" Margin="0,0,0,16"/>
+
+                            <!-- Cancel -->
+                            <ui:Button Content="Cancel Operation" Appearance="Danger"
+                                    Command="{Binding CancelCommand}"
+                                    HorizontalAlignment="Stretch" Margin="0,0,0,12"/>
+                        </StackPanel>
 
                         <!-- Settings Section (hidden when running) -->
                         <StackPanel Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}">
@@ -674,7 +774,8 @@
                             </TextBlock>
                             <ui:Button Content="Run Surface Check" Appearance="Primary"
                                     Command="{Binding RunSurfaceCheckCommand}"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"/>
+                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"
+                                    ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
 
                             <!-- Separator -->
                             <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,14"/>
@@ -714,7 +815,8 @@
 
                             <ui:Button Content="Wipe Selected Drives" Appearance="Danger"
                                     Command="{Binding RunWipeCommand}"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"/>
+                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"
+                                    ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
 
                             <!-- Separator -->
                             <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,14"/>
@@ -729,7 +831,8 @@
                             </TextBlock>
                             <ui:Button Content="Check &amp; Wipe" Appearance="Caution"
                                     Command="{Binding RunCheckAndWipeCommand}"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"/>
+                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"
+                                    ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
 
                             <!-- Separator -->
                             <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,14"/>
@@ -771,6 +874,7 @@
                 </ScrollViewer>
             </ui:Card>
         </Grid>
+        </Grid>
 
         <!-- STATUS BAR -->
         <Border Grid.Row="2" BorderBrush="{DynamicResource ControlElevationBorderBrush}" BorderThickness="0,1,0,0"
@@ -783,12 +887,127 @@
                 <TextBlock Grid.Column="0" Text="{Binding GlobalStatus}"
                            FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="1" FontSize="11"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           VerticalAlignment="Center">
-                    <Run Text="Requires Administrator"/>
-                </TextBlock>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border CornerRadius="4" Padding="8,3" Margin="0,0,10,0" Cursor="Hand"
+                            MouseLeftButtonUp="LicenseBadge_Click">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{StaticResource AccentGreenBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLicensed}" Value="False">
+                                        <Setter Property="Background" Value="{StaticResource AccentRedBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding LicenseStatusText}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                    </Border>
+                    <TextBlock FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                        <Run Text="Requires Administrator"/>
+                    </TextBlock>
+                </StackPanel>
             </Grid>
         </Border>
+
+        <!-- LICENSE MODAL OVERLAY (covers entire window) -->
+        <Grid Grid.Row="0" Grid.RowSpan="3"
+              Visibility="{Binding IsLicenseSettingsOpen, Converter={StaticResource BoolToVis}}">
+            <!-- Dimming backdrop -->
+            <Border Background="#AA000000" MouseLeftButtonUp="LicenseOverlayBackdrop_Click"/>
+
+            <!-- Centered dialog -->
+            <Border Background="#2B2B3D" BorderBrush="#50506A" BorderThickness="1"
+                    CornerRadius="10" Padding="24,20" Width="400"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="40" ShadowDepth="8" Opacity="0.7" Color="Black"/>
+                </Border.Effect>
+                <StackPanel>
+                    <!-- Header -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="License Activation" FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource AccentBlueBrush}"/>
+                    </Grid>
+
+                    <!-- Current license info (when licensed) -->
+                    <StackPanel Visibility="{Binding IsLicensed, Converter={StaticResource BoolToVis}}"
+                                Margin="0,0,0,14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="14"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Licensee" FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding LicenseeDisplay}" FontSize="12" Margin="0,0,0,4"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Edition" FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding LicenseEditionDisplay}" FontSize="12" Margin="0,0,0,4"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Expires" FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding LicenseExpiresDisplay}" FontSize="12" Margin="0,0,0,4"/>
+                        </Grid>
+                        <Border Height="1" Background="#50506A" Margin="0,10,0,0"/>
+                    </StackPanel>
+
+                    <!-- License key input -->
+                    <TextBlock Text="License Key" FontSize="12"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,6"/>
+                    <ui:TextBox Text="{Binding LicenseKeyInput, UpdateSourceTrigger=PropertyChanged}"
+                                PlaceholderText="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                                MaxLength="36" FontSize="12" Margin="0,0,0,6"
+                                PreviewTextInput="LicenseKey_PreviewTextInput"
+                                DataObject.Pasting="LicenseKey_Pasting"/>
+
+                    <!-- Error message (inside modal) -->
+                    <TextBlock Text="{Binding LicenseErrorMessage}" FontSize="11" TextWrapping="Wrap"
+                               Foreground="{StaticResource AccentRedBrush}" Margin="0,0,0,6"
+                               Visibility="{Binding HasLicenseError, Converter={StaticResource BoolToVis}}"/>
+
+                    <!-- Loading spinner -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6"
+                                Visibility="{Binding IsActivatingLicense, Converter={StaticResource BoolToVis}}">
+                        <ui:ProgressRing IsIndeterminate="True" Width="16" Height="16" Margin="0,0,8,0"/>
+                        <TextBlock Text="Activating license..." FontSize="12"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Spacer before buttons -->
+                    <Border Height="8"/>
+
+                    <!-- Buttons -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ui:Button Grid.Column="0" Content="Cancel" Appearance="Secondary"
+                                   Command="{Binding ToggleLicenseSettingsCommand}"
+                                   Padding="16,8" FontSize="12" HorizontalAlignment="Left"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <ui:Button Content="Revalidate" Appearance="Secondary"
+                                       Command="{Binding RevalidateLicenseCommand}"
+                                       Padding="16,8" FontSize="12" Margin="0,0,8,0"
+                                       Visibility="{Binding IsLicensed, Converter={StaticResource BoolToVis}}"/>
+                            <ui:Button Content="Activate" Appearance="Primary"
+                                       Command="{Binding ActivateLicenseCommand}"
+                                       Padding="16,8" FontSize="12"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </ui:FluentWindow>
