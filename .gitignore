@@ -1,0 +1,7 @@
+bin/
+obj/
+.vs/
+binTempBuild/
+*.user
+*.suo
+*.DotSettings.user
