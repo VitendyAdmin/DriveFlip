@@ -13,6 +13,16 @@ namespace DriveFlip.Services;
 [SupportedOSPlatform("windows")]
 public static class DriveDetectionService
 {
+    private static readonly TimeSpan WmiTimeout = TimeSpan.FromSeconds(15);
+
+    private static ManagementScope CreateStorageScope()
+    {
+        var scope = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
+        scope.Options.Timeout = WmiTimeout;
+        scope.Connect();
+        return scope;
+    }
+
     private static readonly Dictionary<int, string> BusTypeMap = new()
     {
         [1] = "SCSI", [2] = "ATAPI", [3] = "ATA", [5] = "1394", [6] = "SSA",
@@ -82,8 +92,7 @@ public static class DriveDetectionService
         try
         {
             // Query MSFT_PhysicalDisk for health, media type, bus type, spindle speed
-            var scope = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
-            scope.Connect();
+            var scope = CreateStorageScope();
 
             var query = new ObjectQuery(
                 $"SELECT HealthStatus, MediaType, BusType, SpindleSpeed FROM MSFT_PhysicalDisk WHERE DeviceId = '{deviceNumber}'");
@@ -125,13 +134,12 @@ public static class DriveDetectionService
         try
         {
             // Query MSFT_StorageReliabilityCounter for SMART-like data
-            var scope = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
-            scope.Connect();
+            var scope2 = CreateStorageScope();
 
             // Get the MSFT_PhysicalDisk instance path first, then its reliability counters
             var diskQuery = new ObjectQuery(
                 $"SELECT * FROM MSFT_PhysicalDisk WHERE DeviceId = '{deviceNumber}'");
-            using var diskSearcher = new ManagementObjectSearcher(scope, diskQuery);
+            using var diskSearcher = new ManagementObjectSearcher(scope2, diskQuery);
 
             foreach (ManagementObject disk in diskSearcher.Get())
             {
@@ -178,8 +186,7 @@ public static class DriveDetectionService
     {
         try
         {
-            var scope = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
-            scope.Connect();
+            var scope = CreateStorageScope();
 
             var query = new ObjectQuery(
                 $"SELECT BusType FROM MSFT_PhysicalDisk WHERE DeviceId = '{drive.DeviceNumber}'");
@@ -286,8 +293,7 @@ public static class DriveDetectionService
     {
         try
         {
-            var scope = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
-            scope.Connect();
+            var scope = CreateStorageScope();
 
             var diskQuery = new ObjectQuery(
                 $"SELECT * FROM MSFT_PhysicalDisk WHERE DeviceId = '{deviceNumber}'");
@@ -541,8 +547,7 @@ public static class DriveDetectionService
     {
         try
         {
-            var scope = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
-            scope.Connect();
+            var scope = CreateStorageScope();
 
             // Find the MSFT_Disk matching this device number
             var diskQuery = new ObjectQuery(

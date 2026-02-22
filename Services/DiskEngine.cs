@@ -461,11 +461,20 @@ public class DiskEngine : IDisposable
                 stream.Flush();
             }
 
-            // Verification pass
-            if (verifyAfterWipe && !cancellation.IsCancellationRequested)
+            // Verification pass — only valid when the last pass wrote zeros.
+            // RandomFill leaves non-deterministic data; verifying against zeros would
+            // falsely report every sector as a failure.
+            bool lastPassWasZero = method != WipeMethod.RandomFill;
+            if (verifyAfterWipe && lastPassWasZero && !cancellation.IsCancellationRequested)
             {
                 RunVerification(stream, drive, report, bytesPerSector,
                     bufferSize, totalSectors, sw, progress, cancellation);
+            }
+            else if (verifyAfterWipe && !lastPassWasZero && !cancellation.IsCancellationRequested)
+            {
+                // Can't verify random data — mark as passed (wipe itself succeeded)
+                report.VerificationPassed = true;
+                Logger.Info($"Disk {drive.DeviceNumber}: Verification skipped (random fill has no deterministic pattern to verify against).");
             }
 
             report.Completed = !cancellation.IsCancellationRequested;

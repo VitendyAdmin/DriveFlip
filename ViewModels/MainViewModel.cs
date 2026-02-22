@@ -172,10 +172,10 @@ public class MainViewModel : INotifyPropertyChanged
         // Pick a random animal at launch
         AnimationEmoji = Random.Shared.Next(2) == 0 ? "\U0001F43F" : "\U0001F436";
 
-        RefreshDrivesCommand = new RelayCommand(RefreshDrives, () => IsIdle);
-        RunSurfaceCheckCommand = new RelayCommand(async () => await RunSurfaceCheck(), () => IsIdle && HasSelection);
-        RunWipeCommand = new RelayCommand(async () => await RunWipe(), () => IsIdle && HasSelection);
-        RunCheckAndWipeCommand = new RelayCommand(async () => await RunCheckAndWipe(), () => IsIdle && HasSelection);
+        RefreshDrivesCommand = new RelayCommand(async () => await SafeAsync(RefreshDrivesAsync), () => IsIdle);
+        RunSurfaceCheckCommand = new RelayCommand(async () => await SafeAsync(RunSurfaceCheck), () => IsIdle && HasSelection);
+        RunWipeCommand = new RelayCommand(async () => await SafeAsync(RunWipe), () => IsIdle && HasSelection);
+        RunCheckAndWipeCommand = new RelayCommand(async () => await SafeAsync(RunCheckAndWipe), () => IsIdle && HasSelection);
         CancelCommand = new RelayCommand(Cancel, () => IsScanning);
         SaveReportCommand = new RelayCommand(SaveReport, () => Drives.Any(d => !string.IsNullOrEmpty(d.ReportText)));
         SelectAllCommand = new RelayCommand(SelectAll);
@@ -183,11 +183,11 @@ public class MainViewModel : INotifyPropertyChanged
         ToggleSettingsCommand = new RelayCommand(() => IsSettingsOpen = !IsSettingsOpen);
         SelectDriveCommand = new RelayCommand(SelectDrive);
         ToggleExternalFilterCommand = new RelayCommand(() => ShowExternalOnly = !ShowExternalOnly);
-        GetSmartDataCommand = new RelayCommand(async () => await GetSmartData(),
+        GetSmartDataCommand = new RelayCommand(async () => await SafeAsync(GetSmartData),
             () => HasSelectedDrive && !IsLoadingSmartData && !SmartDataQueried);
 
         Logger.Info("DriveFlip started.");
-        RefreshDrives();
+        _ = RefreshDrivesAsync();
     }
 
     private bool HasSelection => Drives.Any(d => d.IsSelected);
@@ -201,13 +201,24 @@ public class MainViewModel : INotifyPropertyChanged
         WipeMode = SelectedWipeMode
     };
 
-    public void RefreshDrives()
+    private bool _isRefreshing;
+    public bool IsRefreshing
+    {
+        get => _isRefreshing;
+        set { _isRefreshing = value; OnPropertyChanged(); }
+    }
+
+    public async Task RefreshDrivesAsync()
     {
         SelectedDriveItem = null;
         Drives.Clear();
+        IsRefreshing = true;
+        GlobalStatus = "Detecting drives...";
+
         try
         {
-            var detected = DriveDetectionService.DetectDrives();
+            var detected = await Task.Run(() => DriveDetectionService.DetectDrives());
+
             foreach (var d in detected)
             {
                 var vm = new DriveItemViewModel(d);
@@ -233,6 +244,10 @@ public class MainViewModel : INotifyPropertyChanged
         {
             GlobalStatus = $"Error detecting drives: {ex.Message}";
             Logger.Error("Drive refresh failed", ex);
+        }
+        finally
+        {
+            IsRefreshing = false;
         }
     }
 
@@ -546,16 +561,20 @@ public class MainViewModel : INotifyPropertyChanged
             await Task.Run(() =>
                 DriveDetectionService.QueryDetailedSmartData(drive.DeviceNumber, drive.Health, drive.Health.BusType));
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                OnPropertyChanged(nameof(SelectedDriveHealth));
-                OnPropertyChanged(nameof(SmartDataQueried));
-                CommandManager.InvalidateRequerySuggested();
-            });
+            // DriveHealthInfo doesn't implement INPC, so WPF won't re-read bindings
+            // unless the DataContext reference itself changes. Nudge it.
+            var health = drive.Health;
+            drive.Health = null;
+            OnPropertyChanged(nameof(SelectedDriveHealth));
+            drive.Health = health;
+            OnPropertyChanged(nameof(SelectedDriveHealth));
+            OnPropertyChanged(nameof(SmartDataQueried));
+            CommandManager.InvalidateRequerySuggested();
         }
         catch (Exception ex)
         {
             Logger.Error($"SMART data query failed for disk {drive.DeviceNumber}", ex);
+            GlobalStatus = $"SMART query failed for Disk {drive.DeviceNumber}: {ex.Message}";
         }
         finally
         {
@@ -610,14 +629,30 @@ public class MainViewModel : INotifyPropertyChanged
         // Lazy-load health data on background thread
         if (driveVm.Drive.Health == null)
         {
-            Task.Run(() =>
+            _ = Task.Run(() =>
             {
-                var health = DriveDetectionService.QueryHealthInfo(driveVm.Drive.DeviceNumber);
-                driveVm.Drive.Health = health;
-                Application.Current.Dispatcher.Invoke(() =>
+                try
                 {
-                    OnPropertyChanged(nameof(SelectedDriveHealth));
-                });
+                    var health = DriveDetectionService.QueryHealthInfo(driveVm.Drive.DeviceNumber);
+                    driveVm.Drive.Health = health;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        OnPropertyChanged(nameof(SelectedDriveHealth));
+                        OnPropertyChanged(nameof(SmartDataQueried));
+                        CommandManager.InvalidateRequerySuggested();
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Health query failed for disk {driveVm.Drive.DeviceNumber}", ex);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        // Set a minimal health object so the UI doesn't stay stuck on "Loading"
+                        driveVm.Drive.Health = new DriveHealthInfo { HealthStatus = "Query failed" };
+                        OnPropertyChanged(nameof(SelectedDriveHealth));
+                        OnPropertyChanged(nameof(SmartDataQueried));
+                    });
+                }
             });
         }
     }
@@ -633,6 +668,24 @@ public class MainViewModel : INotifyPropertyChanged
     {
         foreach (var d in Drives)
             d.IsSelected = false;
+    }
+
+    /// <summary>
+    /// Wraps an async Task method so that exceptions don't crash the process
+    /// when called from async void (RelayCommand takes Action, not Func&lt;Task&gt;).
+    /// </summary>
+    private async Task SafeAsync(Func<Task> action)
+    {
+        try
+        {
+            await action();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Unhandled error in async command", ex);
+            GlobalStatus = $"Error: {ex.Message}";
+            IsScanning = false;
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
