@@ -24,6 +24,8 @@
             <converters:PercentToWidthConverter x:Key="PercentToWidth"/>
             <converters:PhaseStatusToColorConverter x:Key="PhaseColor"/>
             <converters:PhaseStatusToIconConverter x:Key="PhaseIcon"/>
+            <converters:AllTrueMultiConverter x:Key="AllTrue"/>
+            <converters:NonEmptyStringToVisibilityConverter x:Key="NonEmptyToVis"/>
 
             <!-- App accent colors -->
             <Color x:Key="AccentBlue">#4A8AC4</Color>

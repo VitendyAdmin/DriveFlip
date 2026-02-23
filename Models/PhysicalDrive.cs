@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using DriveFlip.Services;
 
 namespace DriveFlip.Models;
 
@@ -7,6 +10,7 @@ public class PhysicalDrive
 {
     public int DeviceNumber { get; set; }
     public string DevicePath => $"\\\\.\\PhysicalDrive{DeviceNumber}";
+    public string Manufacturer { get; set; } = "";
     public string Model { get; set; } = "Unknown";
     public string SerialNumber { get; set; } = "";
     public string InterfaceType { get; set; } = "Unknown";
@@ -20,23 +24,25 @@ public class PhysicalDrive
     public bool IsRemovable { get; set; }
     public string FirmwareVersion { get; set; } = "";
     public string Status { get; set; } = "OK";
+    public string SupportedFeatures { get; set; } = "";
+    public string NegotiatedSpeed { get; set; } = "";
     public DriveHealthInfo? Health { get; set; }
+    public string PartNumber { get; set; } = "";
+    public string ManufactureDate { get; set; } = "";
+    public int PhysicalSectorSize { get; set; }
+    public int LogicalSectorSize { get; set; }
+    public string PartitionStyle { get; set; } = "";
+    public string UsbBridgeChip { get; set; } = "";
+    public string PnpDeviceId { get; set; } = "";
 
-    public string DisplaySize
-    {
-        get
-        {
-            if (SizeBytes >= 1_000_000_000_000)
-                return $"{SizeBytes / 1_000_000_000_000.0:F1} TB";
-            if (SizeBytes >= 1_000_000_000)
-                return $"{SizeBytes / 1_000_000_000.0:F1} GB";
-            if (SizeBytes >= 1_000_000)
-                return $"{SizeBytes / 1_000_000.0:F1} MB";
-            return $"{SizeBytes:N0} bytes";
-        }
-    }
+    public string SectorSizeDisplay => DisplayFormatter.FormatSectorSize(PhysicalSectorSize, LogicalSectorSize);
+
+    public string DisplaySize => DisplayFormatter.FormatSize(SizeBytes);
 
     public string DisplayName => $"Disk {DeviceNumber}: {Model} ({DisplaySize})";
+
+    public string SerialSuffix =>
+        SerialNumber.Length >= 4 ? $"s/n \u2026{SerialNumber[^4..]}" : "";
 
     public string DriveLettersSummary =>
         DriveLetters.Count > 0 ? string.Join(", ", DriveLetters) : "No volumes";
@@ -56,7 +62,11 @@ public record SmartAttribute(
     byte CurrentValue,
     byte WorstValue,
     long RawValue,
-    bool IsFailurePredictive);
+    bool IsFailurePredictive,
+    byte Threshold = 0)
+{
+    public bool IsThresholdFailing => Threshold > 0 && CurrentValue <= Threshold;
+}
 
 public class DriveHealthInfo
 {
@@ -81,6 +91,29 @@ public class DriveHealthInfo
     public long? FlushLatencyMax { get; set; }
     public long? StartStopCycleCount { get; set; }
 
+    // ── Additional Info ──
+    public string ManufactureDate { get; set; } = "";
+    public int? TemperatureMax { get; set; }
+    public bool? IsWriteCacheEnabled { get; set; }
+    public bool? IsPowerProtected { get; set; }
+    public long? LoadUnloadCycleCount { get; set; }
+    public long? LoadUnloadCycleCountMax { get; set; }
+    public long? StartStopCycleCountMax { get; set; }
+
+    // ── NVMe Health Log ──
+    public bool IsNvme { get; set; }
+    public int? NvmeAvailableSpare { get; set; }
+    public int? NvmeAvailableSpareThreshold { get; set; }
+    public int? NvmePercentageUsed { get; set; }
+    public long NvmeDataUnitsWritten { get; set; }
+    public long NvmeDataUnitsRead { get; set; }
+    public long NvmePowerCycles { get; set; }
+    public long NvmeUnsafeShutdowns { get; set; }
+    public long NvmeMediaErrors { get; set; }
+    public long NvmeControllerBusyTime { get; set; }
+    public int? NvmeTemperatureSensor1 { get; set; }
+    public int? NvmeTemperatureSensor2 { get; set; }
+
     // ── Raw SMART Attributes (Tier 2, SATA only) ──
     public List<SmartAttribute> SmartAttributes { get; set; } = new();
     public bool SmartSupported { get; set; }
@@ -91,24 +124,39 @@ public class DriveHealthInfo
     public string RiskSummary { get; set; } = "";
 
     // ── Display helpers (basic) ──
-    public string SpindleSpeedDisplay => SpindleSpeed.HasValue
-        ? (SpindleSpeed.Value == 0 ? "SSD (no spindle)" : $"{SpindleSpeed.Value} RPM")
-        : "N/A";
-    public string TemperatureDisplay => Temperature.HasValue ? $"{Temperature.Value} °C" : "N/A";
-    public string PowerOnHoursDisplay => PowerOnHours.HasValue ? $"{PowerOnHours.Value:N0} hours" : "N/A";
-    public string ReadErrorsDisplay => ReadErrors.HasValue ? $"{ReadErrors.Value:N0}" : "N/A";
-    public string WriteErrorsDisplay => WriteErrors.HasValue ? $"{WriteErrors.Value:N0}" : "N/A";
-    public string WearDisplay => Wear.HasValue ? $"{Wear.Value}%" : "N/A";
+    public string SpindleSpeedDisplay => DisplayFormatter.FormatSpindleSpeed(SpindleSpeed);
+    public string TemperatureDisplay => DisplayFormatter.FormatTemperature(Temperature);
+    public string PowerOnHoursDisplay => DisplayFormatter.FormatPowerOnHours(PowerOnHours);
+    public string ReadErrorsDisplay => DisplayFormatter.FormatCount(ReadErrors);
+    public string WriteErrorsDisplay => DisplayFormatter.FormatCount(WriteErrors);
+    public string WearDisplay => DisplayFormatter.FormatPercent(Wear);
 
     // ── Display helpers (extended) ──
-    public string ReadErrorsCorrectedDisplay => ReadErrorsCorrected.HasValue ? $"{ReadErrorsCorrected.Value:N0}" : "N/A";
-    public string ReadErrorsUncorrectedDisplay => ReadErrorsUncorrected.HasValue ? $"{ReadErrorsUncorrected.Value:N0}" : "N/A";
-    public string WriteErrorsCorrectedDisplay => WriteErrorsCorrected.HasValue ? $"{WriteErrorsCorrected.Value:N0}" : "N/A";
-    public string WriteErrorsUncorrectedDisplay => WriteErrorsUncorrected.HasValue ? $"{WriteErrorsUncorrected.Value:N0}" : "N/A";
-    public string ReadLatencyMaxDisplay => ReadLatencyMax.HasValue ? $"{ReadLatencyMax.Value:N0} ms" : "N/A";
-    public string WriteLatencyMaxDisplay => WriteLatencyMax.HasValue ? $"{WriteLatencyMax.Value:N0} ms" : "N/A";
-    public string FlushLatencyMaxDisplay => FlushLatencyMax.HasValue ? $"{FlushLatencyMax.Value:N0} ms" : "N/A";
-    public string StartStopCycleCountDisplay => StartStopCycleCount.HasValue ? $"{StartStopCycleCount.Value:N0}" : "N/A";
+    public string ReadErrorsCorrectedDisplay => DisplayFormatter.FormatCount(ReadErrorsCorrected);
+    public string ReadErrorsUncorrectedDisplay => DisplayFormatter.FormatCount(ReadErrorsUncorrected);
+    public string WriteErrorsCorrectedDisplay => DisplayFormatter.FormatCount(WriteErrorsCorrected);
+    public string WriteErrorsUncorrectedDisplay => DisplayFormatter.FormatCount(WriteErrorsUncorrected);
+    public string ReadLatencyMaxDisplay => DisplayFormatter.FormatLatency(ReadLatencyMax);
+    public string WriteLatencyMaxDisplay => DisplayFormatter.FormatLatency(WriteLatencyMax);
+    public string FlushLatencyMaxDisplay => DisplayFormatter.FormatLatency(FlushLatencyMax);
+    public string StartStopCycleCountDisplay => DisplayFormatter.FormatCount(StartStopCycleCount);
+
+    // ── Display helpers (enhanced) ──
+    public string TemperatureDisplayEnhanced => DisplayFormatter.FormatTemperatureEnhanced(Temperature, TemperatureMax);
+    public string WriteCacheDisplay => DisplayFormatter.FormatBool(IsWriteCacheEnabled, "Enabled", "Disabled");
+    public string PowerProtectionDisplay => DisplayFormatter.FormatBool(IsPowerProtected);
+    public string LoadUnloadCycleCountDisplay => DisplayFormatter.FormatCountWithMax(LoadUnloadCycleCount, LoadUnloadCycleCountMax);
+    public string StartStopCycleCountEnhancedDisplay => DisplayFormatter.FormatCountWithMax(StartStopCycleCount, StartStopCycleCountMax);
+
+    // ── Display helpers (NVMe) ──
+    public string NvmeAvailableSpareDisplay => DisplayFormatter.FormatPercentWithThreshold(NvmeAvailableSpare, NvmeAvailableSpareThreshold);
+    public string NvmePercentageUsedDisplay => DisplayFormatter.FormatPercent(NvmePercentageUsed);
+    public string NvmeDataWrittenDisplay => DisplayFormatter.FormatNvmeDataUnits(NvmeDataUnitsWritten);
+    public string NvmeDataReadDisplay => DisplayFormatter.FormatNvmeDataUnits(NvmeDataUnitsRead);
+    public string NvmePowerCyclesDisplay => DisplayFormatter.FormatCount(NvmePowerCycles > 0 ? NvmePowerCycles : null);
+    public string NvmeUnsafeShutdownsDisplay => DisplayFormatter.FormatCount((long?)NvmeUnsafeShutdowns);
+    public string NvmeMediaErrorsDisplay => DisplayFormatter.FormatCount((long?)NvmeMediaErrors);
+    public string NvmeControllerBusyTimeDisplay => DisplayFormatter.FormatDuration(NvmeControllerBusyTime > 0 ? NvmeControllerBusyTime : null);
 }
 
 public enum OperationType
@@ -200,4 +248,70 @@ public class WipeReport
     public long VerificationErrors { get; set; }
     public bool VerificationPassed { get; set; }
     public bool Completed { get; set; }
+}
+
+public class ListingField : INotifyPropertyChanged
+{
+    public string Key { get; }
+    public string Label { get; }
+    public Func<PhysicalDrive, string?> GetValue { get; }
+
+    private bool _isIncluded;
+    public bool IsIncluded
+    {
+        get => _isIncluded;
+        set { _isIncluded = value; OnPropertyChanged(); }
+    }
+
+    public ListingField(string key, string label, bool isIncluded, Func<PhysicalDrive, string?> getValue)
+    {
+        Key = key;
+        Label = label;
+        _isIncluded = isIncluded;
+        GetValue = getValue;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private void OnPropertyChanged([CallerMemberName] string? name = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    public static List<ListingField> CreateDefaultFields() =>
+    [
+        new("status", "Status", true, d => d.Health?.RiskLevel switch
+        {
+            DriveRiskLevel.Good => "GOOD TO SELL",
+            DriveRiskLevel.Warning => "REVIEW NEEDED",
+            DriveRiskLevel.Critical => "DO NOT SELL",
+            _ => "NOT ASSESSED"
+        }),
+        new("manufacturer", "Manufacturer", true, d =>
+            string.IsNullOrEmpty(d.Manufacturer) ? null : d.Manufacturer),
+        new("model", "Model", true, d => d.Model),
+        new("capacity", "Capacity", true, d => d.DisplaySize),
+        new("interface", "Interface", true, d => d.InterfaceType),
+        new("transfer", "Transfer Mode", true, d =>
+            string.IsNullOrEmpty(d.NegotiatedSpeed) ? null : d.NegotiatedSpeed),
+        new("serial", "Serial Number", false, d =>
+            string.IsNullOrEmpty(d.SerialNumber) ? null : d.SerialNumber),
+        new("firmware", "Firmware", false, d =>
+            string.IsNullOrEmpty(d.FirmwareVersion) ? null : d.FirmwareVersion),
+        new("health", "Health", true, d => d.Health?.HealthStatus),
+        new("temperature", "Temperature", true, d => d.Health?.TemperatureDisplay),
+        new("powerOn", "Power-On Hours", true, d => d.Health?.PowerOnHoursDisplay),
+        new("readErrors", "Read Errors", true, d => d.Health?.ReadErrorsDisplay),
+        new("writeErrors", "Write Errors", true, d => d.Health?.WriteErrorsDisplay),
+        new("ssdWear", "SSD Wear", false, d => d.Health?.Wear.HasValue == true ? d.Health.WearDisplay : null),
+        new("spindle", "Spindle Speed", false, d => d.Health?.SpindleSpeedDisplay),
+        new("mediaType", "Media Type", false, d => d.Health?.MediaType),
+        new("features", "Features", false, d =>
+            string.IsNullOrEmpty(d.SupportedFeatures) ? null : d.SupportedFeatures),
+        new("partNumber", "Part Number", false, d =>
+            string.IsNullOrEmpty(d.PartNumber) ? null : d.PartNumber),
+        new("mfgDate", "Manufacture Date", false, d =>
+            string.IsNullOrEmpty(d.ManufactureDate) ? null : d.ManufactureDate),
+        new("sectorSize", "Sector Size", false, d =>
+            d.PhysicalSectorSize > 0 ? d.SectorSizeDisplay : null),
+        new("partStyle", "Partition Style", false, d =>
+            string.IsNullOrEmpty(d.PartitionStyle) ? null : d.PartitionStyle),
+    ];
 }

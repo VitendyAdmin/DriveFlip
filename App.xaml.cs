@@ -13,18 +13,22 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        // Load cached license (sync — just file read + RSA verify)
-        var (status, payload) = LicenseService.LoadCachedLicense();
+        var license = new LicenseService();
+        var detection = new DriveDetectionService();
+        var engine = new DiskEngine();
 
-        var window = new MainWindow();
-        var vm = (MainViewModel)window.DataContext;
+        // Load cached license (sync — just file read + RSA verify)
+        var (status, payload) = license.LoadCachedLicense();
+
+        var vm = new MainViewModel(detection, engine, license);
         vm.InitializeLicense(status, payload);
 
+        var window = new MainWindow { DataContext = vm };
         MainWindow = window;
         window.Show();
 
         // If licensed and online re-check is due, fire background revalidation
-        if (vm.IsLicensed && LicenseService.IsOnlineRecheckDue())
+        if (vm.IsLicensed && license.IsOnlineRecheckDue())
         {
             _ = vm.RevalidateLicenseInBackgroundAsync();
         }

@@ -29,7 +29,7 @@ public partial class MainWindow : FluentWindow
 
     private void AdjustWindowHeight(int driveCount)
     {
-        const double chromeHeight = 420; // title bar, header, drive list header, info panel, status bar, margins
+        const double chromeHeight = 520; // title bar, header, drive list header, info panel, status bar, margins
         const double driveCardHeight = 66;
         const int maxVisibleDrives = 4;
 

@@ -17,7 +17,7 @@ public static class ReportService
         sb.AppendLine($"  Drive:           Disk {report.DriveNumber} - {report.DriveModel}");
         if (!string.IsNullOrEmpty(report.DriveSerial))
             sb.AppendLine($"  Serial:          {report.DriveSerial}");
-        sb.AppendLine($"  Size:            {FormatBytes(report.DriveSizeBytes)}");
+        sb.AppendLine($"  Size:            {DisplayFormatter.FormatSize(report.DriveSizeBytes)}");
         sb.AppendLine($"  Date:            {report.StartTime:yyyy-MM-dd HH:mm:ss}");
         sb.AppendLine($"  Duration:        {(report.EndTime - report.StartTime):hh\\:mm\\:ss}");
         sb.AppendLine();
@@ -69,7 +69,7 @@ public static class ReportService
         sb.AppendLine("╚══════════════════════════════════════════════════════╝");
         sb.AppendLine();
         sb.AppendLine($"  Drive:           Disk {report.DriveNumber} - {report.DriveModel}");
-        sb.AppendLine($"  Size:            {FormatBytes(report.DriveSizeBytes)}");
+        sb.AppendLine($"  Size:            {DisplayFormatter.FormatSize(report.DriveSizeBytes)}");
         sb.AppendLine($"  Wipe Mode:       {FormatWipeMode(report.Mode)}");
         sb.AppendLine($"  Fill Method:     {FormatWipeMethod(report.Method)}");
         sb.AppendLine($"  Date:            {report.StartTime:yyyy-MM-dd HH:mm:ss}");
@@ -100,15 +100,6 @@ public static class ReportService
     public static void SaveReport(string reportText, string filePath)
     {
         File.WriteAllText(filePath, reportText, Encoding.UTF8);
-    }
-
-    private static string FormatBytes(long bytes)
-    {
-        if (bytes >= 1_000_000_000_000)
-            return $"{bytes / 1_000_000_000_000.0:F2} TB";
-        if (bytes >= 1_000_000_000)
-            return $"{bytes / 1_000_000_000.0:F2} GB";
-        return $"{bytes / 1_000_000.0:F2} MB";
     }
 
     private static string FormatWipeMethod(WipeMethod method) => method switch

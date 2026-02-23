@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using DriveFlip.Constants;
 using DriveFlip.Models;
 using DriveFlip.Services;
 using Microsoft.Win32;
@@ -19,7 +20,9 @@ namespace DriveFlip.ViewModels;
 [SupportedOSPlatform("windows")]
 public class MainViewModel : INotifyPropertyChanged
 {
-    private readonly DiskEngine _engine = new();
+    private readonly DiskEngine _engine;
+    private readonly DriveDetectionService _detection;
+    private readonly ILicenseService _license;
     private CancellationTokenSource? _cts;
 
     // ── Collections ──
@@ -50,6 +53,15 @@ public class MainViewModel : INotifyPropertyChanged
     }
 
     // ── Operations Dashboard (aggregated from all running drives) ──
+    private DateTime _operationStartedAt;
+
+    private string _aggregateTimeRemaining = "";
+    public string AggregateTimeRemaining
+    {
+        get => _aggregateTimeRemaining;
+        set { _aggregateTimeRemaining = value; OnPropertyChanged(); }
+    }
+
     private double _aggregateSpeedMBps;
     public double AggregateSpeedMBps
     {
@@ -183,7 +195,7 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    public bool IsLicenseKeyValid => LicenseService.IsWellFormedLicenseKey(_licenseKeyInput?.Trim() ?? "");
+    public bool IsLicenseKeyValid => _license.IsWellFormedLicenseKey(_licenseKeyInput?.Trim() ?? "");
 
     private string _licenseErrorMessage = "";
     public string LicenseErrorMessage
@@ -259,6 +271,31 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    // ── Advanced Settings ──
+    private bool _showRawDataButton;
+    public bool ShowRawDataButton
+    {
+        get => _showRawDataButton;
+        set { _showRawDataButton = value; OnPropertyChanged(); }
+    }
+
+    private bool _formatAfterWipe;
+    public bool FormatAfterWipe
+    {
+        get => _formatAfterWipe;
+        set { _formatAfterWipe = value; OnPropertyChanged(); }
+    }
+
+    public LogLevel[] LogLevelOptions { get; } =
+        [LogLevel.Trace, LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error, LogLevel.Fatal];
+
+    private LogLevel _selectedLogLevel = LogLevel.Error;
+    public LogLevel SelectedLogLevel
+    {
+        get => _selectedLogLevel;
+        set { _selectedLogLevel = value; OnPropertyChanged(); Logger.MinimumLevel = value; }
+    }
+
     // ── Wipe Options ──
     private WipeMethod _selectedWipeMethod = WipeMethod.ZeroFill;
     public WipeMethod SelectedWipeMethod
@@ -320,7 +357,6 @@ public class MainViewModel : INotifyPropertyChanged
     public ICommand RunWipeCommand { get; }
     public ICommand RunCheckAndWipeCommand { get; }
     public ICommand CancelCommand { get; }
-    public ICommand SaveReportCommand { get; }
     public ICommand SelectAllCommand { get; }
     public ICommand DeselectAllCommand { get; }
     public ICommand ToggleSettingsCommand { get; }
@@ -330,15 +366,21 @@ public class MainViewModel : INotifyPropertyChanged
     public ICommand ActivateLicenseCommand { get; }
     public ICommand RevalidateLicenseCommand { get; }
     public ICommand ToggleLicenseSettingsCommand { get; }
+    public ICommand DumpDriveDataCommand { get; }
+    public ICommand ExportForListingCommand { get; }
 
-    public MainViewModel()
+    public MainViewModel() : this(new DriveDetectionService(), new DiskEngine(), new LicenseService()) { }
+
+    public MainViewModel(DriveDetectionService detection, DiskEngine engine, ILicenseService license)
     {
+        _detection = detection;
+        _engine = engine;
+        _license = license;
         RefreshDrivesCommand = new RelayCommand(async () => await SafeAsync(RefreshDrivesAsync), () => IsIdle);
         RunSurfaceCheckCommand = new RelayCommand(async () => await SafeAsync(RunSurfaceCheck), () => IsIdle && HasSelection && IsLicensed);
         RunWipeCommand = new RelayCommand(async () => await SafeAsync(RunWipe), () => IsIdle && HasSelection && IsLicensed);
         RunCheckAndWipeCommand = new RelayCommand(async () => await SafeAsync(RunCheckAndWipe), () => IsIdle && HasSelection && IsLicensed);
         CancelCommand = new RelayCommand(Cancel, () => IsScanning);
-        SaveReportCommand = new RelayCommand(SaveReport, () => Drives.Any(d => !string.IsNullOrEmpty(d.ReportText)));
         SelectAllCommand = new RelayCommand(SelectAll);
         DeselectAllCommand = new RelayCommand(DeselectAll);
         ToggleSettingsCommand = new RelayCommand(() => IsSettingsOpen = !IsSettingsOpen);
@@ -349,6 +391,8 @@ public class MainViewModel : INotifyPropertyChanged
         ActivateLicenseCommand = new RelayCommand(async () => await SafeAsync(ActivateLicense), () => CanActivate);
         RevalidateLicenseCommand = new RelayCommand(async () => await SafeAsync(RevalidateLicense), () => !IsActivatingLicense);
         ToggleLicenseSettingsCommand = new RelayCommand(() => IsLicenseSettingsOpen = !IsLicenseSettingsOpen);
+        DumpDriveDataCommand = new RelayCommand(async () => await SafeAsync(DumpDriveData), () => HasSelectedDrive);
+        ExportForListingCommand = new RelayCommand(ExportForListing, () => HasSelectedDrive);
 
         Logger.Info("DriveFlip started.");
         _ = RefreshDrivesAsync();
@@ -361,7 +405,7 @@ public class MainViewModel : INotifyPropertyChanged
         LicenseStatusValue = status;
         LicensePayloadValue = payload;
 
-        var settings = LicenseService.LoadSettings();
+        var settings = _license.LoadSettings();
         LicenseKeyInput = settings.LicenseKey;
     }
 
@@ -369,7 +413,7 @@ public class MainViewModel : INotifyPropertyChanged
     {
         try
         {
-            var (status, payload) = await LicenseService.RevalidateAsync();
+            var (status, payload) = await _license.RevalidateAsync();
             if (status == LicenseStatusEnum.Valid)
             {
                 LicenseStatusValue = status;
@@ -407,7 +451,7 @@ public class MainViewModel : INotifyPropertyChanged
             return;
         }
 
-        var settings = LicenseService.LoadSettings();
+        var settings = _license.LoadSettings();
         var endpointUrl = settings.EndpointUrl;
         if (string.IsNullOrWhiteSpace(endpointUrl))
         {
@@ -420,7 +464,7 @@ public class MainViewModel : INotifyPropertyChanged
 
         try
         {
-            var (status, payload) = await LicenseService.ActivateLicenseAsync(key, endpointUrl);
+            var (status, payload) = await _license.ActivateLicenseAsync(key, endpointUrl);
 
             LicenseStatusValue = status;
             LicensePayloadValue = payload;
@@ -461,7 +505,7 @@ public class MainViewModel : INotifyPropertyChanged
 
         try
         {
-            var (status, payload) = await LicenseService.RevalidateAsync();
+            var (status, payload) = await _license.RevalidateAsync();
             LicenseStatusValue = status;
             LicensePayloadValue = payload;
             GlobalStatus = IsLicensed ? "License revalidated." : "Revalidation failed.";
@@ -495,7 +539,35 @@ public class MainViewModel : INotifyPropertyChanged
             ? (running.Sum(d => d.Progress) + completed.Count * 100.0) / total
             : 0;
 
+        // Time remaining = max across running drives (parallel ops finish when slowest finishes)
+        var remaining = running.Count > 0
+            ? running.Max(d => d.TimeRemaining)
+            : TimeSpan.Zero;
+        if (remaining.TotalSeconds < 1)
+            AggregateTimeRemaining = "00:00";
+        else if (remaining.TotalHours >= 1)
+            AggregateTimeRemaining = $"{(int)remaining.TotalHours}:{remaining.Minutes:D2}:{remaining.Seconds:D2}";
+        else
+            AggregateTimeRemaining = $"{(int)remaining.TotalMinutes:D2}:{remaining.Seconds:D2}";
+
         OperationSummary = $"{completed.Count} of {total} drive(s) complete";
+    }
+
+    private static TimeSpan EstimateTimeRemaining(OperationProgress p)
+    {
+        // Use engine-reported estimate when available
+        if (p.EstimatedRemaining > TimeSpan.Zero)
+            return p.EstimatedRemaining;
+
+        // Fallback: extrapolate from elapsed time and progress
+        if (p.PercentComplete > 0.5 && p.Elapsed.TotalSeconds > 1)
+        {
+            var totalEstimate = p.Elapsed.TotalSeconds / p.PercentComplete * 100;
+            var remaining = totalEstimate - p.Elapsed.TotalSeconds;
+            return remaining > 0 ? TimeSpan.FromSeconds(remaining) : TimeSpan.Zero;
+        }
+
+        return TimeSpan.Zero;
     }
 
     private WipeSettings BuildSettings() => new()
@@ -523,7 +595,7 @@ public class MainViewModel : INotifyPropertyChanged
 
         try
         {
-            var detected = await Task.Run(() => DriveDetectionService.DetectDrives());
+            var detected = await Task.Run(() => _detection.DetectDrives());
 
             foreach (var d in detected)
             {
@@ -563,12 +635,18 @@ public class MainViewModel : INotifyPropertyChanged
                 try
                 {
                     var devNum = driveVm.Drive.DeviceNumber;
-                    var health = await Task.Run(() => DriveDetectionService.QueryHealthInfo(devNum));
+                    var health = await Task.Run(() => _detection.QueryHealthInfo(devNum));
                     driveVm.Drive.Health = health;
 
+                    // Copy ManufactureDate from health to drive model for Info tab binding
+                    if (!string.IsNullOrEmpty(health.ManufactureDate))
+                        driveVm.Drive.ManufactureDate = health.ManufactureDate;
+
                     // Query detailed SMART data for risk assessment
+                    var busType = Enum.TryParse<StorageBusType>(health.BusType, true, out var bt)
+                        ? bt : StorageBusType.Unknown;
                     await Task.Run(() =>
-                        DriveDetectionService.QueryDetailedSmartData(devNum, health, health.BusType));
+                        _detection.QueryDetailedSmartData(devNum, health, busType));
 
                     driveVm.RiskLevel = health.RiskLevel;
                 }
@@ -637,6 +715,7 @@ public class MainViewModel : INotifyPropertyChanged
 
         Logger.Info($"Surface check requested on {selected.Count} drive(s), duration={SurfaceCheckDurationMinutes}min");
         IsScanning = true;
+        _operationStartedAt = DateTime.UtcNow;
         _cts = new CancellationTokenSource();
         GlobalStatus = "Running surface check...";
 
@@ -675,6 +754,7 @@ public class MainViewModel : INotifyPropertyChanged
                     driveVm.DataPresencePercent = p.TotalSectorsToProcess > 0
                         ? (double)p.DataSectorsFound / Math.Max(1, p.SectorsProcessed) * 100 : 0;
                     driveVm.IsComplete = p.IsComplete;
+                    driveVm.TimeRemaining = EstimateTimeRemaining(p);
                     driveVm.UpdateVisualization(p.PercentComplete, p.StatusMessage);
                     UpdateDashboard();
                 });
@@ -691,6 +771,7 @@ public class MainViewModel : INotifyPropertyChanged
                     driveVm.Passed = report.Passed;
                     driveVm.ReportText = ReportService.GenerateSurfaceCheckReport(report);
                     driveVm.StatusText = report.Passed ? "Healthy" : "Errors found";
+                    driveVm.MarkAllPhasesDone();
                 });
             }
             catch (OperationCanceledException)
@@ -761,6 +842,7 @@ public class MainViewModel : INotifyPropertyChanged
 
         Logger.Info($"Wipe requested: mode={modeName}, fill={methodName}, passes={NumberOfPasses}, drives={selected.Count}");
         IsScanning = true;
+        _operationStartedAt = DateTime.UtcNow;
         _cts = new CancellationTokenSource();
         GlobalStatus = "Wiping drives...";
 
@@ -779,6 +861,7 @@ public class MainViewModel : INotifyPropertyChanged
     {
         var settings = BuildSettings();
         bool isSmartWipe = SelectedWipeMode == WipeMode.SmartWipe;
+        bool formatAfterWipe = FormatAfterWipe;
 
         // Init visualization for wipe
         foreach (var driveVm in selected)
@@ -794,7 +877,7 @@ public class MainViewModel : INotifyPropertyChanged
             {
                 driveVm.InitVisualization(headSegs, tailSegs, isSmartWipe, false);
                 if (driveVm.Phases.Count == 0)
-                    driveVm.InitPhases(isSmartWipe, false, VerifyAfterWipe);
+                    driveVm.InitPhases(isSmartWipe, false, VerifyAfterWipe && !isSmartWipe);
             });
         }
 
@@ -809,6 +892,7 @@ public class MainViewModel : INotifyPropertyChanged
                     driveVm.SpeedText = $"{p.SpeedMBps:F1} MB/s";
                     driveVm.ErrorCount = p.ErrorCount;
                     driveVm.IsComplete = p.IsComplete;
+                    driveVm.TimeRemaining = EstimateTimeRemaining(p);
                     driveVm.UpdateVisualization(p.PercentComplete, p.StatusMessage);
                     UpdateDashboard();
                 });
@@ -828,14 +912,41 @@ public class MainViewModel : INotifyPropertyChanged
                         driveVm.Drive, SelectedWipeMethod, settings.NumberOfPasses, VerifyAfterWipe, progress, _cts!.Token);
                 }
 
-                Application.Current.Dispatcher.Invoke(() =>
+                bool wipeSucceeded = report.Completed && report.WriteErrors == 0;
+
+                // Post-wipe: quick format & assign letter
+                if (wipeSucceeded && formatAfterWipe)
                 {
-                    driveVm.IsRunning = false;
-                    driveVm.IsComplete = true;
-                    driveVm.Passed = report.Completed && report.WriteErrors == 0;
-                    driveVm.ReportText = ReportService.GenerateWipeReport(report);
-                    driveVm.StatusText = report.Completed ? "Wipe complete" : "Wipe incomplete";
-                });
+                    Application.Current.Dispatcher.Invoke(() =>
+                        driveVm.StatusText = "Formatting...");
+
+                    var (fmtOk, letter, fmtError) = await Task.Run(() =>
+                        DriveDetectionService.InitializeFormatAndAssignLetter(driveVm.Drive.DeviceNumber));
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        driveVm.IsRunning = false;
+                        driveVm.IsComplete = true;
+                        driveVm.Passed = true;
+                        driveVm.ReportText = ReportService.GenerateWipeReport(report);
+                        driveVm.StatusText = fmtOk
+                            ? $"Wipe complete \u2014 formatted as {letter}"
+                            : $"Wipe complete \u2014 format failed: {fmtError}";
+                        driveVm.MarkAllPhasesDone();
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        driveVm.IsRunning = false;
+                        driveVm.IsComplete = true;
+                        driveVm.Passed = wipeSucceeded;
+                        driveVm.ReportText = ReportService.GenerateWipeReport(report);
+                        driveVm.StatusText = report.Completed ? "Wipe complete" : "Wipe incomplete";
+                        driveVm.MarkAllPhasesDone();
+                    });
+                }
             }
             catch (OperationCanceledException)
             {
@@ -887,6 +998,7 @@ public class MainViewModel : INotifyPropertyChanged
 
         Logger.Info($"Check & Wipe requested on {selected.Count} drive(s)");
         IsScanning = true;
+        _operationStartedAt = DateTime.UtcNow;
         _cts = new CancellationTokenSource();
 
         // ── Phase 1: Surface Check ──
@@ -894,7 +1006,7 @@ public class MainViewModel : INotifyPropertyChanged
         bool isSmartWipe = SelectedWipeMode == WipeMode.SmartWipe;
         foreach (var d in selected) { d.Reset(); d.IsRunning = true; }
         foreach (var d in selected)
-            d.InitPhases(isSmartWipe, false, VerifyAfterWipe, isCheckAndWipe: true);
+            d.InitPhases(isSmartWipe, false, VerifyAfterWipe && !isSmartWipe, isCheckAndWipe: true);
         SelectedDriveItem = selected[0];
         SelectedInfoTab = 2;
 
@@ -956,8 +1068,10 @@ public class MainViewModel : INotifyPropertyChanged
         IsLoadingSmartData = true;
         try
         {
+            var busType = Enum.TryParse<StorageBusType>(drive.Health.BusType, true, out var bt)
+                ? bt : StorageBusType.Unknown;
             await Task.Run(() =>
-                DriveDetectionService.QueryDetailedSmartData(drive.DeviceNumber, drive.Health, drive.Health.BusType));
+                _detection.QueryDetailedSmartData(drive.DeviceNumber, drive.Health, busType));
 
             // DriveHealthInfo doesn't implement INPC, so WPF won't re-read bindings
             // unless the DataContext reference itself changes. Nudge it.
@@ -980,34 +1094,50 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    private async Task DumpDriveData()
+    {
+        var drive = SelectedDriveItem?.Drive;
+        if (drive == null) return;
+
+        GlobalStatus = $"Dumping data for Disk {drive.DeviceNumber}...";
+        var json = await Task.Run(() => _detection.DumpDriveData(drive.DeviceNumber));
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            FileName = $"DriveFlip_Disk{drive.DeviceNumber}_Dump.json",
+            DefaultExt = ".json",
+            Filter = "JSON files (*.json)|*.json"
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            System.IO.File.WriteAllText(dialog.FileName, json);
+            GlobalStatus = $"Data dumped to {dialog.FileName}";
+
+            // Open the file
+            try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(dialog.FileName) { UseShellExecute = true }); }
+            catch { }
+        }
+        else
+        {
+            GlobalStatus = "Data dump cancelled.";
+        }
+    }
+
+    private void ExportForListing()
+    {
+        var drive = SelectedDrive;
+        if (drive == null) return;
+
+        if (Views.ListingExportDialog.ShowExport(drive))
+            GlobalStatus = "Drive listing copied to clipboard.";
+    }
+
     private void Cancel()
     {
         _cts?.Cancel();
         GlobalStatus = "Cancelling...";
         Logger.Info("Operation cancelled by user.");
-    }
-
-    private void SaveReport()
-    {
-        var allReports = string.Join("\n\n",
-            Drives.Where(d => !string.IsNullOrEmpty(d.ReportText))
-                  .Select(d => d.ReportText));
-
-        if (string.IsNullOrWhiteSpace(allReports)) return;
-
-        var dlg = new SaveFileDialog
-        {
-            Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
-            FileName = $"DriveFlip_Report_{DateTime.Now:yyyyMMdd_HHmmss}.txt",
-            Title = "Save Report"
-        };
-
-        if (dlg.ShowDialog() == true)
-        {
-            ReportService.SaveReport(allReports, dlg.FileName);
-            GlobalStatus = $"Report saved to {dlg.FileName}";
-            Logger.Info($"Report saved: {dlg.FileName}");
-        }
     }
 
     private void SelectDrive(object? param)
@@ -1031,7 +1161,7 @@ public class MainViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    var health = DriveDetectionService.QueryHealthInfo(driveVm.Drive.DeviceNumber);
+                    var health = _detection.QueryHealthInfo(driveVm.Drive.DeviceNumber);
                     driveVm.Drive.Health = health;
                     Application.Current.Dispatcher.Invoke(() =>
                     {

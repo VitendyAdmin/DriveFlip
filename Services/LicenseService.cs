@@ -10,7 +10,7 @@ using DriveFlip.Models;
 
 namespace DriveFlip.Services;
 
-public static class LicenseService
+public class LicenseService : ILicenseService
 {
     private const string EmbeddedPublicKeyBase64 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn8rtg2tce60D4mNWpP2AyUb/JLa+tBasdFIY4UM9D9VCHIX/DE0Oo9IJuCPjeEtZLpm/aofHOrrmVei2fV9UVgEPi4ZVeSJ0DHXuXsJRvZJaoc7DTT6zOkGayg0Lz0cfLnrbnzAkFoxrM/k41ka7QUmNtzxpeVyq1Y1WWRowmIvUcQ5LCF8imOdjAt4d3RNEj7qsgKgFOnBMtM44rhEJLvgkTvbegSGUTJZpT6bKqNKNnWyNpM4/tBcw/Ig4bG5o6BwPkplSJ4DKyhnKT6+ApQ+xywhg8X5RI8aApdrNUMnD3Hx21qIWW2At/i2J3XxcSZCTHCfBsodnOqZPfVDSoQIDAQAB";
 
@@ -20,7 +20,7 @@ public static class LicenseService
     /// Pre-flight check: the last byte of the GUID must be a checksum of the first 15 bytes
     /// XOR'd with a salt. Filters out ~255/256 of random/made-up GUIDs without a server call.
     /// </summary>
-    public static bool IsWellFormedLicenseKey(string key)
+    public static bool IsWellFormedLicenseKeyStatic(string key)
     {
 #if DEBUG
         return Guid.TryParse(key, out _);
@@ -36,6 +36,8 @@ public static class LicenseService
         return bytes[15] == checksum;
 #endif
     }
+
+    bool ILicenseService.IsWellFormedLicenseKey(string key) => IsWellFormedLicenseKeyStatic(key);
 
     /// <summary>
     /// Generates a GUID with an embedded checksum in the last byte.
@@ -53,11 +55,11 @@ public static class LicenseService
         return new Guid(bytes);
     }
 
-    private static readonly string AppDataDir = Path.Combine(
+    private readonly string _appDataDir = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DriveFlip");
 
-    private static readonly string CachePath = Path.Combine(AppDataDir, "license.json");
-    private static readonly string SettingsPath = Path.Combine(AppDataDir, "license-settings.json");
+    private readonly string _cachePath;
+    private readonly string _settingsPath;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -71,16 +73,22 @@ public static class LicenseService
         PropertyNameCaseInsensitive = true
     };
 
+    public LicenseService()
+    {
+        _cachePath = Path.Combine(_appDataDir, "license.json");
+        _settingsPath = Path.Combine(_appDataDir, "license-settings.json");
+    }
+
     // ── Public API ──
 
-    public static (LicenseStatus Status, LicensePayload? Payload) LoadCachedLicense()
+    public (LicenseStatus Status, LicensePayload? Payload) LoadCachedLicense()
     {
         try
         {
-            if (!File.Exists(CachePath))
+            if (!File.Exists(_cachePath))
                 return (LicenseStatus.Unknown, null);
 
-            var json = File.ReadAllText(CachePath);
+            var json = File.ReadAllText(_cachePath);
             var response = JsonSerializer.Deserialize<SignedLicenseResponse>(json, JsonReadOptions);
             if (response?.Payload == null)
                 return (LicenseStatus.Invalid, null);
@@ -109,7 +117,7 @@ public static class LicenseService
         }
     }
 
-    public static async Task<(LicenseStatus Status, LicensePayload? Payload)> ActivateLicenseAsync(
+    public async Task<(LicenseStatus Status, LicensePayload? Payload)> ActivateLicenseAsync(
         string key, string endpointUrl)
     {
         if (!Guid.TryParse(key, out _))
@@ -176,7 +184,7 @@ public static class LicenseService
 #endif
     }
 
-    public static async Task<(LicenseStatus Status, LicensePayload? Payload)> RevalidateAsync()
+    public async Task<(LicenseStatus Status, LicensePayload? Payload)> RevalidateAsync()
     {
         var settings = LoadSettings();
         if (string.IsNullOrEmpty(settings.LicenseKey) || string.IsNullOrEmpty(settings.EndpointUrl))
@@ -212,7 +220,7 @@ public static class LicenseService
         }
     }
 
-    public static bool IsOnlineRecheckDue()
+    public bool IsOnlineRecheckDue()
     {
         var settings = LoadSettings();
         return (DateTime.UtcNow - settings.LastOnlineCheckUtc).TotalHours >= 24;
@@ -220,14 +228,14 @@ public static class LicenseService
 
     // ── Settings ──
 
-    public static LicenseSettings LoadSettings()
+    public LicenseSettings LoadSettings()
     {
         try
         {
-            if (!File.Exists(SettingsPath))
+            if (!File.Exists(_settingsPath))
                 return new LicenseSettings();
 
-            var json = File.ReadAllText(SettingsPath);
+            var json = File.ReadAllText(_settingsPath);
             return JsonSerializer.Deserialize<LicenseSettings>(json, JsonReadOptions) ?? new LicenseSettings();
         }
         catch
@@ -236,12 +244,12 @@ public static class LicenseService
         }
     }
 
-    public static void SaveSettings(LicenseSettings settings)
+    public void SaveSettings(LicenseSettings settings)
     {
         try
         {
-            Directory.CreateDirectory(AppDataDir);
-            File.WriteAllText(SettingsPath, JsonSerializer.Serialize(settings, JsonOptions));
+            Directory.CreateDirectory(_appDataDir);
+            File.WriteAllText(_settingsPath, JsonSerializer.Serialize(settings, JsonOptions));
         }
         catch (Exception ex)
         {
@@ -299,13 +307,13 @@ public static class LicenseService
         return JsonSerializer.Deserialize<SignedLicenseResponse>(json, JsonReadOptions);
     }
 
-    private static void SaveCache(SignedLicenseResponse response)
+    private void SaveCache(SignedLicenseResponse response)
     {
         try
         {
-            Directory.CreateDirectory(AppDataDir);
+            Directory.CreateDirectory(_appDataDir);
             var json = JsonSerializer.Serialize(response, JsonOptions);
-            File.WriteAllText(CachePath, json);
+            File.WriteAllText(_cachePath, json);
         }
         catch (Exception ex)
         {

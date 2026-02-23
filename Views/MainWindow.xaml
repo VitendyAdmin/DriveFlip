@@ -6,14 +6,12 @@
         xmlns:models="clr-namespace:DriveFlip.Models"
         xmlns:converters="clr-namespace:DriveFlip.Converters"
         Title="DriveFlip &#x2014; Surface Check &amp; Drive Prep"
-        Width="1020" Height="760" MinWidth="850" MinHeight="640"
+        Width="1020" Height="860" MinWidth="850" MinHeight="740"
+        Icon="/Assets/logo-icon.jpeg"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
         WindowStartupLocation="CenterScreen">
 
-    <ui:FluentWindow.DataContext>
-        <vm:MainViewModel/>
-    </ui:FluentWindow.DataContext>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -39,18 +37,20 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <TextBlock Text="DriveFlip" FontSize="22" FontWeight="Bold"
-                                   Foreground="{StaticResource AccentBlueBrush}"/>
-                        <TextBlock Text="Surface checker &amp; drive prep for resale"
-                                   FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Assets/logo-icon.jpeg" Height="36" Margin="0,0,10,0"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="DriveFlip" FontSize="22" FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBlueBrush}"/>
+                            <TextBlock Text="No Time for Slow. Random Wipe and Go."
+                                       FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                         <ui:Button Content="Refresh Drives" Appearance="Secondary"
                                    Command="{Binding RefreshDrivesCommand}" Margin="0,0,4,0"/>
-                        <ui:Button Content="Save Report" Appearance="Secondary"
-                                   Command="{Binding SaveReportCommand}" Margin="0,0,4,0"/>
                         <ui:Button x:Name="GearButton" Command="{Binding ToggleSettingsCommand}"
                                    Appearance="Secondary" Padding="8,6" ToolTip="Settings">
                             <ui:SymbolIcon Symbol="Settings24"/>
@@ -120,6 +120,30 @@
                                               IsChecked="{Binding ProtectInternalDrives}"
                                               FontSize="11.5"
                                               ToolTip="Prevents all non-removable (internal) drives from being selected for operations."/>
+
+                                    <Border Height="1" Background="#50506A" Margin="0,10,0,10"/>
+                                    <TextBlock Text="Advanced" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,6"/>
+                                    <CheckBox Content="Show raw data export"
+                                              IsChecked="{Binding ShowRawDataButton}"
+                                              FontSize="11.5" Margin="0,0,0,4"
+                                              ToolTip="Shows the Dump Raw Data button in the drive Info tab."/>
+                                    <CheckBox Content="Quick format &amp; assign letter after wipe"
+                                              IsChecked="{Binding FormatAfterWipe}"
+                                              FontSize="11.5" Margin="0,0,0,4"
+                                              ToolTip="After a successful wipe, initializes the disk as GPT, creates a single NTFS partition, and assigns a drive letter."/>
+                                    <Grid Margin="0,2,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Log level:"
+                                                   FontSize="11.5" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <ComboBox Grid.Column="1"
+                                                  ItemsSource="{Binding LogLevelOptions}"
+                                                  SelectedItem="{Binding SelectedLogLevel}"
+                                                  ToolTip="Controls how much detail is written to the log file. Lower levels produce more output."/>
+                                    </Grid>
                                 </StackPanel>
                             </Border>
                         </Popup>
@@ -186,9 +210,11 @@
                                               Cursor="Hand"/>
                                 <ui:Button Content="All" Appearance="Secondary"
                                         Command="{Binding SelectAllCommand}" Padding="10,4" FontSize="11"
+                                        IsEnabled="{Binding IsIdle}"
                                         Margin="0,0,6,0"/>
                                 <ui:Button Content="None" Appearance="Secondary"
-                                        Command="{Binding DeselectAllCommand}" Padding="10,4" FontSize="11"/>
+                                        Command="{Binding DeselectAllCommand}" Padding="10,4" FontSize="11"
+                                        IsEnabled="{Binding IsIdle}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -246,8 +272,14 @@
                                                 </Border>
 
                                                 <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}"
-                                                          IsEnabled="{Binding IsSelectable}"
-                                                          VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                          VerticalAlignment="Center" Margin="0,0,10,0">
+                                                    <CheckBox.IsEnabled>
+                                                        <MultiBinding Converter="{StaticResource AllTrue}">
+                                                            <Binding Path="IsSelectable"/>
+                                                            <Binding Path="DataContext.IsIdle" RelativeSource="{RelativeSource AncestorType=ui:FluentWindow}"/>
+                                                        </MultiBinding>
+                                                    </CheckBox.IsEnabled>
+                                                </CheckBox>
 
                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                     <TextBlock Text="{Binding Drive.DisplayName}"
@@ -258,6 +290,9 @@
                                                                    Margin="0,0,12,0"/>
                                                         <TextBlock Text="{Binding Drive.DriveLettersSummary}"
                                                                    FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                                   Margin="0,0,12,0"/>
+                                                        <TextBlock Text="{Binding Drive.SerialSuffix}"
+                                                                   FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                                                                    Margin="0,0,12,0"/>
                                                         <TextBlock FontSize="11" Foreground="{StaticResource AccentAmberBrush}"
                                                                    Visibility="{Binding Drive.IsSystemDrive, Converter={StaticResource BoolToVis}}"
@@ -413,31 +448,80 @@
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Model" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Model}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Manufacturer" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Manufacturer, TargetNullValue=Unknown, FallbackValue=Unknown}" FontSize="11" Margin="0,0,0,4"/>
 
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Serial" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SerialNumber}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Model" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Model}" FontSize="11" Margin="0,0,0,4"/>
 
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Interface" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding InterfaceType}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Serial" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SerialNumber}" FontSize="11" Margin="0,0,0,4"/>
 
-                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Firmware" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding FirmwareVersion, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Part Number" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
+                                                   Visibility="{Binding PartNumber, Converter={StaticResource NonEmptyToVis}}"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding PartNumber}" FontSize="11" Margin="0,0,0,4"
+                                                   Visibility="{Binding PartNumber, Converter={StaticResource NonEmptyToVis}}"/>
 
-                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Size" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding DisplaySize}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Manufacture Date" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
+                                                   Visibility="{Binding ManufactureDate, Converter={StaticResource NonEmptyToVis}}"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding ManufactureDate}" FontSize="11" Margin="0,0,0,4"
+                                                   Visibility="{Binding ManufactureDate, Converter={StaticResource NonEmptyToVis}}"/>
 
-                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Partitions" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding Partitions.Count, StringFormat={}{0} partition(s)}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Interface" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding InterfaceType}" FontSize="11" Margin="0,0,0,4"/>
 
-                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Drive Letters" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding DriveLettersSummary}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Firmware" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding FirmwareVersion, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
 
-                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Status" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding Status}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Size" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding DisplaySize}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Sector Size" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding SectorSizeDisplay}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Partitions" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding Partitions.Count, StringFormat={}{0} partition(s)}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Partition Style" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="2" Text="{Binding PartitionStyle, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="11" Grid.Column="0" Text="Drive Letters" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="11" Grid.Column="2" Text="{Binding DriveLettersSummary}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Status" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="12" Grid.Column="2" Text="{Binding Status}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="13" Grid.Column="0" Text="Transfer Mode" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="13" Grid.Column="2" Text="{Binding NegotiatedSpeed, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="14" Grid.Column="0" Text="Features" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="14" Grid.Column="2" Text="{Binding SupportedFeatures, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4" TextWrapping="Wrap"/>
+
+                                        <TextBlock Grid.Row="15" Grid.Column="0" Text="USB Bridge" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
+                                                   Visibility="{Binding UsbBridgeChip, Converter={StaticResource NonEmptyToVis}}"/>
+                                        <TextBlock Grid.Row="15" Grid.Column="2" Text="{Binding UsbBridgeChip}" FontSize="11" Margin="0,0,0,4"
+                                                   Visibility="{Binding UsbBridgeChip, Converter={StaticResource NonEmptyToVis}}"/>
+
+                                        <StackPanel Grid.Row="16" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,10,0,0">
+                                            <ui:Button Content="Copy for Listing" Appearance="Primary"
+                                                       Command="{Binding DataContext.ExportForListingCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                                       Padding="12,6" FontSize="11" Margin="0,0,8,0"/>
+                                            <ui:Button Content="Dump Raw Data" Appearance="Secondary"
+                                                       Command="{Binding DataContext.DumpDriveDataCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                                       Padding="12,6" FontSize="11"
+                                                       Visibility="{Binding DataContext.ShowRawDataButton, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource BoolToVis}}"/>
+                                        </StackPanel>
                                     </Grid>
                                 </ScrollViewer>
                             </TabItem>
@@ -470,6 +554,8 @@
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
 
                                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Health Status" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
@@ -485,7 +571,7 @@
                                             <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SpindleSpeedDisplay}" FontSize="11" Margin="0,0,0,4"/>
 
                                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Temperature" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding TemperatureDisplay}" FontSize="11" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding TemperatureDisplayEnhanced}" FontSize="11" Margin="0,0,0,4"/>
 
                                             <TextBlock Grid.Row="5" Grid.Column="0" Text="Power-On Hours" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
                                             <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding PowerOnHoursDisplay}" FontSize="11" Margin="0,0,0,4"/>
@@ -499,6 +585,12 @@
 
                                             <TextBlock Grid.Row="7" Grid.Column="0" Text="SSD Wear" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
                                             <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding WearDisplay}" FontSize="11" Margin="0,0,0,4"/>
+
+                                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Write Cache" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding WriteCacheDisplay}" FontSize="11" Margin="0,0,0,4"/>
+
+                                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Power Protection" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding PowerProtectionDisplay}" FontSize="11" Margin="0,0,0,4"/>
                                         </Grid>
 
                                         <!-- Get SMART Data Button (visible when not yet queried) -->
@@ -553,6 +645,7 @@
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
                                                 </Grid.RowDefinitions>
 
                                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Read Errors (Corrected)" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
@@ -579,7 +672,10 @@
                                                 <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding FlushLatencyMaxDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
                                                 <TextBlock Grid.Row="7" Grid.Column="0" Text="Start/Stop Cycles" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding StartStopCycleCountDisplay}" FontSize="11" Margin="0,0,0,3"/>
+                                                <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding StartStopCycleCountEnhancedDisplay}" FontSize="11" Margin="0,0,0,3"/>
+
+                                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Load/Unload Cycles" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding LoadUnloadCycleCountDisplay}" FontSize="11" Margin="0,0,0,3"/>
                                             </Grid>
 
                                             <!-- SMART Attributes Table (SATA only) -->
@@ -594,66 +690,154 @@
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="30"/>
                                                         <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="45"/>
-                                                        <ColumnDefinition Width="45"/>
-                                                        <ColumnDefinition Width="70"/>
+                                                        <ColumnDefinition Width="40"/>
+                                                        <ColumnDefinition Width="40"/>
+                                                        <ColumnDefinition Width="40"/>
+                                                        <ColumnDefinition Width="65"/>
                                                     </Grid.ColumnDefinitions>
                                                     <TextBlock Grid.Column="0" Text="ID" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                                     <TextBlock Grid.Column="1" Text="Name" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                                     <TextBlock Grid.Column="2" Text="Cur" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                                     <TextBlock Grid.Column="3" Text="Worst" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <TextBlock Grid.Column="4" Text="Raw" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                    <TextBlock Grid.Column="4" Text="Thresh" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                    <TextBlock Grid.Column="5" Text="Raw" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                                 </Grid>
 
                                                 <ItemsControl ItemsSource="{Binding SmartAttributes}">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Grid Margin="0,1,0,1">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="30"/>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                    <ColumnDefinition Width="45"/>
-                                                                    <ColumnDefinition Width="45"/>
-                                                                    <ColumnDefinition Width="70"/>
-                                                                </Grid.ColumnDefinitions>
-                                                                <TextBlock Grid.Column="0" Text="{Binding Id}" FontSize="10">
-                                                                    <TextBlock.Style>
-                                                                        <Style TargetType="TextBlock">
-                                                                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding IsFailurePredictive}" Value="True">
-                                                                                    <Setter Property="FontWeight" Value="Bold"/>
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </TextBlock.Style>
-                                                                </TextBlock>
-                                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="10" TextTrimming="CharacterEllipsis">
-                                                                    <TextBlock.Style>
-                                                                        <Style TargetType="TextBlock">
-                                                                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding IsFailurePredictive}" Value="True">
-                                                                                    <Setter Property="FontWeight" Value="Bold"/>
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </TextBlock.Style>
-                                                                </TextBlock>
-                                                                <TextBlock Grid.Column="2" Text="{Binding CurrentValue}" FontSize="10"/>
-                                                                <TextBlock Grid.Column="3" Text="{Binding WorstValue}" FontSize="10"/>
-                                                                <TextBlock Grid.Column="4" Text="{Binding RawValue}" FontSize="10"/>
-                                                            </Grid>
+                                                            <Border Margin="0,1,0,1" CornerRadius="2" Padding="0,1">
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Setter Property="Background" Value="Transparent"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
+                                                                                <Setter Property="Background" Value="#33D32F2F"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="30"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="40"/>
+                                                                        <ColumnDefinition Width="40"/>
+                                                                        <ColumnDefinition Width="40"/>
+                                                                        <ColumnDefinition Width="65"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Grid.Column="0" Text="{Binding Id}" FontSize="10">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsFailurePredictive}" Value="True">
+                                                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                                                    </DataTrigger>
+                                                                                    <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
+                                                                                        <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
+                                                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="10" TextTrimming="CharacterEllipsis">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsFailurePredictive}" Value="True">
+                                                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                                                    </DataTrigger>
+                                                                                    <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
+                                                                                        <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
+                                                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                    <TextBlock Grid.Column="2" Text="{Binding CurrentValue}" FontSize="10"/>
+                                                                    <TextBlock Grid.Column="3" Text="{Binding WorstValue}" FontSize="10"/>
+                                                                    <TextBlock Grid.Column="4" Text="{Binding Threshold}" FontSize="10"
+                                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                                    <TextBlock Grid.Column="5" Text="{Binding RawValue}" FontSize="10"/>
+                                                                </Grid>
+                                                            </Border>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
                                             </StackPanel>
 
-                                            <!-- NVMe note (when SMART not supported) -->
-                                            <TextBlock Text="Raw SMART attributes are not available for NVMe drives."
+                                            <!-- NVMe Health Log (when NVMe drive) -->
+                                            <StackPanel Visibility="{Binding IsNvme, Converter={StaticResource BoolToVis}}"
+                                                        Margin="0,8,0,0">
+                                                <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,8"/>
+                                                <TextBlock Text="NVMe Health Log" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"
+                                                           Foreground="{StaticResource AccentBlueBrush}"/>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="14"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Available Spare" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding NvmeAvailableSpareDisplay}" FontSize="11" Margin="0,0,0,3"/>
+
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Percentage Used" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NvmePercentageUsedDisplay}" FontSize="11" Margin="0,0,0,3"/>
+
+                                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Data Written" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding NvmeDataWrittenDisplay}" FontSize="11" Margin="0,0,0,3"/>
+
+                                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Data Read" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding NvmeDataReadDisplay}" FontSize="11" Margin="0,0,0,3"/>
+
+                                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Power Cycles" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding NvmePowerCyclesDisplay}" FontSize="11" Margin="0,0,0,3"/>
+
+                                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Unsafe Shutdowns" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding NvmeUnsafeShutdownsDisplay}" FontSize="11" Margin="0,0,0,3"/>
+
+                                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Media Errors" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding NvmeMediaErrorsDisplay}" FontSize="11" Margin="0,0,0,3"/>
+
+                                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Controller Busy Time" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding NvmeControllerBusyTimeDisplay}" FontSize="11" Margin="0,0,0,3"/>
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <!-- Fallback note (non-NVMe, non-SATA) -->
+                                            <TextBlock Text="Raw SMART attributes are not available for this drive."
                                                        FontSize="10" FontStyle="Italic" Margin="0,8,0,0"
-                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                       Visibility="{Binding SmartSupported, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}"/>
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding SmartSupported}" Value="False"/>
+                                                                    <Condition Binding="{Binding IsNvme}" Value="False"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
                                         </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
@@ -670,25 +854,22 @@
                                         <ItemsControl ItemsSource="{Binding Phases}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
-                                                        <TextBlock Text="{Binding Status, Converter={StaticResource PhaseIcon}}"
-                                                                   FontSize="12" Width="18"
-                                                                   Foreground="{Binding Status, Converter={StaticResource PhaseColor}}"
-                                                                   VerticalAlignment="Center"/>
-                                                        <TextBlock Text="{Binding Name}" FontSize="12"
-                                                                   Foreground="{Binding Status, Converter={StaticResource PhaseColor}}"
-                                                                   VerticalAlignment="Center">
-                                                            <TextBlock.Style>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </TextBlock.Style>
-                                                        </TextBlock>
-                                                    </StackPanel>
+                                                    <CheckBox IsChecked="{Binding IsDone, Mode=OneWay}"
+                                                              IsHitTestVisible="False" Focusable="False"
+                                                              Content="{Binding Name}" Margin="0,2,0,2">
+                                                        <CheckBox.Foreground>
+                                                            <Binding Path="Status" Converter="{StaticResource PhaseColor}"/>
+                                                        </CheckBox.Foreground>
+                                                        <CheckBox.Style>
+                                                            <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </CheckBox.Style>
+                                                    </CheckBox>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
@@ -747,6 +928,17 @@
 
                         <!-- Operations Dashboard (visible during scanning) -->
                         <StackPanel Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}">
+
+                            <!-- Time Remaining -->
+                            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,14">
+                                <TextBlock Text="{Binding AggregateTimeRemaining}"
+                                           FontSize="28" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="remaining" FontSize="11"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
 
                             <!-- Overall Progress -->
                             <ProgressBar Value="{Binding AggregateProgress}" Minimum="0" Maximum="100"
@@ -860,6 +1052,9 @@
                             <!-- About -->
                             <ui:Card Padding="12,10">
                                 <StackPanel>
+                                    <Image Source="/Assets/logo-full.jpeg" Height="60"
+                                           HorizontalAlignment="Left" Margin="0,0,0,8"
+                                           RenderOptions.BitmapScalingMode="HighQuality"/>
                                     <TextBlock Text="Pragmatic Peace of Mind" FontSize="12" FontWeight="SemiBold"
                                                Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,6"/>
                                     <TextBlock TextWrapping="Wrap" FontSize="11"

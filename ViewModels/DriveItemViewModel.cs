@@ -94,6 +94,13 @@ public class DriveItemViewModel : INotifyPropertyChanged
 
 
 
+    private TimeSpan _timeRemaining;
+    public TimeSpan TimeRemaining
+    {
+        get => _timeRemaining;
+        set { _timeRemaining = value; OnPropertyChanged(); }
+    }
+
     private long _errorCount;
     public long ErrorCount
     {
@@ -177,6 +184,12 @@ public class DriveItemViewModel : INotifyPropertyChanged
 
         if (Phases.Count > 0)
             Phases[0].Status = PhaseStatus.Active;
+    }
+
+    public void MarkAllPhasesDone()
+    {
+        foreach (var phase in Phases)
+            phase.Status = PhaseStatus.Done;
     }
 
     public void MarkSurfaceCheckDone()
@@ -407,6 +420,7 @@ public class DriveItemViewModel : INotifyPropertyChanged
         StatusText = "";
         SpeedText = "";
 
+        TimeRemaining = TimeSpan.Zero;
         ErrorCount = 0;
         DataPresencePercent = 0;
         IsComplete = false;
