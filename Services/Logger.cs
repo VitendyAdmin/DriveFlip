@@ -12,6 +12,22 @@ public static class Logger
 
     public static LogLevel MinimumLevel { get; set; } = LogLevel.Error;
 
+    public static string LogFilePath => _logPath;
+
+    public static string[] ReadTailLines(int count)
+    {
+        lock (_lock)
+        {
+            try
+            {
+                if (!File.Exists(_logPath)) return [];
+                var lines = File.ReadAllLines(_logPath);
+                return lines.Length <= count ? lines : lines[^count..];
+            }
+            catch { return []; }
+        }
+    }
+
     static Logger()
     {
         var appDir = Path.Combine(

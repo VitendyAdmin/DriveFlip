@@ -1,8 +1,10 @@
+using DriveFlip.Localization;
+
 namespace DriveFlip.Services;
 
 public static class DisplayFormatter
 {
-    public const string NotAvailable = "N/A";
+    public static string NotAvailable => Loc.Get("FormatNotAvailable");
 
     public static string FormatSize(long bytes)
     {
@@ -43,11 +45,6 @@ public static class DisplayFormatter
                 : $"{count.Value:N0}")
             : NotAvailable;
 
-    public static string FormatSpindleSpeed(int? speed) =>
-        speed.HasValue
-            ? (speed.Value == 0 ? "SSD (no spindle)" : $"{speed.Value} RPM")
-            : NotAvailable;
-
     public static string FormatPercent(int? pct) =>
         pct.HasValue ? $"{pct.Value}%" : NotAvailable;
 
@@ -58,8 +55,8 @@ public static class DisplayFormatter
                 : $"{pct.Value}%")
             : NotAvailable;
 
-    public static string FormatBool(bool? value, string trueText = "Yes", string falseText = "No") =>
-        value.HasValue ? (value.Value ? trueText : falseText) : NotAvailable;
+    public static string FormatBool(bool? value, string? trueText = null, string? falseText = null) =>
+        value.HasValue ? (value.Value ? (trueText ?? Loc.Get("FormatYes")) : (falseText ?? Loc.Get("FormatNo"))) : NotAvailable;
 
     public static string FormatSectorSize(int physical, int logical)
     {
@@ -67,7 +64,7 @@ public static class DisplayFormatter
         if (physical == logical)
             return physical == 4096 ? "4Kn (4096)" : $"{physical}";
         if (logical == 512 && physical == 4096)
-            return "512e (512 / 4096)";
+            return Loc.Get("FormatSector512e");
         return $"{logical} / {physical}";
     }
 

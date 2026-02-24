@@ -5,9 +5,10 @@
         xmlns:vm="clr-namespace:DriveFlip.ViewModels"
         xmlns:models="clr-namespace:DriveFlip.Models"
         xmlns:converters="clr-namespace:DriveFlip.Converters"
+        xmlns:loc="clr-namespace:DriveFlip.Localization"
         Title="DriveFlip &#x2014; Surface Check &amp; Drive Prep"
-        Width="1020" Height="860" MinWidth="850" MinHeight="740"
-        Icon="/Assets/logo-icon.jpeg"
+        Width="1300" Height="860" MinWidth="1000" MinHeight="740"
+        Icon="/Assets/logo-icon.ico"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
         WindowStartupLocation="CenterScreen">
@@ -27,10 +28,10 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ui:TitleBar Grid.Row="0" Title="DriveFlip"/>
+            <ui:TitleBar Grid.Row="0" Title="" Padding="0"/>
 
             <!-- Branded Header -->
-            <Border Grid.Row="1" Padding="20,10,20,12">
+            <Border Grid.Row="1" Padding="20,4,20,12">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -43,18 +44,21 @@
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="DriveFlip" FontSize="22" FontWeight="Bold"
                                        Foreground="{StaticResource AccentBlueBrush}"/>
-                            <TextBlock Text="No Time for Slow. Random Wipe and Go."
+                            <TextBlock Text="{loc:Loc AppSubtitle}"
                                        FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                         </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <ui:Button Content="Refresh Drives" Appearance="Secondary"
-                                   Command="{Binding RefreshDrivesCommand}" Margin="0,0,4,0"/>
+                        <ui:Button x:Name="AboutButton" Appearance="Secondary" Padding="8,6" ToolTip="{loc:Loc TooltipAbout}"
+                                   Command="{Binding ToggleAboutCommand}" Margin="0,0,4,0">
+                            <ui:SymbolIcon Symbol="Info24"/>
+                        </ui:Button>
                         <ui:Button x:Name="GearButton" Command="{Binding ToggleSettingsCommand}"
-                                   Appearance="Secondary" Padding="8,6" ToolTip="Settings">
+                                   Appearance="Secondary" Padding="8,6" ToolTip="{loc:Loc TooltipSettings}">
                             <ui:SymbolIcon Symbol="Settings24"/>
                         </ui:Button>
+                        <!-- About popup removed — replaced by modal overlay at bottom of file -->
                         <Popup IsOpen="{Binding IsSettingsOpen}"
                                PlacementTarget="{Binding ElementName=GearButton}"
                                Placement="Bottom" StaysOpen="True"
@@ -65,7 +69,7 @@
                                     <DropShadowEffect BlurRadius="12" ShadowDepth="4" Opacity="0.3"/>
                                 </Border.Effect>
                                 <StackPanel>
-                                    <TextBlock Text="Settings" FontSize="14" FontWeight="SemiBold"
+                                    <TextBlock Text="{loc:Loc Settings}" FontSize="14" FontWeight="SemiBold"
                                                Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,12"/>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -79,7 +83,7 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Surface check:"
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc SettingSurfaceCheck}"
                                                    FontSize="11.5"
                                                    VerticalAlignment="Center" Margin="0,0,10,6"/>
                                         <ComboBox Grid.Row="0" Grid.Column="1"
@@ -87,7 +91,7 @@
                                                   SelectedItem="{Binding SurfaceCheckDurationMinutes}"
                                                   ItemStringFormat="{}{0} min" Margin="0,0,0,6"/>
 
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Head/tail wipe:"
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc SettingHeadTailWipe}"
                                                    FontSize="11.5"
                                                    VerticalAlignment="Center" Margin="0,0,10,6"/>
                                         <ComboBox Grid.Row="1" Grid.Column="1"
@@ -95,7 +99,7 @@
                                                   SelectedItem="{Binding HeadTailSizeGB}"
                                                   ItemStringFormat="{}{0} GB" Margin="0,0,0,6"/>
 
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Scatter wipe:"
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc SettingScatterWipe}"
                                                    FontSize="11.5"
                                                    VerticalAlignment="Center" Margin="0,0,10,6"/>
                                         <ComboBox Grid.Row="2" Grid.Column="1"
@@ -103,7 +107,7 @@
                                                   SelectedItem="{Binding ScatterDurationMinutes}"
                                                   ItemStringFormat="{}{0} min" Margin="0,0,0,6"/>
 
-                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Passes:"
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc SettingPasses}"
                                                    FontSize="11.5"
                                                    VerticalAlignment="Center" Margin="0,0,10,0"/>
                                         <ComboBox Grid.Row="3" Grid.Column="1"
@@ -112,37 +116,55 @@
                                     </Grid>
 
                                     <Border Height="1" Background="#50506A" Margin="0,12,0,10"/>
-                                    <CheckBox Content="Protect system drive"
+                                    <CheckBox Content="{loc:Loc SettingProtectSystem}"
                                               IsChecked="{Binding ProtectSystemDrives}"
                                               FontSize="11.5" Margin="0,0,0,4"
-                                              ToolTip="Prevents the system drive (C:) from being selected for operations."/>
-                                    <CheckBox Content="Protect internal drives"
+                                              ToolTip="{loc:Loc SettingProtectSystemTooltip}"/>
+                                    <CheckBox Content="{loc:Loc SettingProtectInternal}"
                                               IsChecked="{Binding ProtectInternalDrives}"
                                               FontSize="11.5"
-                                              ToolTip="Prevents all non-removable (internal) drives from being selected for operations."/>
+                                              ToolTip="{loc:Loc SettingProtectInternalTooltip}"/>
 
                                     <Border Height="1" Background="#50506A" Margin="0,10,0,10"/>
-                                    <TextBlock Text="Advanced" FontSize="11" FontWeight="SemiBold"
+                                    <TextBlock Text="{loc:Loc SettingAdvanced}" FontSize="11" FontWeight="SemiBold"
                                                Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,6"/>
-                                    <CheckBox Content="Show raw data export"
+                                    <CheckBox Content="{loc:Loc SettingDebugExport}"
                                               IsChecked="{Binding ShowRawDataButton}"
                                               FontSize="11.5" Margin="0,0,0,4"
-                                              ToolTip="Shows the Dump Raw Data button in the drive Info tab."/>
-                                    <CheckBox Content="Quick format &amp; assign letter after wipe"
+                                              ToolTip="{loc:Loc SettingDebugExportTooltip}"/>
+                                    <CheckBox Content="{loc:Loc SettingQuickFormat}"
                                               IsChecked="{Binding FormatAfterWipe}"
                                               FontSize="11.5" Margin="0,0,0,4"
-                                              ToolTip="After a successful wipe, initializes the disk as GPT, creates a single NTFS partition, and assigns a drive letter."/>
+                                              ToolTip="{loc:Loc SettingQuickFormatTooltip}"/>
+                                    <CheckBox Content="{loc:Loc SettingAssignLetter}"
+                                              IsChecked="{Binding AssignLetterAfterWipe}"
+                                              IsEnabled="{Binding FormatAfterWipe}"
+                                              FontSize="11.5" Margin="16,0,0,4"
+                                              ToolTip="{loc:Loc SettingAssignLetterTooltip}"/>
+                                    <CheckBox Content="{loc:Loc SettingCrashReport}"
+                                              IsChecked="{Binding CrashReportEnabled}"
+                                              FontSize="11.5" Margin="0,0,0,4"
+                                              ToolTip="{loc:Loc SettingCrashReportTooltip}"/>
                                     <Grid Margin="0,2,0,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="Log level:"
-                                                   FontSize="11.5" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                        <ComboBox Grid.Column="1"
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc SettingLogLevel}"
+                                                   FontSize="11.5" VerticalAlignment="Center" Margin="0,0,10,6"/>
+                                        <ComboBox Grid.Row="0" Grid.Column="1"
                                                   ItemsSource="{Binding LogLevelOptions}"
                                                   SelectedItem="{Binding SelectedLogLevel}"
-                                                  ToolTip="Controls how much detail is written to the log file. Lower levels produce more output."/>
+                                                  ToolTip="{loc:Loc SettingLogLevelTooltip}" Margin="0,0,0,6"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc SettingLanguage}"
+                                                   FontSize="11.5" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <ComboBox Grid.Row="1" Grid.Column="1"
+                                                  ItemsSource="{Binding Languages}"
+                                                  SelectedItem="{Binding SelectedLanguage}"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -169,100 +191,79 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <TextBlock Text="License Required" FontSize="13" FontWeight="SemiBold"
+                        <TextBlock Text="{loc:Loc LicenseRequired}" FontSize="13" FontWeight="SemiBold"
                                    Foreground="{StaticResource AccentRedBrush}"/>
-                        <TextBlock Text="Activate a license to unlock surface check, wipe, and check &amp; wipe operations."
+                        <TextBlock Text="{loc:Loc LicenseBannerText}"
                                    FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
                     </StackPanel>
-                    <ui:Button Grid.Column="1" Content="Activate License" Appearance="Primary"
+                    <ui:Button Grid.Column="1" Content="{loc:Loc ActivateLicense}" Appearance="Primary"
                                Command="{Binding ToggleLicenseSettingsCommand}"
                                VerticalAlignment="Center" Padding="12,6"/>
                 </Grid>
             </Border>
 
+            <!-- 3-PANE LAYOUT -->
             <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="380"/>
-                <ColumnDefinition Width="310"/>
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="480" MinWidth="240" MaxWidth="700"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="270"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- Left: Drive List -->
-            <ui:Card Grid.Column="0" Margin="0,0,12,0" Padding="0"
-                     VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <!-- LEFT PANE: Drive List (Column 0) -->
+                <ui:Card Grid.Column="0" Margin="0,0,0,0" Padding="0"
+                         VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Padding="14,10">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Physical Drives" FontSize="14" FontWeight="SemiBold"/>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <ToggleButton Content="External Only"
-                                              IsChecked="{Binding ShowExternalOnly}"
-                                              Padding="10,4" FontSize="11" Margin="0,0,6,0"
-                                              Cursor="Hand"/>
-                                <ui:Button Content="All" Appearance="Secondary"
-                                        Command="{Binding SelectAllCommand}" Padding="10,4" FontSize="11"
-                                        IsEnabled="{Binding IsIdle}"
-                                        Margin="0,0,6,0"/>
-                                <ui:Button Content="None" Appearance="Secondary"
-                                        Command="{Binding DeselectAllCommand}" Padding="10,4" FontSize="11"
-                                        IsEnabled="{Binding IsIdle}"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                        <!-- Header -->
+                        <Border Grid.Row="0" Padding="12,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{loc:Loc Drives}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <ui:Button Grid.Column="1" Content="{loc:Loc Refresh}" Appearance="Secondary"
+                                           Command="{Binding RefreshDrivesCommand}"
+                                           Padding="8,3" FontSize="10"/>
+                            </Grid>
+                        </Border>
 
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="6">
-                        <ItemsControl ItemsSource="{Binding Drives}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border CornerRadius="6" Margin="4,3" Padding="12,10"
-                                            Cursor="Hand">
-                                        <Border.InputBindings>
-                                            <MouseBinding MouseAction="LeftClick"
-                                                          Command="{Binding DataContext.SelectDriveCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
-                                                          CommandParameter="{Binding}"/>
-                                        </Border.InputBindings>
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}"/>
-                                                <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}"/>
-                                                <Setter Property="BorderThickness" Value="1"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsInfoSelected}" Value="True">
-                                                        <Setter Property="BorderBrush" Value="{StaticResource AccentBlueBrush}"/>
-                                                        <Setter Property="BorderThickness" Value="2"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-
-                                            <!-- Row 0: Checkbox + Drive Name -->
-                                            <Grid Grid.Row="0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <!-- Size indicator overlay (behind content, columns 1-2) -->
-                                                <Border Grid.Column="1" Grid.ColumnSpan="2" CornerRadius="3"
-                                                        Background="#0DFFFFFF" HorizontalAlignment="Left"
-                                                        VerticalAlignment="Stretch" IsHitTestVisible="False">
+                        <!-- Drive List -->
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="4,2">
+                            <ItemsControl ItemsSource="{Binding Drives}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="5" Margin="3,2" Padding="8,7" Cursor="Hand">
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick"
+                                                              Command="{Binding DataContext.SelectDriveCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                                              CommandParameter="{Binding}"/>
+                                            </Border.InputBindings>
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}"/>
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}"/>
+                                                    <Setter Property="BorderThickness" Value="1"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsInfoSelected}" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{StaticResource AccentBlueBrush}"/>
+                                                            <Setter Property="BorderThickness" Value="2"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <Grid>
+                                                <!-- Size indicator bar (behind all content) -->
+                                                <Border CornerRadius="4" Background="#0DFFFFFF"
+                                                        HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                                                        IsHitTestVisible="False">
                                                     <Border.Width>
                                                         <MultiBinding Converter="{StaticResource PercentToWidth}">
                                                             <Binding Path="SizePercent"/>
@@ -271,8 +272,23 @@
                                                     </Border.Width>
                                                 </Border>
 
-                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}"
-                                                          VerticalAlignment="Center" Margin="0,0,10,0">
+                                                <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <!-- Row 0: Checkbox + Model + Risk badge -->
+                                                <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding IsSelected}"
+                                                          VerticalAlignment="Center" Margin="0,0,6,0">
                                                     <CheckBox.IsEnabled>
                                                         <MultiBinding Converter="{StaticResource AllTrue}">
                                                             <Binding Path="IsSelectable"/>
@@ -281,47 +297,25 @@
                                                     </CheckBox.IsEnabled>
                                                 </CheckBox>
 
-                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding Drive.DisplayName}"
-                                                               FontSize="13" FontWeight="SemiBold"/>
-                                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-                                                        <TextBlock Text="{Binding Drive.InterfaceType}"
-                                                                   FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                                   Margin="0,0,12,0"/>
-                                                        <TextBlock Text="{Binding Drive.DriveLettersSummary}"
-                                                                   FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                                   Margin="0,0,12,0"/>
-                                                        <TextBlock Text="{Binding Drive.SerialSuffix}"
-                                                                   FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                                                   Margin="0,0,12,0"/>
-                                                        <TextBlock FontSize="11" Foreground="{StaticResource AccentAmberBrush}"
-                                                                   Visibility="{Binding Drive.IsSystemDrive, Converter={StaticResource BoolToVis}}"
-                                                                   Text="SYSTEM" FontWeight="Bold"/>
-                                                        <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                                   Visibility="{Binding Drive.IsRemovable, Converter={StaticResource BoolToVis}}"
-                                                                   Text="USB/Removable" Margin="8,0,0,0"/>
-                                                    </StackPanel>
-                                                </StackPanel>
+                                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Drive.DisplayName}"
+                                                           FontSize="11.5" FontWeight="SemiBold"
+                                                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 
-                                                <!-- Inline risk badge / health spinner -->
-                                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                                    <!-- SMART loading spinner -->
-                                                    <ui:ProgressRing IsIndeterminate="True" Width="14" Height="14"
+                                                <!-- Risk badge / health spinner / operation status -->
+                                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <ui:ProgressRing IsIndeterminate="True" Width="12" Height="12"
                                                                      Visibility="{Binding IsQueryingHealth, Converter={StaticResource BoolToVis}}"
-                                                                     Margin="0,0,6,0"/>
-
-                                                    <!-- Risk badge (shown when health is known) -->
-                                                    <Border CornerRadius="4" Padding="6,2"
+                                                                     Margin="4,0,0,0"/>
+                                                    <Border CornerRadius="3" Padding="4,1"
                                                             Visibility="{Binding HasRiskLevel, Converter={StaticResource BoolToVis}}"
                                                             Background="{Binding RiskLevel, Converter={StaticResource RiskLevelColor}}"
-                                                            Margin="0,0,6,0">
+                                                            Margin="4,0,0,0">
                                                         <TextBlock Text="{Binding RiskLevel, Converter={StaticResource RiskLevelText}}"
-                                                                   FontSize="9" FontWeight="Bold" Foreground="White"/>
+                                                                   FontSize="8" FontWeight="Bold" Foreground="White"/>
                                                     </Border>
-
-                                                    <!-- Operation status badge -->
-                                                    <Border CornerRadius="4" Padding="8,3"
-                                                            Visibility="{Binding IsComplete, Converter={StaticResource BoolToVis}}">
+                                                    <Border CornerRadius="3" Padding="5,1"
+                                                            Visibility="{Binding IsComplete, Converter={StaticResource BoolToVis}}"
+                                                            Margin="4,0,0,0">
                                                         <Border.Style>
                                                             <Style TargetType="Border">
                                                                 <Setter Property="Background" Value="{StaticResource AccentGreenBrush}"/>
@@ -332,13 +326,13 @@
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Border.Style>
-                                                        <TextBlock FontSize="11" FontWeight="Bold" Foreground="White">
+                                                        <TextBlock FontSize="9" FontWeight="Bold" Foreground="White">
                                                             <TextBlock.Style>
                                                                 <Style TargetType="TextBlock">
                                                                     <Setter Property="Text" Value="PASS"/>
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding Passed}" Value="False">
-                                                                            <Setter Property="Text" Value="ISSUES"/>
+                                                                            <Setter Property="Text" Value="FAIL"/>
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
@@ -346,94 +340,287 @@
                                                         </TextBlock>
                                                     </Border>
                                                 </StackPanel>
-                                            </Grid>
 
-                                            <!-- Row 1: Progress bar (when running) -->
-                                            <Grid Grid.Row="1" Margin="0,8,0,0"
-                                                  Visibility="{Binding IsRunning, Converter={StaticResource BoolToVis}}">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
+                                                <!-- Row 1: Interface + partitions + volumes + system badge -->
+                                                <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                                            Orientation="Horizontal" Margin="0,2,0,0">
+                                                    <TextBlock Text="{Binding Drive.InterfaceType}"
+                                                               FontSize="10" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                               Margin="0,0,8,0"/>
+                                                    <TextBlock Text="{Binding Drive.PartitionSummary}"
+                                                               FontSize="10" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                               Margin="0,0,8,0"/>
+                                                    <TextBlock Text="{Binding Drive.DriveLettersSummary}"
+                                                               FontSize="10" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                               Margin="0,0,8,0"/>
+                                                    <TextBlock FontSize="10" Foreground="{StaticResource AccentAmberBrush}"
+                                                               Visibility="{Binding Drive.IsSystemDrive, Converter={StaticResource BoolToVis}}"
+                                                               Text="{loc:Loc BadgeSys}" FontWeight="Bold"/>
+                                                </StackPanel>
 
-                                                <Border Grid.Row="0" Background="{DynamicResource ControlFillColorDefaultBrush}" CornerRadius="3" Height="6">
-                                                    <Border Background="{StaticResource AccentBlueBrush}"
-                                                            CornerRadius="3" HorizontalAlignment="Left">
-                                                        <Border.Width>
-                                                            <MultiBinding>
-                                                                <MultiBinding.Converter>
-                                                                    <converters:PercentToWidthConverter/>
-                                                                </MultiBinding.Converter>
-                                                                <Binding Path="Progress"/>
-                                                                <Binding Path="ActualWidth"
-                                                                         RelativeSource="{RelativeSource AncestorType=Border, AncestorLevel=2}"/>
-                                                            </MultiBinding>
-                                                        </Border.Width>
+                                                <!-- Row 2: Capacity + serial suffix -->
+                                                <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                                            Orientation="Horizontal" Margin="0,1,0,0">
+                                                    <TextBlock Text="{Binding Drive.CapacitySummary}"
+                                                               FontSize="10" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                               Margin="0,0,8,0"/>
+                                                    <TextBlock Text="{Binding Drive.SerialSuffix}"
+                                                               FontSize="10" Foreground="{DynamicResource TextFillColorTertiaryBrush}"/>
+                                                </StackPanel>
+
+                                                <!-- Row 3: Progress bar (when running) -->
+                                                <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,0"
+                                                      Visibility="{Binding IsRunning, Converter={StaticResource BoolToVis}}">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Border Grid.Row="0" Background="{DynamicResource ControlFillColorDefaultBrush}" CornerRadius="2" Height="4">
+                                                        <Border Background="{StaticResource AccentBlueBrush}"
+                                                                CornerRadius="2" HorizontalAlignment="Left">
+                                                            <Border.Width>
+                                                                <MultiBinding>
+                                                                    <MultiBinding.Converter>
+                                                                        <converters:PercentToWidthConverter/>
+                                                                    </MultiBinding.Converter>
+                                                                    <Binding Path="Progress"/>
+                                                                    <Binding Path="ActualWidth"
+                                                                             RelativeSource="{RelativeSource AncestorType=Border, AncestorLevel=2}"/>
+                                                                </MultiBinding>
+                                                            </Border.Width>
+                                                        </Border>
                                                     </Border>
-                                                </Border>
-
-                                                <Grid Grid.Row="1" Margin="0,5,0,0">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="{Binding StatusText}"
-                                                               FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding SpeedText}"
-                                                               FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                               Margin="12,0,0,0"/>
+                                                    <Grid Grid.Row="1" Margin="0,3,0,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Progress, StringFormat={}{0:F0}%}"
+                                                                   FontSize="10" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding SpeedText}"
+                                                                   FontSize="10" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                    </Grid>
                                                 </Grid>
+
+                                                <!-- Row 4: Completed status text -->
+                                                <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
+                                                           Text="{Binding StatusText}"
+                                                           FontSize="10" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                           Margin="0,3,0,0" TextTrimming="CharacterEllipsis">
+                                                    <TextBlock.Visibility>
+                                                        <MultiBinding>
+                                                            <MultiBinding.Converter>
+                                                                <converters:CompletedNotRunningConverter/>
+                                                            </MultiBinding.Converter>
+                                                            <Binding Path="IsComplete"/>
+                                                            <Binding Path="IsRunning"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Visibility>
+                                                </TextBlock>
                                             </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
 
-                                            <!-- Row 2: Stats (when running) -->
-                                            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,6,0,0"
-                                                        Visibility="{Binding IsRunning, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock FontSize="11" Margin="0,0,16,0">
-                                                    <Run Text="Errors: " Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <Run Text="{Binding ErrorCount, Mode=OneWay}"
-                                                         Foreground="{Binding ErrorCount, Converter={StaticResource HealthColor}}"/>
-                                                </TextBlock>
-                                                <TextBlock FontSize="11">
-                                                    <Run Text="Data found: " Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <Run Text="{Binding DataPresencePercent, StringFormat={}{0:F1}%, Mode=OneWay}"
-                                                         Foreground="{Binding DataPresencePercent, Converter={StaticResource DataPresenceColor}}"/>
-                                                </TextBlock>
+                        <!-- Footer: External filter + All / None -->
+                        <Border Grid.Row="2" Padding="8,6" BorderBrush="{DynamicResource ControlElevationBorderBrush}" BorderThickness="0,1,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Grid.Column="0" Content="{loc:Loc ExternalOnly}"
+                                          IsChecked="{Binding ShowExternalOnly}"
+                                          FontSize="10" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <ui:Button Content="{loc:Loc All}" Appearance="Secondary"
+                                               Command="{Binding SelectAllCommand}" Padding="12,3" FontSize="10"
+                                               IsEnabled="{Binding IsIdle}" Margin="0,0,6,0"/>
+                                    <ui:Button Content="{loc:Loc None}" Appearance="Secondary"
+                                               Command="{Binding DeselectAllCommand}" Padding="12,3" FontSize="10"
+                                               IsEnabled="{Binding IsIdle}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </ui:Card>
+
+                <!-- GRID SPLITTER between drive list and details -->
+                <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Center"
+                              VerticalAlignment="Stretch" Background="Transparent" Cursor="SizeWE"/>
+
+                <!-- CENTER PANE: Details (Column 2) -->
+                <ui:Card Grid.Column="2" Margin="10,0,10,0" Padding="0"
+                         VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+
+                    <Grid>
+                        <!-- No Drive Selected Placeholder -->
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Visibility="{Binding HasSelectedDrive, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}">
+                            <ui:SymbolIcon Symbol="HardDrive20" FontSize="40"
+                                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                           HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="{loc:Loc SelectDrivePlaceholder}"
+                                       FontSize="13" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Stacked Detail Sections -->
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      Visibility="{Binding HasSelectedDrive, Converter={StaticResource BoolToVis}}">
+                            <StackPanel Margin="16,12,16,16">
+
+                                <!-- SECTION 1: Drive Info -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{loc:Loc DriveInfo}" FontSize="14" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentBlueBrush}"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <ui:Button Content="{loc:Loc CopyInfo}" Appearance="Primary"
+                                                   Command="{Binding ExportForListingCommand}"
+                                                   Padding="8,4" FontSize="10" Margin="0,0,6,0"/>
+                                        <ui:Button Content="{loc:Loc DumpRawData}" Appearance="Secondary"
+                                                   Command="{Binding DumpDriveDataCommand}"
+                                                   Padding="8,4" FontSize="10" Margin="0,0,6,0"
+                                                   Visibility="{Binding ShowRawDataButton, Converter={StaticResource BoolToVis}}"/>
+                                        <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+                                                CornerRadius="4" Padding="2,0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <ui:Button Command="{Binding ZoomOutCommand}"
+                                                           Padding="4,2" FontSize="10" Appearance="Secondary"
+                                                           ToolTip="{loc:Loc TooltipZoomOut}">
+                                                    <ui:SymbolIcon Symbol="SubtractCircle20" FontSize="12"/>
+                                                </ui:Button>
+                                                <ui:Button Command="{Binding ZoomResetCommand}"
+                                                           Padding="4,2" FontSize="9" Appearance="Secondary"
+                                                           Content="Aa" ToolTip="{loc:Loc TooltipZoomReset}"/>
+                                                <ui:Button Command="{Binding ZoomInCommand}"
+                                                           Padding="4,2" FontSize="10" Appearance="Secondary"
+                                                           ToolTip="{loc:Loc TooltipZoomIn}">
+                                                    <ui:SymbolIcon Symbol="AddCircle20" FontSize="12"/>
+                                                </ui:Button>
                                             </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
 
-                                            <!-- Row 3: Completed status text -->
-                                            <TextBlock Grid.Row="3" Text="{Binding StatusText}"
-                                                       FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                       Margin="0,4,0,0">
-                                                <TextBlock.Visibility>
-                                                    <MultiBinding>
-                                                        <MultiBinding.Converter>
-                                                            <converters:CompletedNotRunningConverter/>
-                                                        </MultiBinding.Converter>
-                                                        <Binding Path="IsComplete"/>
-                                                        <Binding Path="IsRunning"/>
-                                                    </MultiBinding>
-                                                </TextBlock.Visibility>
-                                            </TextBlock>
-                                        </Grid>
+                                <!-- Zoomable content area (excludes headers/buttons above) -->
+                                <StackPanel>
+                                    <StackPanel.LayoutTransform>
+                                        <ScaleTransform ScaleX="{Binding DetailZoom}" ScaleY="{Binding DetailZoom}"/>
+                                    </StackPanel.LayoutTransform>
+
+                                <Grid DataContext="{Binding SelectedDrive}" Margin="0,4,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc LabelManufacturer}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Manufacturer, TargetNullValue=Unknown, FallbackValue=Unknown}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc LabelModel}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Model}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc LabelSerial}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SerialNumber}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc LabelPartNumber}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
+                                               Visibility="{Binding PartNumber, Converter={StaticResource NonEmptyToVis}}"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding PartNumber}" FontSize="11" Margin="0,0,0,4"
+                                               Visibility="{Binding PartNumber, Converter={StaticResource NonEmptyToVis}}"/>
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Loc LabelMfgDate}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
+                                               Visibility="{Binding ManufactureDate, Converter={StaticResource NonEmptyToVis}}"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding ManufactureDate}" FontSize="11" Margin="0,0,0,4"
+                                               Visibility="{Binding ManufactureDate, Converter={StaticResource NonEmptyToVis}}"/>
+
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Loc LabelInterface}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding InterfaceType}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Loc LabelFirmware}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding FirmwareVersion, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{loc:Loc LabelSize}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding DisplaySize}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="8" Grid.Column="0" Text="{loc:Loc LabelSectorSize}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding SectorSizeDisplay}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="9" Grid.Column="0" Text="{loc:Loc LabelPartitions}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding Partitions.Count, StringFormat={}{0} partition(s)}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="10" Grid.Column="0" Text="{loc:Loc LabelPartitionStyle}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="10" Grid.Column="2" Text="{Binding PartitionStyle, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="11" Grid.Column="0" Text="{loc:Loc LabelDriveLetters}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="11" Grid.Column="2" Text="{Binding DriveLettersSummary}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="12" Grid.Column="0" Text="{loc:Loc LabelStatus}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="12" Grid.Column="2" Text="{Binding Status}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="13" Grid.Column="0" Text="{loc:Loc LabelTransferMode}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="13" Grid.Column="2" Text="{Binding NegotiatedSpeed, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Grid.Row="14" Grid.Column="0" Text="{loc:Loc LabelFeatures}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock Grid.Row="14" Grid.Column="2" Text="{Binding SupportedFeatures, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4" TextWrapping="Wrap"/>
+
+                                    <TextBlock Grid.Row="15" Grid.Column="0" Text="{loc:Loc LabelUsbBridge}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
+                                               Visibility="{Binding UsbBridgeChip, Converter={StaticResource NonEmptyToVis}}"/>
+                                    <TextBlock Grid.Row="15" Grid.Column="2" Text="{Binding UsbBridgeChip}" FontSize="11" Margin="0,0,0,4"
+                                               Visibility="{Binding UsbBridgeChip, Converter={StaticResource NonEmptyToVis}}"/>
+                                </Grid>
+
+                                <!-- SECTION 2: Health -->
+                                <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,12,0,12"/>
+
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{loc:Loc Health}" FontSize="14" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentBlueBrush}"/>
+                                    <Border Grid.Column="1" CornerRadius="4" Padding="8,3"
+                                            Visibility="{Binding SelectedDriveHealth.SmartDataQueried, FallbackValue=Collapsed, Converter={StaticResource BoolToVis}}"
+                                            Background="{Binding SelectedDriveHealth.RiskLevel, Converter={StaticResource RiskLevelColor}}">
+                                        <TextBlock Text="{Binding SelectedDriveHealth.RiskLevel, Converter={StaticResource RiskLevelText}}"
+                                                   FontSize="10" FontWeight="Bold" Foreground="White"/>
                                     </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                                </Grid>
 
-                    <!-- Drive Info Panel (Row 2) -->
-                    <Border Grid.Row="2" BorderBrush="{DynamicResource ControlElevationBorderBrush}" BorderThickness="0,1,0,0"
-                            MaxHeight="400"
-                            Visibility="{Binding DataContext.HasSelectedDrive, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource BoolToVis}}">
-                        <TabControl BorderThickness="0" Padding="0"
-                                    SelectedIndex="{Binding DataContext.SelectedInfoTab, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}">
+                                <StackPanel DataContext="{Binding SelectedDriveHealth}">
+                                    <TextBlock Text="{loc:Loc LoadingHealthData}"
+                                               FontSize="11" FontStyle="Italic"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Visibility="{Binding DataContext.SelectedDriveHealth, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource NullToVis}, ConverterParameter=Invert}"/>
 
-                            <!-- Info Tab -->
-                            <TabItem Header="Info">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,10">
-                                    <Grid DataContext="{Binding DataContext.SelectedDrive, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
-                                          Margin="14,10">
+                                    <Grid Visibility="{Binding Converter={StaticResource NullToVis}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="14"/>
@@ -449,6 +636,75 @@
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc LabelHealthStatus}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding HealthStatus}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc LabelMediaType}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding MediaType}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc LabelBusType}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding BusType}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc LabelTemperature}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding TemperatureDisplayEnhanced}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Loc LabelPowerOnHours}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding PowerOnHoursDisplay}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Loc LabelReadWriteErrors}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="2" FontSize="11" Margin="0,0,0,4">
+                                            <Run Text="{Binding ReadErrorsDisplay, Mode=OneWay}"/>
+                                            <Run Text=" / "/>
+                                            <Run Text="{Binding WriteErrorsDisplay, Mode=OneWay}"/>
+                                        </TextBlock>
+
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Loc LabelSsdWear}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding WearDisplay}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="{loc:Loc LabelWriteCache}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding WriteCacheDisplay}" FontSize="11" Margin="0,0,0,4"/>
+
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="{loc:Loc LabelPowerProtection}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding PowerProtectionDisplay}" FontSize="11" Margin="0,0,0,4"/>
+                                    </Grid>
+
+                                    <ui:Button Content="{loc:Loc GetSmartData}" Appearance="Secondary"
+                                               Command="{Binding DataContext.GetSmartDataCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                               HorizontalAlignment="Left" Margin="0,10,0,0" Padding="12,6"
+                                               Visibility="{Binding SmartDataQueried, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0"
+                                                Visibility="{Binding DataContext.IsLoadingSmartData, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource BoolToVis}}">
+                                        <ui:ProgressRing IsIndeterminate="True" Width="16" Height="16" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{loc:Loc ReadingSmartData}"
+                                                   FontSize="11" VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- SECTION 3: SMART / NVMe (visible after query) -->
+                                <StackPanel DataContext="{Binding SelectedDriveHealth}"
+                                            Visibility="{Binding SmartDataQueried, FallbackValue=Collapsed, Converter={StaticResource BoolToVis}}"
+                                            Margin="0,10,0,0">
+
+                                    <TextBlock Text="{Binding RiskSummary}" FontSize="11" TextWrapping="Wrap"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Margin="0,0,0,6"/>
+
+                                    <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,4,0,8"/>
+
+                                    <TextBlock Text="{loc:Loc ExtendedCounters}" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"
+                                               Foreground="{StaticResource AccentBlueBrush}"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="14"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
@@ -459,87 +715,134 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Manufacturer" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Manufacturer, TargetNullValue=Unknown, FallbackValue=Unknown}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc LabelReadErrorsCorrected}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ReadErrorsCorrectedDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Model" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Model}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc LabelReadErrorsUncorrected}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding ReadErrorsUncorrectedDisplay}" FontSize="11" Margin="0,0,0,3"
+                                                   Foreground="{Binding ReadErrorsUncorrected, Converter={StaticResource HealthColor}}"/>
 
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Serial" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SerialNumber}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc LabelWriteErrorsCorrected}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding WriteErrorsCorrectedDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Part Number" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
-                                                   Visibility="{Binding PartNumber, Converter={StaticResource NonEmptyToVis}}"/>
-                                        <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding PartNumber}" FontSize="11" Margin="0,0,0,4"
-                                                   Visibility="{Binding PartNumber, Converter={StaticResource NonEmptyToVis}}"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc LabelWriteErrorsUncorrected}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding WriteErrorsUncorrectedDisplay}" FontSize="11" Margin="0,0,0,3"
+                                                   Foreground="{Binding WriteErrorsUncorrected, Converter={StaticResource HealthColor}}"/>
 
-                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Manufacture Date" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
-                                                   Visibility="{Binding ManufactureDate, Converter={StaticResource NonEmptyToVis}}"/>
-                                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding ManufactureDate}" FontSize="11" Margin="0,0,0,4"
-                                                   Visibility="{Binding ManufactureDate, Converter={StaticResource NonEmptyToVis}}"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Loc LabelMaxReadLatency}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding ReadLatencyMaxDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Interface" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding InterfaceType}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Loc LabelMaxWriteLatency}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding WriteLatencyMaxDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Firmware" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding FirmwareVersion, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Loc LabelMaxFlushLatency}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding FlushLatencyMaxDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Size" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding DisplaySize}" FontSize="11" Margin="0,0,0,4"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="{loc:Loc LabelStartStopCycles}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding StartStopCycleCountEnhancedDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Sector Size" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding SectorSizeDisplay}" FontSize="11" Margin="0,0,0,4"/>
-
-                                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Partitions" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding Partitions.Count, StringFormat={}{0} partition(s)}" FontSize="11" Margin="0,0,0,4"/>
-
-                                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Partition Style" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="10" Grid.Column="2" Text="{Binding PartitionStyle, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
-
-                                        <TextBlock Grid.Row="11" Grid.Column="0" Text="Drive Letters" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="11" Grid.Column="2" Text="{Binding DriveLettersSummary}" FontSize="11" Margin="0,0,0,4"/>
-
-                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Status" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="12" Grid.Column="2" Text="{Binding Status}" FontSize="11" Margin="0,0,0,4"/>
-
-                                        <TextBlock Grid.Row="13" Grid.Column="0" Text="Transfer Mode" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="13" Grid.Column="2" Text="{Binding NegotiatedSpeed, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4"/>
-
-                                        <TextBlock Grid.Row="14" Grid.Column="0" Text="Features" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                        <TextBlock Grid.Row="14" Grid.Column="2" Text="{Binding SupportedFeatures, TargetNullValue=N/A, FallbackValue=N/A}" FontSize="11" Margin="0,0,0,4" TextWrapping="Wrap"/>
-
-                                        <TextBlock Grid.Row="15" Grid.Column="0" Text="USB Bridge" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
-                                                   Visibility="{Binding UsbBridgeChip, Converter={StaticResource NonEmptyToVis}}"/>
-                                        <TextBlock Grid.Row="15" Grid.Column="2" Text="{Binding UsbBridgeChip}" FontSize="11" Margin="0,0,0,4"
-                                                   Visibility="{Binding UsbBridgeChip, Converter={StaticResource NonEmptyToVis}}"/>
-
-                                        <StackPanel Grid.Row="16" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,10,0,0">
-                                            <ui:Button Content="Copy for Listing" Appearance="Primary"
-                                                       Command="{Binding DataContext.ExportForListingCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
-                                                       Padding="12,6" FontSize="11" Margin="0,0,8,0"/>
-                                            <ui:Button Content="Dump Raw Data" Appearance="Secondary"
-                                                       Command="{Binding DataContext.DumpDriveDataCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
-                                                       Padding="12,6" FontSize="11"
-                                                       Visibility="{Binding DataContext.ShowRawDataButton, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource BoolToVis}}"/>
-                                        </StackPanel>
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="{loc:Loc LabelLoadUnloadCycles}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                        <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding LoadUnloadCycleCountDisplay}" FontSize="11" Margin="0,0,0,3"/>
                                     </Grid>
-                                </ScrollViewer>
-                            </TabItem>
 
-                            <!-- Health Tab -->
-                            <TabItem Header="Health">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,10">
-                                    <StackPanel DataContext="{Binding DataContext.SelectedDriveHealth, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
-                                                Margin="14,10">
+                                    <!-- SMART Attributes Table (SATA only) -->
+                                    <StackPanel Visibility="{Binding SmartSupported, Converter={StaticResource BoolToVis}}"
+                                                Margin="0,8,0,0">
+                                        <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,8"/>
+                                        <TextBlock Text="{loc:Loc SmartAttributes}" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"
+                                                   Foreground="{StaticResource AccentBlueBrush}"/>
 
-                                        <!-- Loading indicator when health is null -->
-                                        <TextBlock Text="Loading health data..."
-                                                   FontSize="11" FontStyle="Italic"
-                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                   Visibility="{Binding DataContext.SelectedDriveHealth, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource NullToVis}, ConverterParameter=Invert}"/>
+                                        <Grid Margin="0,0,0,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="30"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="40"/>
+                                                <ColumnDefinition Width="40"/>
+                                                <ColumnDefinition Width="40"/>
+                                                <ColumnDefinition Width="65"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{loc:Loc SmartHeaderId}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Grid.Column="1" Text="{loc:Loc SmartHeaderName}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Grid.Column="2" Text="{loc:Loc SmartHeaderCurrent}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Grid.Column="3" Text="{loc:Loc SmartHeaderWorst}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Grid.Column="4" Text="{loc:Loc SmartHeaderThreshold}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Grid.Column="5" Text="{loc:Loc SmartHeaderRaw}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                        </Grid>
 
-                                        <!-- Basic Health Rows -->
-                                        <Grid Visibility="{Binding Converter={StaticResource NullToVis}}">
+                                        <ItemsControl ItemsSource="{Binding SmartAttributes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Margin="0,1,0,1" CornerRadius="2" Padding="0,1">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
+                                                                        <Setter Property="Background" Value="#33D32F2F"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="30"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="40"/>
+                                                                <ColumnDefinition Width="40"/>
+                                                                <ColumnDefinition Width="40"/>
+                                                                <ColumnDefinition Width="65"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Id}" FontSize="10">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsFailurePredictive}" Value="True">
+                                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
+                                                                                <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
+                                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                            <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="10" TextTrimming="CharacterEllipsis">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsFailurePredictive}" Value="True">
+                                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
+                                                                                <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
+                                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                            <TextBlock Grid.Column="2" Text="{Binding CurrentValue}" FontSize="10"/>
+                                                            <TextBlock Grid.Column="3" Text="{Binding WorstValue}" FontSize="10"/>
+                                                            <TextBlock Grid.Column="4" Text="{Binding Threshold}" FontSize="10"
+                                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                            <TextBlock Grid.Column="5" Text="{Binding RawValue}" FontSize="10"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <!-- NVMe Health Log -->
+                                    <StackPanel Visibility="{Binding IsNvme, Converter={StaticResource BoolToVis}}"
+                                                Margin="0,8,0,0">
+                                        <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,8"/>
+                                        <TextBlock Text="{loc:Loc NvmeHealthLog}" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"
+                                                   Foreground="{StaticResource AccentBlueBrush}"/>
+                                        <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="14"/>
@@ -554,521 +857,242 @@
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
 
-                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Health Status" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding HealthStatus}" FontSize="11" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc LabelNvmeAvailableSpare}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding NvmeAvailableSpareDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Media Type" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding MediaType}" FontSize="11" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc LabelNvmePercentUsed}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NvmePercentageUsedDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Bus Type" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding BusType}" FontSize="11" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc LabelNvmeDataWritten}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding NvmeDataWrittenDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Spindle Speed" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SpindleSpeedDisplay}" FontSize="11" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc LabelNvmeDataRead}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding NvmeDataReadDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Temperature" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding TemperatureDisplayEnhanced}" FontSize="11" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Loc LabelNvmePowerCycles}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding NvmePowerCyclesDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Power-On Hours" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding PowerOnHoursDisplay}" FontSize="11" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Loc LabelNvmeUnsafeShutdowns}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                            <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding NvmeUnsafeShutdownsDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Read / Write Errors" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="6" Grid.Column="2" FontSize="11" Margin="0,0,0,4">
-                                                <Run Text="{Binding ReadErrorsDisplay, Mode=OneWay}"/>
-                                                <Run Text=" / "/>
-                                                <Run Text="{Binding WriteErrorsDisplay, Mode=OneWay}"/>
-                                            </TextBlock>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Loc LabelNvmeMediaErrors}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                            <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding NvmeMediaErrorsDisplay}" FontSize="11" Margin="0,0,0,3"/>
 
-                                            <TextBlock Grid.Row="7" Grid.Column="0" Text="SSD Wear" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding WearDisplay}" FontSize="11" Margin="0,0,0,4"/>
-
-                                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Write Cache" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding WriteCacheDisplay}" FontSize="11" Margin="0,0,0,4"/>
-
-                                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Power Protection" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding PowerProtectionDisplay}" FontSize="11" Margin="0,0,0,4"/>
+                                            <TextBlock Grid.Row="7" Grid.Column="0" Text="{loc:Loc LabelNvmeBusyTime}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
+                                            <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding NvmeControllerBusyTimeDisplay}" FontSize="11" Margin="0,0,0,3"/>
                                         </Grid>
+                                    </StackPanel>
 
-                                        <!-- Get SMART Data Button (visible when not yet queried) -->
-                                        <ui:Button Content="Get SMART Data" Appearance="Secondary"
-                                                   Command="{Binding DataContext.GetSmartDataCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
-                                                   HorizontalAlignment="Left" Margin="0,10,0,0" Padding="12,6"
-                                                   Visibility="{Binding SmartDataQueried, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}"/>
+                                    <!-- Fallback note -->
+                                    <TextBlock Text="{loc:Loc SmartNotAvailableFallback}"
+                                               FontSize="10" FontStyle="Italic" Margin="0,8,0,0"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding SmartSupported}" Value="False"/>
+                                                            <Condition Binding="{Binding IsNvme}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
 
-                                        <!-- Loading indicator during SMART query -->
-                                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0"
-                                                    Visibility="{Binding DataContext.IsLoadingSmartData, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource BoolToVis}}">
-                                            <ui:ProgressRing IsIndeterminate="True" Width="16" Height="16" Margin="0,0,8,0"/>
-                                            <TextBlock Text="Reading and interpreting SMART data..."
-                                                       FontSize="11" VerticalAlignment="Center"
+                                <!-- SECTION 4: Progress (visible when drive is running) -->
+                                <StackPanel DataContext="{Binding SelectedDriveItem}"
+                                            Visibility="{Binding IsRunning, FallbackValue=Collapsed, Converter={StaticResource BoolToVis}}"
+                                            Margin="0,10,0,0">
+
+                                    <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,10"/>
+
+                                    <TextBlock Text="{loc:Loc Progress}" FontSize="14" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,8"/>
+
+                                    <ItemsControl ItemsSource="{Binding Phases}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding IsDone, Mode=OneWay}"
+                                                          IsHitTestVisible="False" Focusable="False"
+                                                          Content="{Binding Name}" Margin="0,2,0,2">
+                                                    <CheckBox.Foreground>
+                                                        <Binding Path="Status" Converter="{StaticResource PhaseColor}"/>
+                                                    </CheckBox.Foreground>
+                                                    <CheckBox.Style>
+                                                        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </CheckBox.Style>
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <Border Background="#1A1A2E" CornerRadius="4"
+                                            Height="32" ClipToBounds="True" Margin="0,10,0,0">
+                                        <Image Source="{Binding VisualizationBitmap}"
+                                               Stretch="Fill"
+                                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                               Visibility="{Binding VisualizationBitmap, Converter={StaticResource NullToVis}}"/>
+                                    </Border>
+
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{loc:Loc Progress}" FontSize="10"
                                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding Progress, StringFormat={}{0:F1}%}"
+                                                       FontSize="13" FontWeight="SemiBold"/>
                                         </StackPanel>
 
-                                        <!-- SMART Results (visible after query) -->
-                                        <StackPanel Visibility="{Binding SmartDataQueried, Converter={StaticResource BoolToVis}}"
-                                                    Margin="0,10,0,0">
-
-                                            <!-- Risk Badge -->
-                                            <Border CornerRadius="4" Padding="10,6" HorizontalAlignment="Left"
-                                                    Background="{Binding RiskLevel, Converter={StaticResource RiskLevelColor}}">
-                                                <TextBlock Text="{Binding RiskLevel, Converter={StaticResource RiskLevelText}}"
-                                                           FontSize="12" FontWeight="Bold" Foreground="White"/>
-                                            </Border>
-
-                                            <!-- Risk Summary -->
-                                            <TextBlock Text="{Binding RiskSummary}" FontSize="11" TextWrapping="Wrap"
-                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                       Margin="0,6,0,0"/>
-
-                                            <!-- Separator -->
-                                            <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,8,0,8"/>
-
-                                            <!-- Extended Counters (Tier 1) -->
-                                            <TextBlock Text="Extended Counters" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"
-                                                       Foreground="{StaticResource AccentBlueBrush}"/>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="14"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-
-                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Read Errors (Corrected)" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ReadErrorsCorrectedDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Read Errors (Uncorrected)" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding ReadErrorsUncorrectedDisplay}" FontSize="11" Margin="0,0,0,3"
-                                                           Foreground="{Binding ReadErrorsUncorrected, Converter={StaticResource HealthColor}}"/>
-
-                                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Write Errors (Corrected)" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding WriteErrorsCorrectedDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Write Errors (Uncorrected)" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding WriteErrorsUncorrectedDisplay}" FontSize="11" Margin="0,0,0,3"
-                                                           Foreground="{Binding WriteErrorsUncorrected, Converter={StaticResource HealthColor}}"/>
-
-                                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Max Read Latency" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding ReadLatencyMaxDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                <TextBlock Grid.Row="5" Grid.Column="0" Text="Max Write Latency" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding WriteLatencyMaxDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Max Flush Latency" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding FlushLatencyMaxDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Start/Stop Cycles" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding StartStopCycleCountEnhancedDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Load/Unload Cycles" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding LoadUnloadCycleCountDisplay}" FontSize="11" Margin="0,0,0,3"/>
-                                            </Grid>
-
-                                            <!-- SMART Attributes Table (SATA only) -->
-                                            <StackPanel Visibility="{Binding SmartSupported, Converter={StaticResource BoolToVis}}"
-                                                        Margin="0,8,0,0">
-                                                <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,8"/>
-                                                <TextBlock Text="SMART Attributes" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"
-                                                           Foreground="{StaticResource AccentBlueBrush}"/>
-
-                                                <!-- Header Row -->
-                                                <Grid Margin="0,0,0,2">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="30"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="40"/>
-                                                        <ColumnDefinition Width="40"/>
-                                                        <ColumnDefinition Width="40"/>
-                                                        <ColumnDefinition Width="65"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="ID" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <TextBlock Grid.Column="1" Text="Name" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <TextBlock Grid.Column="2" Text="Cur" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <TextBlock Grid.Column="3" Text="Worst" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <TextBlock Grid.Column="4" Text="Thresh" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    <TextBlock Grid.Column="5" Text="Raw" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                </Grid>
-
-                                                <ItemsControl ItemsSource="{Binding SmartAttributes}">
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Border Margin="0,1,0,1" CornerRadius="2" Padding="0,1">
-                                                                <Border.Style>
-                                                                    <Style TargetType="Border">
-                                                                        <Setter Property="Background" Value="Transparent"/>
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
-                                                                                <Setter Property="Background" Value="#33D32F2F"/>
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </Border.Style>
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="30"/>
-                                                                        <ColumnDefinition Width="*"/>
-                                                                        <ColumnDefinition Width="40"/>
-                                                                        <ColumnDefinition Width="40"/>
-                                                                        <ColumnDefinition Width="40"/>
-                                                                        <ColumnDefinition Width="65"/>
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <TextBlock Grid.Column="0" Text="{Binding Id}" FontSize="10">
-                                                                        <TextBlock.Style>
-                                                                            <Style TargetType="TextBlock">
-                                                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                                                                <Style.Triggers>
-                                                                                    <DataTrigger Binding="{Binding IsFailurePredictive}" Value="True">
-                                                                                        <Setter Property="FontWeight" Value="Bold"/>
-                                                                                    </DataTrigger>
-                                                                                    <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
-                                                                                        <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
-                                                                                        <Setter Property="FontWeight" Value="Bold"/>
-                                                                                    </DataTrigger>
-                                                                                </Style.Triggers>
-                                                                            </Style>
-                                                                        </TextBlock.Style>
-                                                                    </TextBlock>
-                                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="10" TextTrimming="CharacterEllipsis">
-                                                                        <TextBlock.Style>
-                                                                            <Style TargetType="TextBlock">
-                                                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                                                                <Style.Triggers>
-                                                                                    <DataTrigger Binding="{Binding IsFailurePredictive}" Value="True">
-                                                                                        <Setter Property="FontWeight" Value="Bold"/>
-                                                                                    </DataTrigger>
-                                                                                    <DataTrigger Binding="{Binding IsThresholdFailing}" Value="True">
-                                                                                        <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
-                                                                                        <Setter Property="FontWeight" Value="Bold"/>
-                                                                                    </DataTrigger>
-                                                                                </Style.Triggers>
-                                                                            </Style>
-                                                                        </TextBlock.Style>
-                                                                    </TextBlock>
-                                                                    <TextBlock Grid.Column="2" Text="{Binding CurrentValue}" FontSize="10"/>
-                                                                    <TextBlock Grid.Column="3" Text="{Binding WorstValue}" FontSize="10"/>
-                                                                    <TextBlock Grid.Column="4" Text="{Binding Threshold}" FontSize="10"
-                                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                                    <TextBlock Grid.Column="5" Text="{Binding RawValue}" FontSize="10"/>
-                                                                </Grid>
-                                                            </Border>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                            </StackPanel>
-
-                                            <!-- NVMe Health Log (when NVMe drive) -->
-                                            <StackPanel Visibility="{Binding IsNvme, Converter={StaticResource BoolToVis}}"
-                                                        Margin="0,8,0,0">
-                                                <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,8"/>
-                                                <TextBlock Text="NVMe Health Log" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"
-                                                           Foreground="{StaticResource AccentBlueBrush}"/>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="14"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                    </Grid.RowDefinitions>
-
-                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Available Spare" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding NvmeAvailableSpareDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Percentage Used" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NvmePercentageUsedDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Data Written" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding NvmeDataWrittenDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Data Read" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding NvmeDataReadDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Power Cycles" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding NvmePowerCyclesDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Unsafe Shutdowns" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding NvmeUnsafeShutdownsDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Media Errors" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding NvmeMediaErrorsDisplay}" FontSize="11" Margin="0,0,0,3"/>
-
-                                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Controller Busy Time" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,3"/>
-                                                    <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding NvmeControllerBusyTimeDisplay}" FontSize="11" Margin="0,0,0,3"/>
-                                                </Grid>
-                                            </StackPanel>
-
-                                            <!-- Fallback note (non-NVMe, non-SATA) -->
-                                            <TextBlock Text="Raw SMART attributes are not available for this drive."
-                                                       FontSize="10" FontStyle="Italic" Margin="0,8,0,0"
-                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                        <Style.Triggers>
-                                                            <MultiDataTrigger>
-                                                                <MultiDataTrigger.Conditions>
-                                                                    <Condition Binding="{Binding SmartSupported}" Value="False"/>
-                                                                    <Condition Binding="{Binding IsNvme}" Value="False"/>
-                                                                </MultiDataTrigger.Conditions>
-                                                                <Setter Property="Visibility" Value="Visible"/>
-                                                            </MultiDataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{loc:Loc LabelSpeed}" FontSize="10"
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding SpeedText}" FontSize="13" FontWeight="SemiBold"/>
                                         </StackPanel>
-                                    </StackPanel>
-                                </ScrollViewer>
-                            </TabItem>
 
-                            <!-- Progress Tab (visible when selected drive is running) -->
-                            <TabItem Header="Progress"
-                                     DataContext="{Binding DataContext.SelectedDriveItem, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
-                                     Visibility="{Binding IsRunning, FallbackValue=Collapsed, Converter={StaticResource BoolToVis}}">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,10">
-                                    <StackPanel Margin="14,10">
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="{loc:Loc LabelErrors}" FontSize="10"
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding ErrorCount}" FontSize="13" FontWeight="SemiBold"
+                                                       Foreground="{Binding ErrorCount, Converter={StaticResource HealthColor}}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
 
-                                        <!-- Phase steps -->
-                                        <ItemsControl ItemsSource="{Binding Phases}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <CheckBox IsChecked="{Binding IsDone, Mode=OneWay}"
-                                                              IsHitTestVisible="False" Focusable="False"
-                                                              Content="{Binding Name}" Margin="0,2,0,2">
-                                                        <CheckBox.Foreground>
-                                                            <Binding Path="Status" Converter="{StaticResource PhaseColor}"/>
-                                                        </CheckBox.Foreground>
-                                                        <CheckBox.Style>
-                                                            <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </CheckBox.Style>
-                                                    </CheckBox>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
+                                </StackPanel> <!-- end zoomable content -->
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </ui:Card>
 
-                                        <!-- Visualization bitmap -->
-                                        <Border Background="#1A1A2E" CornerRadius="4"
-                                                Height="32" ClipToBounds="True" Margin="0,10,0,0">
-                                            <Image Source="{Binding VisualizationBitmap}"
-                                                   Stretch="Fill"
-                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                   Visibility="{Binding VisualizationBitmap, Converter={StaticResource NullToVis}}"/>
-                                        </Border>
+                <!-- RIGHT PANE: Actions (Column 3) -->
+                <ui:Card Grid.Column="3" Padding="0"
+                         VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="14,12">
 
-                                        <!-- Stats -->
-                                        <Grid Margin="0,10,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
+                            <!-- Operations Dashboard (visible during scanning) -->
+                            <StackPanel Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}">
 
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock Text="Progress" FontSize="10"
-                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                <TextBlock Text="{Binding Progress, StringFormat={}{0:F1}%}"
-                                                           FontSize="13" FontWeight="SemiBold"/>
-                                            </StackPanel>
+                                <StackPanel HorizontalAlignment="Center" Margin="0,0,0,14">
+                                    <TextBlock Text="{Binding AggregateTimeRemaining}"
+                                               FontSize="28" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{loc:Loc Remaining}" FontSize="11"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
 
-                                            <StackPanel Grid.Column="1">
-                                                <TextBlock Text="Speed" FontSize="10"
-                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                <TextBlock Text="{Binding SpeedText}" FontSize="13" FontWeight="SemiBold"/>
-                                            </StackPanel>
-
-                                            <StackPanel Grid.Column="2">
-                                                <TextBlock Text="Errors" FontSize="10"
-                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                <TextBlock Text="{Binding ErrorCount}" FontSize="13" FontWeight="SemiBold"
-                                                           Foreground="{Binding ErrorCount, Converter={StaticResource HealthColor}}"/>
-                                            </StackPanel>
-                                        </Grid>
-
-                                    </StackPanel>
-                                </ScrollViewer>
-                            </TabItem>
-                        </TabControl>
-                    </Border>
-                </Grid>
-            </ui:Card>
-
-            <!-- Right: Actions + Settings Panel -->
-            <ui:Card Grid.Column="1" Padding="0"
-                     VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="16,14">
-
-                        <!-- Operations Dashboard (visible during scanning) -->
-                        <StackPanel Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}}">
-
-                            <!-- Time Remaining -->
-                            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,14">
-                                <TextBlock Text="{Binding AggregateTimeRemaining}"
-                                           FontSize="28" FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Text="remaining" FontSize="11"
+                                <ProgressBar Value="{Binding AggregateProgress}" Minimum="0" Maximum="100"
+                                             Height="8" Margin="0,0,0,8"/>
+                                <TextBlock Text="{Binding OperationSummary}" FontSize="12"
                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                           HorizontalAlignment="Center"/>
+                                           HorizontalAlignment="Center" Margin="0,0,0,16"/>
+
+                                <ui:Button Content="{loc:Loc CancelOperation}" Appearance="Danger"
+                                           Command="{Binding CancelCommand}"
+                                           HorizontalAlignment="Stretch" Margin="0,0,0,12"/>
                             </StackPanel>
 
-                            <!-- Overall Progress -->
-                            <ProgressBar Value="{Binding AggregateProgress}" Minimum="0" Maximum="100"
-                                         Height="8" Margin="0,0,0,8"/>
-                            <TextBlock Text="{Binding OperationSummary}" FontSize="12"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                            <!-- Actions (hidden when running) -->
+                            <StackPanel Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}">
 
-                            <!-- Cancel -->
-                            <ui:Button Content="Cancel Operation" Appearance="Danger"
-                                    Command="{Binding CancelCommand}"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,12"/>
+                                <!-- Surface Check -->
+                                <TextBlock Text="{loc:Loc SurfaceCheck}" FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,4"/>
+                                <TextBlock TextWrapping="Wrap" FontSize="11"
+                                           Text="{loc:Loc SurfaceCheckDesc2}"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,8"/>
+                                <ui:Button Content="{loc:Loc RunSurfaceCheck}" Appearance="Primary"
+                                           Command="{Binding RunSurfaceCheckCommand}"
+                                           HorizontalAlignment="Stretch" Margin="0,0,0,14"
+                                           ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
+
+                                <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,12"/>
+
+                                <!-- Wipe -->
+                                <TextBlock Text="{loc:Loc Wipe}" FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{StaticResource AccentRedBrush}" Margin="0,0,0,4"/>
+                                <TextBlock TextWrapping="Wrap" FontSize="11"
+                                           Text="{loc:Loc WipeDesc2}"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,8"/>
+
+                                <!-- Collapsible wipe options -->
+                                <Expander Margin="0,0,0,8" Padding="0" IsExpanded="False">
+                                    <Expander.Header>
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                                            <Run Text="{Binding SelectedWipeMode, Mode=OneWay}"/>
+                                            <Run Text=" &#x2022; "/>
+                                            <Run Text="{Binding SelectedWipeMethod, Mode=OneWay}"/>
+                                            <Run Text="{Binding VerifyAfterWipe, Mode=OneWay, StringFormat=' &#x2022; Verify: {0}'}"/>
+                                        </TextBlock>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,6,0,0">
+                                        <TextBlock Text="{loc:Loc WipeModeColon}" FontSize="11" Margin="0,0,0,3"/>
+                                        <RadioButton Content="{loc:Loc WipeModeSmartWipeDesc}" FontSize="11"
+                                                     IsChecked="{Binding SelectedWipeMode, Converter={StaticResource EnumToBool}, ConverterParameter=SmartWipe}"
+                                                     GroupName="WipeMode"/>
+                                        <RadioButton Content="{loc:Loc WipeModeFullWipeDesc}" FontSize="11"
+                                                     IsChecked="{Binding SelectedWipeMode, Converter={StaticResource EnumToBool}, ConverterParameter=FullWipe}"
+                                                     GroupName="WipeMode" Margin="0,2,0,6"/>
+
+                                        <TextBlock Text="{loc:Loc FillMethodColon}" FontSize="11" Margin="0,0,0,3"/>
+                                        <RadioButton Content="{loc:Loc WipeMethodZeroFillDesc}" FontSize="11"
+                                                     IsChecked="{Binding SelectedWipeMethod, Converter={StaticResource EnumToBool}, ConverterParameter=ZeroFill}"
+                                                     GroupName="WipeMethod"/>
+                                        <RadioButton Content="{loc:Loc WipeMethodRandomFillDesc}" FontSize="11"
+                                                     IsChecked="{Binding SelectedWipeMethod, Converter={StaticResource EnumToBool}, ConverterParameter=RandomFill}"
+                                                     GroupName="WipeMethod"/>
+                                        <RadioButton Content="{loc:Loc WipeMethodRandomZeroDesc}" FontSize="11"
+                                                     IsChecked="{Binding SelectedWipeMethod, Converter={StaticResource EnumToBool}, ConverterParameter=RandomThenZero}"
+                                                     GroupName="WipeMethod" Margin="0,2,0,6"/>
+
+                                        <CheckBox Content="{loc:Loc VerifyAfterWipe}" FontSize="11"
+                                                  IsChecked="{Binding VerifyAfterWipe}"/>
+                                    </StackPanel>
+                                </Expander>
+
+                                <ui:Button Content="{loc:Loc WipeSelectedDrives}" Appearance="Danger"
+                                           Command="{Binding RunWipeCommand}"
+                                           HorizontalAlignment="Stretch" Margin="0,0,0,14"
+                                           ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
+
+                                <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,12"/>
+
+                                <!-- Check & Wipe -->
+                                <TextBlock Text="{loc:Loc CheckAndWipe}" FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{StaticResource AccentAmberBrush}" Margin="0,0,0,4"/>
+                                <TextBlock TextWrapping="Wrap" FontSize="11"
+                                           Text="{loc:Loc CheckAndWipeDesc2}"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,8"/>
+                                <ui:Button Content="{loc:Loc RunCheckAndWipe}" Appearance="Caution"
+                                           Command="{Binding RunCheckAndWipeCommand}"
+                                           HorizontalAlignment="Stretch"
+                                           ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
+                            </StackPanel>
+
                         </StackPanel>
-
-                        <!-- Settings Section (hidden when running) -->
-                        <StackPanel Visibility="{Binding IsScanning, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}">
-
-                            <!-- Surface Check Section -->
-                            <TextBlock Text="Surface Check" FontSize="14" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,6"/>
-                            <TextBlock TextWrapping="Wrap" FontSize="11.5"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,10">
-                                Randomly samples sectors to detect read errors and residual data.
-                                Safe — read-only operation.
-                            </TextBlock>
-                            <ui:Button Content="Run Surface Check" Appearance="Primary"
-                                    Command="{Binding RunSurfaceCheckCommand}"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"
-                                    ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
-
-                            <!-- Separator -->
-                            <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,14"/>
-
-                            <!-- Wipe Section -->
-                            <TextBlock Text="Wipe" FontSize="14" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AccentRedBrush}" Margin="0,0,0,6"/>
-                            <TextBlock TextWrapping="Wrap" FontSize="11.5"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,10">
-                                Overwrites drive data. This permanently destroys all data and cannot be undone.
-                            </TextBlock>
-
-                            <!-- Wipe Mode -->
-                            <TextBlock Text="Wipe mode:" FontSize="12" Margin="0,0,0,4"/>
-                            <RadioButton Content="Smart Wipe (head + tail + scatter)"
-                                         IsChecked="{Binding SelectedWipeMode, Converter={StaticResource EnumToBool}, ConverterParameter=SmartWipe}"
-                                         GroupName="WipeMode"/>
-                            <RadioButton Content="Full Wipe (every sector)"
-                                         IsChecked="{Binding SelectedWipeMode, Converter={StaticResource EnumToBool}, ConverterParameter=FullWipe}"
-                                         GroupName="WipeMode" Margin="0,3,0,8"/>
-
-                            <!-- Fill Method -->
-                            <TextBlock Text="Fill method:" FontSize="12" Margin="0,0,0,4"/>
-                            <RadioButton Content="Zero fill (fast)"
-                                         IsChecked="{Binding SelectedWipeMethod, Converter={StaticResource EnumToBool}, ConverterParameter=ZeroFill}"
-                                         GroupName="WipeMethod"/>
-                            <RadioButton Content="Random fill"
-                                         IsChecked="{Binding SelectedWipeMethod, Converter={StaticResource EnumToBool}, ConverterParameter=RandomFill}"
-                                         GroupName="WipeMethod"/>
-                            <RadioButton Content="Random + zero (2 passes)"
-                                         IsChecked="{Binding SelectedWipeMethod, Converter={StaticResource EnumToBool}, ConverterParameter=RandomThenZero}"
-                                         GroupName="WipeMethod" Margin="0,3,0,8"/>
-
-                            <!-- Verify option -->
-                            <CheckBox Content="Verify after wipe"
-                                      IsChecked="{Binding VerifyAfterWipe}" Margin="0,0,0,12"/>
-
-                            <ui:Button Content="Wipe Selected Drives" Appearance="Danger"
-                                    Command="{Binding RunWipeCommand}"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"
-                                    ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
-
-                            <!-- Separator -->
-                            <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,14"/>
-
-                            <!-- Check &amp; Wipe Combined -->
-                            <TextBlock Text="Check &amp; Wipe" FontSize="14" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AccentAmberBrush}" Margin="0,0,0,6"/>
-                            <TextBlock TextWrapping="Wrap" FontSize="11.5"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,10">
-                                Runs surface check first, then automatically wipes if the drive passes.
-                                If issues are found, you'll be asked whether to continue.
-                            </TextBlock>
-                            <ui:Button Content="Check &amp; Wipe" Appearance="Caution"
-                                    Command="{Binding RunCheckAndWipeCommand}"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"
-                                    ToolTip="{Binding LicenseBannerVisible, Converter={StaticResource LicenseTooltip}}"/>
-
-                            <!-- Separator -->
-                            <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,0,0,14"/>
-
-                            <!-- Tips -->
-                            <ui:Card Padding="12,10">
-                                <StackPanel>
-                                    <TextBlock Text="Tips" FontSize="12" FontWeight="SemiBold"
-                                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,6"/>
-                                    <TextBlock TextWrapping="Wrap" FontSize="11"
-                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" LineHeight="18">
-                                        &#x2022; Run a surface check first to assess drive health&#x0a;
-                                        &#x2022; Smart Wipe is fast — destroys FS structures + scatters data&#x0a;
-                                        &#x2022; Full Wipe overwrites every sector (slow but thorough)&#x0a;
-                                        &#x2022; System drives are automatically protected&#x0a;
-                                        &#x2022; Multiple drives are processed in parallel&#x0a;
-                                        &#x2022; Save reports for your records
-                                    </TextBlock>
-                                </StackPanel>
-                            </ui:Card>
-
-                            <!-- Separator -->
-                            <Border Height="1" Background="{DynamicResource ControlElevationBorderBrush}" Margin="0,14,0,14"/>
-
-                            <!-- About -->
-                            <ui:Card Padding="12,10">
-                                <StackPanel>
-                                    <Image Source="/Assets/logo-full.jpeg" Height="60"
-                                           HorizontalAlignment="Left" Margin="0,0,0,8"
-                                           RenderOptions.BitmapScalingMode="HighQuality"/>
-                                    <TextBlock Text="Pragmatic Peace of Mind" FontSize="12" FontWeight="SemiBold"
-                                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,6"/>
-                                    <TextBlock TextWrapping="Wrap" FontSize="11"
-                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" LineHeight="18">
-                                        DriveFlip is built for the "good enough" reality of hardware recycling: since NAS data is already fragmented across multiple disks, wiping even one drive with our random-pattern pass makes reconstruction mathematically exhausting. We don't promise a forensic-proof fortress; we provide a sensible, high-speed hurdle that turns "recovering your data" into an expensive, impractical fool's errand for the next owner.
-                                    </TextBlock>
-                                </StackPanel>
-                            </ui:Card>
-                        </StackPanel>
-
-                    </StackPanel>
-                </ScrollViewer>
-            </ui:Card>
-        </Grid>
+                    </ScrollViewer>
+                </ui:Card>
+            </Grid>
         </Grid>
 
         <!-- STATUS BAR -->
@@ -1098,9 +1122,8 @@
                         <TextBlock Text="{Binding LicenseStatusText}" FontSize="10" FontWeight="Bold" Foreground="White"/>
                     </Border>
                     <TextBlock FontSize="11"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-                        <Run Text="Requires Administrator"/>
-                    </TextBlock>
+                               Text="{loc:Loc RequiresAdministrator}"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -1108,10 +1131,8 @@
         <!-- LICENSE MODAL OVERLAY (covers entire window) -->
         <Grid Grid.Row="0" Grid.RowSpan="3"
               Visibility="{Binding IsLicenseSettingsOpen, Converter={StaticResource BoolToVis}}">
-            <!-- Dimming backdrop -->
             <Border Background="#AA000000" MouseLeftButtonUp="LicenseOverlayBackdrop_Click"/>
 
-            <!-- Centered dialog -->
             <Border Background="#2B2B3D" BorderBrush="#50506A" BorderThickness="1"
                     CornerRadius="10" Padding="24,20" Width="400"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -1119,17 +1140,15 @@
                     <DropShadowEffect BlurRadius="40" ShadowDepth="8" Opacity="0.7" Color="Black"/>
                 </Border.Effect>
                 <StackPanel>
-                    <!-- Header -->
                     <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="License Activation" FontSize="16" FontWeight="SemiBold"
+                        <TextBlock Text="{loc:Loc LicenseActivation}" FontSize="16" FontWeight="SemiBold"
                                    Foreground="{StaticResource AccentBlueBrush}"/>
                     </Grid>
 
-                    <!-- Current license info (when licensed) -->
                     <StackPanel Visibility="{Binding IsLicensed, Converter={StaticResource BoolToVis}}"
                                 Margin="0,0,0,14">
                         <Grid>
@@ -1143,21 +1162,20 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Licensee" FontSize="12"
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc Licensee}" FontSize="12"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding LicenseeDisplay}" FontSize="12" Margin="0,0,0,4"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Edition" FontSize="12"
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc Edition}" FontSize="12"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding LicenseEditionDisplay}" FontSize="12" Margin="0,0,0,4"/>
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Expires" FontSize="12"
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc Expires}" FontSize="12"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding LicenseExpiresDisplay}" FontSize="12" Margin="0,0,0,4"/>
                         </Grid>
                         <Border Height="1" Background="#50506A" Margin="0,10,0,0"/>
                     </StackPanel>
 
-                    <!-- License key input -->
-                    <TextBlock Text="License Key" FontSize="12"
+                    <TextBlock Text="{loc:Loc LicenseKeyLabel}" FontSize="12"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,6"/>
                     <ui:TextBox Text="{Binding LicenseKeyInput, UpdateSourceTrigger=PropertyChanged}"
                                 PlaceholderText="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -1165,42 +1183,82 @@
                                 PreviewTextInput="LicenseKey_PreviewTextInput"
                                 DataObject.Pasting="LicenseKey_Pasting"/>
 
-                    <!-- Error message (inside modal) -->
                     <TextBlock Text="{Binding LicenseErrorMessage}" FontSize="11" TextWrapping="Wrap"
                                Foreground="{StaticResource AccentRedBrush}" Margin="0,0,0,6"
                                Visibility="{Binding HasLicenseError, Converter={StaticResource BoolToVis}}"/>
 
-                    <!-- Loading spinner -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6"
                                 Visibility="{Binding IsActivatingLicense, Converter={StaticResource BoolToVis}}">
                         <ui:ProgressRing IsIndeterminate="True" Width="16" Height="16" Margin="0,0,8,0"/>
-                        <TextBlock Text="Activating license..." FontSize="12"
+                        <TextBlock Text="{loc:Loc ActivatingLicense}" FontSize="12"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <!-- Spacer before buttons -->
                     <Border Height="8"/>
 
-                    <!-- Buttons -->
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <ui:Button Grid.Column="0" Content="Cancel" Appearance="Secondary"
+                        <ui:Button Grid.Column="0" Content="{loc:Loc Cancel}" Appearance="Secondary"
                                    Command="{Binding ToggleLicenseSettingsCommand}"
                                    Padding="16,8" FontSize="12" HorizontalAlignment="Left"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <ui:Button Content="Revalidate" Appearance="Secondary"
+                            <ui:Button Content="{loc:Loc Revalidate}" Appearance="Secondary"
                                        Command="{Binding RevalidateLicenseCommand}"
                                        Padding="16,8" FontSize="12" Margin="0,0,8,0"
                                        Visibility="{Binding IsLicensed, Converter={StaticResource BoolToVis}}"/>
-                            <ui:Button Content="Activate" Appearance="Primary"
+                            <ui:Button Content="{loc:Loc Activate}" Appearance="Primary"
                                        Command="{Binding ActivateLicenseCommand}"
                                        Padding="16,8" FontSize="12"/>
                         </StackPanel>
                     </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ABOUT MODAL OVERLAY (covers entire window) -->
+        <Grid Grid.Row="0" Grid.RowSpan="3"
+              Visibility="{Binding IsAboutOpen, Converter={StaticResource BoolToVis}}">
+            <Border Background="#AA000000"/>
+
+            <Border Background="#2B2B3D" BorderBrush="#50506A" BorderThickness="1"
+                    CornerRadius="10" Padding="28,24" Width="460"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="40" ShadowDepth="8" Opacity="0.7" Color="Black"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="{loc:Loc AboutTitle}" FontSize="22" FontWeight="Bold"
+                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,2"/>
+                    <TextBlock FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"
+                               Text="{loc:Loc AboutSubtitle}"/>
+                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Margin="0,0,0,14">
+                        <Run Text="{loc:Loc AboutVersionPrefix}"/>
+                        <Run Text="{Binding AppVersion, Mode=OneWay}"/>
+                    </TextBlock>
+
+                    <TextBlock Text="{loc:Loc AboutTaglineText}" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,8"/>
+                    <TextBlock TextWrapping="Wrap" FontSize="13"
+                               Text="{loc:Loc AboutDescriptionFull}"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" LineHeight="20"/>
+
+                    <Border Height="1" Background="#50506A" Margin="0,16,0,14"/>
+                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">
+                        <Run Text="{loc:Loc AboutLicenseLabel}"/>
+                        <Run Text="  "/>
+                        <Run Text="{Binding LicenseStatusText, Mode=OneWay}"/>
+                    </TextBlock>
+                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Margin="0,4,0,0"
+                               Text="{loc:Loc AboutRequiresAdmin}"/>
+
+                    <ui:Button Content="{loc:Loc AboutClose}" Appearance="Secondary"
+                               Command="{Binding ToggleAboutCommand}"
+                               HorizontalAlignment="Right" Margin="0,18,0,0"
+                               Padding="20,8" FontSize="12"/>
                 </StackPanel>
             </Border>
         </Grid>

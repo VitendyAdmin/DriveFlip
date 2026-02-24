@@ -1,0 +1,1251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML://headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Coverage" type="System.Int32, mscorlib">0</data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">[base64 mime encoded string representing a byte array form of the .NET Framework object]</data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    temporary storage of the resource file that the data needs to be
+    persisted. This is a problem because some types of data cannot
+    be serialized and stored in this fashion.
+
+    There is also a requirement not to store data in the RESX file
+    that would make the file dependent on a specific platform. That
+    is, don't include type references in the RESX file, so that the
+    data can be cross-platform compatible.
+  -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Window/Header -->
+  <data name="WindowTitle" xml:space="preserve">
+    <value>DriveFlip — Kontrola powierzchni i przygotowanie dysk&#xF3;w</value>
+  </data>
+  <data name="AppSubtitle" xml:space="preserve">
+    <value>Bez czekania. Losowe wymazanie i gotowe.</value>
+  </data>
+  <data name="TooltipAbout" xml:space="preserve">
+    <value>O programie</value>
+  </data>
+  <data name="TooltipSettings" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+
+  <!-- Settings Panel -->
+  <data name="Settings" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="SettingSurfaceCheck" xml:space="preserve">
+    <value>Kontrola powierzchni:</value>
+  </data>
+  <data name="SettingHeadTailWipe" xml:space="preserve">
+    <value>Wymazywanie pocz&#x105;tku/ko&#x144;ca:</value>
+  </data>
+  <data name="SettingScatterWipe" xml:space="preserve">
+    <value>Wymazywanie rozproszone:</value>
+  </data>
+  <data name="SettingPasses" xml:space="preserve">
+    <value>Przebiegi:</value>
+  </data>
+  <data name="SettingProtectSystem" xml:space="preserve">
+    <value>Chro&#x144; dysk systemowy</value>
+  </data>
+  <data name="SettingProtectSystemTooltip" xml:space="preserve">
+    <value>Zapobiega wybraniu dysku systemowego (C:) do operacji.</value>
+  </data>
+  <data name="SettingProtectInternal" xml:space="preserve">
+    <value>Chro&#x144; dyski wewn&#x119;trzne</value>
+  </data>
+  <data name="SettingProtectInternalTooltip" xml:space="preserve">
+    <value>Zapobiega wybraniu wszystkich niewymiennych (wewn&#x119;trznych) dysk&#xF3;w do operacji.</value>
+  </data>
+  <data name="SettingAdvanced" xml:space="preserve">
+    <value>Zaawansowane</value>
+  </data>
+  <data name="SettingDebugExport" xml:space="preserve">
+    <value>Poka&#x17C; przycisk eksportu debugowania</value>
+  </data>
+  <data name="SettingDebugExportTooltip" xml:space="preserve">
+    <value>Wy&#x15B;wietla przycisk eksportu danych debugowania w panelu szczeg&#xF3;&#x142;&#xF3;w dysku.</value>
+  </data>
+  <data name="SettingQuickFormat" xml:space="preserve">
+    <value>Szybkie formatowanie po wymazaniu</value>
+  </data>
+  <data name="SettingQuickFormatTooltip" xml:space="preserve">
+    <value>Po udanym wymazaniu inicjalizuje dysk jako GPT i tworzy pojedyncz&#x105; partycj&#x119; NTFS.</value>
+  </data>
+  <data name="SettingAssignLetter" xml:space="preserve">
+    <value>Przypisz liter&#x119; dysku po wymazaniu</value>
+  </data>
+  <data name="SettingAssignLetterTooltip" xml:space="preserve">
+    <value>Po sformatowaniu przypisuje nast&#x119;pn&#x105; dost&#x119;pn&#x105; liter&#x119; dysku.</value>
+  </data>
+  <data name="SettingLogLevel" xml:space="preserve">
+    <value>Poziom logowania:</value>
+  </data>
+  <data name="SettingLogLevelTooltip" xml:space="preserve">
+    <value>Kontroluje ilo&#x15B;&#x107; szczeg&#xF3;&#x142;&#xF3;w zapisywanych do pliku dziennika. Ni&#x17C;sze poziomy generuj&#x105; wi&#x119;cej danych.</value>
+  </data>
+  <data name="SettingLanguage" xml:space="preserve">
+    <value>J&#x119;zyk:</value>
+  </data>
+
+  <!-- License Banner -->
+  <data name="LicenseRequired" xml:space="preserve">
+    <value>Wymagana licencja</value>
+  </data>
+  <data name="LicenseBannerText" xml:space="preserve">
+    <value>Aktywuj licencj&#x119;, aby odblokowa&#x107; kontrol&#x119; powierzchni, wymazywanie oraz kontrol&#x119; i wymazywanie.</value>
+  </data>
+  <data name="ActivateLicense" xml:space="preserve">
+    <value>Aktywuj licencj&#x119;</value>
+  </data>
+  <data name="LicenseTooltip" xml:space="preserve">
+    <value>Do korzystania z tej funkcji wymagana jest licencja</value>
+  </data>
+
+  <!-- Drive List -->
+  <data name="Drives" xml:space="preserve">
+    <value>Dyski</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Od&#x15B;wie&#x17C;</value>
+  </data>
+  <data name="ExternalOnly" xml:space="preserve">
+    <value>Tylko zewn&#x119;trzne</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Wszystkie</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>&#x17B;aden</value>
+  </data>
+  <data name="BadgeSys" xml:space="preserve">
+    <value>SYS</value>
+  </data>
+  <data name="BadgePass" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="BadgeFail" xml:space="preserve">
+    <value>B&#x141;&#x104;D</value>
+  </data>
+  <data name="SelectDrivePlaceholder" xml:space="preserve">
+    <value>Wybierz dysk, aby wy&#x15B;wietli&#x107; szczeg&#xF3;&#x142;y</value>
+  </data>
+
+  <!-- Center Pane - Drive Info -->
+  <data name="DriveInfo" xml:space="preserve">
+    <value>Informacje o dysku</value>
+  </data>
+  <data name="CopyInfo" xml:space="preserve">
+    <value>Kopiuj informacje</value>
+  </data>
+  <data name="DumpRawData" xml:space="preserve">
+    <value>Eksportuj surowe dane</value>
+  </data>
+  <data name="TooltipZoomIn" xml:space="preserve">
+    <value>Zwi&#x119;ksz rozmiar tekstu (Ctrl++)</value>
+  </data>
+  <data name="TooltipZoomOut" xml:space="preserve">
+    <value>Zmniejsz rozmiar tekstu (Ctrl+-)</value>
+  </data>
+  <data name="TooltipZoomReset" xml:space="preserve">
+    <value>Przywr&#xF3;&#x107; rozmiar tekstu</value>
+  </data>
+
+  <!-- Center Pane - Drive Info Grid Labels -->
+  <data name="LabelManufacturer" xml:space="preserve">
+    <value>Producent</value>
+  </data>
+  <data name="LabelModel" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="LabelSerial" xml:space="preserve">
+    <value>Numer seryjny</value>
+  </data>
+  <data name="LabelFirmware" xml:space="preserve">
+    <value>Firmware</value>
+  </data>
+  <data name="LabelPartNumber" xml:space="preserve">
+    <value>Numer katalogowy</value>
+  </data>
+  <data name="LabelMfgDate" xml:space="preserve">
+    <value>Data produkcji</value>
+  </data>
+  <data name="LabelInterface" xml:space="preserve">
+    <value>Interfejs</value>
+  </data>
+  <data name="LabelMediaType" xml:space="preserve">
+    <value>Typ no&#x15B;nika</value>
+  </data>
+  <data name="LabelSectorSize" xml:space="preserve">
+    <value>Rozmiar sektora</value>
+  </data>
+  <data name="LabelPartitions" xml:space="preserve">
+    <value>Partycje</value>
+  </data>
+  <data name="LabelVolumes" xml:space="preserve">
+    <value>Woluminy</value>
+  </data>
+  <data name="LabelCapacity" xml:space="preserve">
+    <value>Pojemno&#x15B;&#x107;</value>
+  </data>
+  <data name="LabelBusType" xml:space="preserve">
+    <value>Typ magistrali</value>
+  </data>
+  <data name="LabelTransferMode" xml:space="preserve">
+    <value>Tryb transferu</value>
+  </data>
+  <data name="LabelFeatures" xml:space="preserve">
+    <value>Funkcje</value>
+  </data>
+  <data name="LabelUsbBridge" xml:space="preserve">
+    <value>Mostek USB</value>
+  </data>
+
+  <!-- Center Pane - Health -->
+  <data name="Health" xml:space="preserve">
+    <value>Kondycja</value>
+  </data>
+  <data name="HealthSummary" xml:space="preserve">
+    <value>Podsumowanie kondycji</value>
+  </data>
+  <data name="GetSmartData" xml:space="preserve">
+    <value>Pobierz dane SMART</value>
+  </data>
+  <data name="LoadingSmartData" xml:space="preserve">
+    <value>Pobieranie danych SMART...</value>
+  </data>
+  <data name="SmartNotAvailable" xml:space="preserve">
+    <value>Surowe atrybuty SMART nie s&#x105; dost&#x119;pne dla tego dysku.</value>
+  </data>
+  <data name="SmartAttributes" xml:space="preserve">
+    <value>Atrybuty SMART</value>
+  </data>
+  <data name="NvmeHealthLog" xml:space="preserve">
+    <value>Dziennik kondycji NVMe</value>
+  </data>
+
+  <!-- Health Grid Labels -->
+  <data name="LabelHealthStatus" xml:space="preserve">
+    <value>Stan</value>
+  </data>
+  <data name="LabelTemperature" xml:space="preserve">
+    <value>Temperatura</value>
+  </data>
+  <data name="LabelPowerOnHours" xml:space="preserve">
+    <value>Godziny pracy</value>
+  </data>
+  <data name="LabelReadErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy odczytu</value>
+  </data>
+  <data name="LabelWriteErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy zapisu</value>
+  </data>
+  <data name="LabelSsdWear" xml:space="preserve">
+    <value>Zu&#x17C;ycie SSD</value>
+  </data>
+  <data name="LabelSpindleSpeed" xml:space="preserve">
+    <value>Pr&#x119;dko&#x15B;&#x107; obrotowa</value>
+  </data>
+  <data name="LabelReadCorrected" xml:space="preserve">
+    <value>Odczyt skorygowany</value>
+  </data>
+  <data name="LabelReadUncorrected" xml:space="preserve">
+    <value>Odczyt nieskorygowany</value>
+  </data>
+  <data name="LabelWriteCorrected" xml:space="preserve">
+    <value>Zapis skorygowany</value>
+  </data>
+  <data name="LabelWriteUncorrected" xml:space="preserve">
+    <value>Zapis nieskorygowany</value>
+  </data>
+  <data name="LabelReadLatencyMax" xml:space="preserve">
+    <value>Maks. op&#xF3;&#x17A;nienie odczytu</value>
+  </data>
+  <data name="LabelWriteLatencyMax" xml:space="preserve">
+    <value>Maks. op&#xF3;&#x17A;nienie zapisu</value>
+  </data>
+  <data name="LabelFlushLatencyMax" xml:space="preserve">
+    <value>Maks. op&#xF3;&#x17A;nienie flush</value>
+  </data>
+  <data name="LabelStartStopCycles" xml:space="preserve">
+    <value>Cykle start/stop</value>
+  </data>
+  <data name="LabelWriteCache" xml:space="preserve">
+    <value>Pami&#x119;&#x107; podr&#x119;czna zapisu</value>
+  </data>
+  <data name="LabelPowerProtection" xml:space="preserve">
+    <value>Ochrona zasilania</value>
+  </data>
+  <data name="LabelLoadUnloadCycles" xml:space="preserve">
+    <value>Cykle &#x142;adowania/roz&#x142;adowania</value>
+  </data>
+
+  <!-- NVMe Health Labels -->
+  <data name="LabelNvmeAvailableSpare" xml:space="preserve">
+    <value>Dost&#x119;pna rezerwa</value>
+  </data>
+  <data name="LabelNvmePercentUsed" xml:space="preserve">
+    <value>Procent zu&#x17C;ycia</value>
+  </data>
+  <data name="LabelNvmeDataWritten" xml:space="preserve">
+    <value>Zapisane dane</value>
+  </data>
+  <data name="LabelNvmeDataRead" xml:space="preserve">
+    <value>Odczytane dane</value>
+  </data>
+  <data name="LabelNvmePowerCycles" xml:space="preserve">
+    <value>Cykle zasilania</value>
+  </data>
+  <data name="LabelNvmeUnsafeShutdowns" xml:space="preserve">
+    <value>Niebezpieczne wy&#x142;&#x105;czenia</value>
+  </data>
+  <data name="LabelNvmeMediaErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy no&#x15B;nika</value>
+  </data>
+  <data name="LabelNvmeBusyTime" xml:space="preserve">
+    <value>Zaj&#x119;to&#x15B;&#x107; kontrolera</value>
+  </data>
+
+  <!-- SMART Table Headers -->
+  <data name="SmartHeaderId" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="SmartHeaderName" xml:space="preserve">
+    <value>Atrybut</value>
+  </data>
+  <data name="SmartHeaderCurrent" xml:space="preserve">
+    <value>Bie&#x17C;.</value>
+  </data>
+  <data name="SmartHeaderWorst" xml:space="preserve">
+    <value>Najg.</value>
+  </data>
+  <data name="SmartHeaderThreshold" xml:space="preserve">
+    <value>Pr&#xF3;g</value>
+  </data>
+  <data name="SmartHeaderRaw" xml:space="preserve">
+    <value>Warto&#x15B;&#x107; surowa</value>
+  </data>
+
+  <!-- Risk Summary -->
+  <data name="RiskSummaryLabel" xml:space="preserve">
+    <value>Podsumowanie ryzyka</value>
+  </data>
+
+  <!-- Progress Section -->
+  <data name="Progress" xml:space="preserve">
+    <value>Post&#x119;p</value>
+  </data>
+  <data name="LabelErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy</value>
+  </data>
+  <data name="LabelDataPresence" xml:space="preserve">
+    <value>Dane</value>
+  </data>
+  <data name="LabelSpeed" xml:space="preserve">
+    <value>Pr&#x119;dko&#x15B;&#x107;</value>
+  </data>
+
+  <!-- Right Pane - Actions -->
+  <data name="SurfaceCheck" xml:space="preserve">
+    <value>Kontrola powierzchni</value>
+  </data>
+  <data name="SurfaceCheckDesc" xml:space="preserve">
+    <value>Test tylko do odczytu, kt&#xF3;ry pr&#xF3;bkuje losowe sektory w celu wykrycia b&#x142;&#x119;d&#xF3;w odczytu i obecno&#x15B;ci danych.</value>
+  </data>
+  <data name="RunSurfaceCheck" xml:space="preserve">
+    <value>Uruchom kontrol&#x119; powierzchni</value>
+  </data>
+  <data name="Wipe" xml:space="preserve">
+    <value>Wymazywanie</value>
+  </data>
+  <data name="WipeDesc" xml:space="preserve">
+    <value>Trwale niszczy wszystkie dane poprzez nadpisanie sektor&#xF3;w dysku.</value>
+  </data>
+  <data name="WipeSelectedDrives" xml:space="preserve">
+    <value>Wyma&#x17C; wybrane dyski</value>
+  </data>
+  <data name="CheckAndWipe" xml:space="preserve">
+    <value>Kontrola i wymazanie</value>
+  </data>
+  <data name="CheckAndWipeDesc" xml:space="preserve">
+    <value>Operacja dwufazowa: najpierw kontrola powierzchni, potem wymazanie je&#x15B;li test przejdzie pomy&#x15B;lnie.</value>
+  </data>
+  <data name="RunCheckAndWipe" xml:space="preserve">
+    <value>Uruchom kontrol&#x119; i wymazanie</value>
+  </data>
+
+  <!-- Wipe Options -->
+  <data name="WipeModeLabel" xml:space="preserve">
+    <value>Tryb</value>
+  </data>
+  <data name="WipeModeSmartWipe" xml:space="preserve">
+    <value>Inteligentne wymazywanie</value>
+  </data>
+  <data name="WipeModeFullWipe" xml:space="preserve">
+    <value>Pe&#x142;ne wymazywanie</value>
+  </data>
+  <data name="WipeMethodLabel" xml:space="preserve">
+    <value>Wype&#x142;nienie</value>
+  </data>
+  <data name="WipeMethodZeroFill" xml:space="preserve">
+    <value>Wype&#x142;nienie zerami</value>
+  </data>
+  <data name="WipeMethodRandomFill" xml:space="preserve">
+    <value>Losowe wype&#x142;nienie</value>
+  </data>
+  <data name="WipeMethodRandomZero" xml:space="preserve">
+    <value>Losowe + zerowe</value>
+  </data>
+  <data name="WipeVerifyLabel" xml:space="preserve">
+    <value>Weryfikacja po wymazaniu</value>
+  </data>
+
+  <!-- Operations Dashboard -->
+  <data name="TimeRemaining" xml:space="preserve">
+    <value>Pozosta&#x142;y czas</value>
+  </data>
+  <data name="MBps" xml:space="preserve">
+    <value>MB/s</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+
+  <!-- About Modal -->
+  <data name="AboutTitle" xml:space="preserve">
+    <value>DriveFlip</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Kontrola powierzchni i przygotowanie dysk&#xF3;w</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Wersja {0}</value>
+  </data>
+  <data name="AboutTagline" xml:space="preserve">
+    <value>Pragmatyczny spok&#xF3;j ducha</value>
+  </data>
+  <data name="AboutDescription" xml:space="preserve">
+    <value>DriveFlip pokazuje to, co wa&#x17C;ne &#x2014; dane o kondycji, flagi ryzyka i przydatne informacje &#x2014; dzi&#x119;ki czemu mo&#x17C;esz &#x15B;mia&#x142;o wycenia&#x107;, sprawnie wymazywa&#x107; i wysy&#x142;a&#x107; dyski, kt&#xF3;re nie wracaj&#x105;.</value>
+  </data>
+  <data name="AboutVersionPrefix" xml:space="preserve">
+    <value>Wersja </value>
+  </data>
+  <data name="AboutClose" xml:space="preserve">
+    <value>Zamknij</value>
+  </data>
+
+  <!-- License Modal -->
+  <data name="LicenseKeyLabel" xml:space="preserve">
+    <value>Klucz licencyjny</value>
+  </data>
+  <data name="LicenseKeyPlaceholder" xml:space="preserve">
+    <value>Wprowad&#x17A; klucz licencyjny...</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Aktywuj</value>
+  </data>
+  <data name="Activating" xml:space="preserve">
+    <value>Aktywowanie...</value>
+  </data>
+  <data name="LicenseTo" xml:space="preserve">
+    <value>Licencja dla:</value>
+  </data>
+  <data name="LicenseEdition" xml:space="preserve">
+    <value>Edycja:</value>
+  </data>
+  <data name="LicenseExpires" xml:space="preserve">
+    <value>Wyga&#x15B;ni&#x119;cie:</value>
+  </data>
+  <data name="Revalidate" xml:space="preserve">
+    <value>Ponowna walidacja</value>
+  </data>
+  <data name="LicenseSettingsLabel" xml:space="preserve">
+    <value>Ustawienia licencji</value>
+  </data>
+  <data name="EndpointUrl" xml:space="preserve">
+    <value>Adres URL punktu ko&#x144;cowego</value>
+  </data>
+
+  <!-- Global Status Messages -->
+  <data name="StatusReady" xml:space="preserve">
+    <value>Wybierz dyski i wybierz operacj&#x119;.</value>
+  </data>
+  <data name="StatusDetectingDrives" xml:space="preserve">
+    <value>Wykrywanie dysk&#xF3;w...</value>
+  </data>
+  <data name="StatusFoundDrivesQuerying" xml:space="preserve">
+    <value>Znaleziono {0} dysk(&#xF3;w). Pobieranie danych o kondycji...</value>
+  </data>
+  <data name="StatusFoundDrivesReady" xml:space="preserve">
+    <value>Znaleziono {0} dysk(&#xF3;w) fizycznych. Wybierz dyski i wybierz operacj&#x119;.</value>
+  </data>
+  <data name="StatusErrorDetecting" xml:space="preserve">
+    <value>B&#x142;&#x105;d wykrywania dysk&#xF3;w: {0}</value>
+  </data>
+  <data name="StatusNoSelection" xml:space="preserve">
+    <value>Nie wybrano dysk&#xF3;w niesystemowych.</value>
+  </data>
+  <data name="StatusRunningSurfaceCheck" xml:space="preserve">
+    <value>Trwa kontrola powierzchni...</value>
+  </data>
+  <data name="StatusSurfaceCheckComplete" xml:space="preserve">
+    <value>Kontrola powierzchni zako&#x144;czona.</value>
+  </data>
+  <data name="StatusWipingDrives" xml:space="preserve">
+    <value>Wymazywanie dysk&#xF3;w...</value>
+  </data>
+  <data name="StatusWipeComplete" xml:space="preserve">
+    <value>Operacja wymazywania zako&#x144;czona.</value>
+  </data>
+  <data name="StatusCheckWipeCancelled" xml:space="preserve">
+    <value>Kontrola i wymazanie anulowane.</value>
+  </data>
+  <data name="StatusCheckWipeStopped" xml:space="preserve">
+    <value>Kontrola i wymazanie zatrzymane po kontroli powierzchni. Sprawd&#x17A; wyniki powy&#x17C;ej.</value>
+  </data>
+  <data name="StatusCheckWipeComplete" xml:space="preserve">
+    <value>Kontrola i wymazanie zako&#x144;czone.</value>
+  </data>
+  <data name="StatusPhase1" xml:space="preserve">
+    <value>Faza 1: Trwa kontrola powierzchni...</value>
+  </data>
+  <data name="StatusPhase2" xml:space="preserve">
+    <value>Faza 2: Wymazywanie dysk&#xF3;w...</value>
+  </data>
+  <data name="StatusCancelling" xml:space="preserve">
+    <value>Anulowanie...</value>
+  </data>
+  <data name="StatusDumpingData" xml:space="preserve">
+    <value>Eksportowanie danych dla dysku {0}...</value>
+  </data>
+  <data name="StatusDataDumped" xml:space="preserve">
+    <value>Dane wyeksportowane do {0}</value>
+  </data>
+  <data name="StatusDataDumpCancelled" xml:space="preserve">
+    <value>Eksport danych anulowany.</value>
+  </data>
+  <data name="StatusListingCopied" xml:space="preserve">
+    <value>Lista dysk&#xF3;w skopiowana do schowka.</value>
+  </data>
+  <data name="StatusFormatting" xml:space="preserve">
+    <value>Formatowanie...</value>
+  </data>
+  <data name="StatusWipeFormatted" xml:space="preserve">
+    <value>Wymazywanie zako&#x144;czone &#x2014; sformatowano jako {0}</value>
+  </data>
+  <data name="StatusWipeFormatFailed" xml:space="preserve">
+    <value>Wymazywanie zako&#x144;czone &#x2014; formatowanie nie powiod&#x142;o si&#x119;: {0}</value>
+  </data>
+  <data name="StatusWipeCompleteShort" xml:space="preserve">
+    <value>Wymazywanie zako&#x144;czone</value>
+  </data>
+  <data name="StatusWipeIncomplete" xml:space="preserve">
+    <value>Wymazywanie nieuko&#x144;czone</value>
+  </data>
+  <data name="StatusHealthy" xml:space="preserve">
+    <value>Zdrowy</value>
+  </data>
+  <data name="StatusErrorsFound" xml:space="preserve">
+    <value>Znaleziono b&#x142;&#x119;dy</value>
+  </data>
+  <data name="StatusCancelled" xml:space="preserve">
+    <value>Anulowano</value>
+  </data>
+  <data name="StatusAccessDenied" xml:space="preserve">
+    <value>Odmowa dost&#x119;pu &#x2014; uruchom jako Administrator</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>B&#x142;&#x105;d: {0}</value>
+  </data>
+  <data name="StatusQueryFailed" xml:space="preserve">
+    <value>Zapytanie nie powiod&#x142;o si&#x119;</value>
+  </data>
+  <data name="StatusSmartQueryFailed" xml:space="preserve">
+    <value>Zapytanie SMART nie powiod&#x142;o si&#x119; dla dysku {0}: {1}</value>
+  </data>
+
+  <!-- License Status -->
+  <data name="LicenseStatusLicensed" xml:space="preserve">
+    <value>Licencjonowany</value>
+  </data>
+  <data name="LicenseStatusCachedOffline" xml:space="preserve">
+    <value>Licencjonowany (offline)</value>
+  </data>
+  <data name="LicenseStatusExpired" xml:space="preserve">
+    <value>Licencja wygas&#x142;a</value>
+  </data>
+  <data name="LicenseStatusInvalid" xml:space="preserve">
+    <value>Nieprawid&#x142;owa licencja</value>
+  </data>
+  <data name="LicenseStatusUnlicensed" xml:space="preserve">
+    <value>Brak licencji</value>
+  </data>
+  <data name="LicenseActivated" xml:space="preserve">
+    <value>Licencja aktywowana pomy&#x15B;lnie!</value>
+  </data>
+  <data name="LicenseRevalidating" xml:space="preserve">
+    <value>Ponowna walidacja licencji...</value>
+  </data>
+  <data name="LicenseRevalidated" xml:space="preserve">
+    <value>Licencja ponownie zwalidowana.</value>
+  </data>
+  <data name="LicenseRevalidationFailed" xml:space="preserve">
+    <value>Ponowna walidacja nie powiod&#x142;a si&#x119;.</value>
+  </data>
+  <data name="LicenseRevalidationError" xml:space="preserve">
+    <value>B&#x142;&#x105;d ponownej walidacji: {0}</value>
+  </data>
+  <data name="LicenseTooManyAttempts" xml:space="preserve">
+    <value>Zbyt wiele pr&#xF3;b. Spr&#xF3;buj ponownie za {0}m {1}s.</value>
+  </data>
+  <data name="LicenseTooManyAttemptsMinutes" xml:space="preserve">
+    <value>Zbyt wiele pr&#xF3;b. Spr&#xF3;buj ponownie za {0} minut.</value>
+  </data>
+  <data name="LicenseNoEndpoint" xml:space="preserve">
+    <value>Nie skonfigurowano punktu ko&#x144;cowego licencji.</value>
+  </data>
+  <data name="LicenseKeyExpired" xml:space="preserve">
+    <value>Ten klucz licencyjny wygas&#x142;.</value>
+  </data>
+  <data name="LicenseKeyInvalid" xml:space="preserve">
+    <value>Nieprawid&#x142;owy klucz licencyjny lub weryfikacja podpisu nie powiod&#x142;a si&#x119;.</value>
+  </data>
+  <data name="LicenseActivationFailed" xml:space="preserve">
+    <value>Aktywacja nie powiod&#x142;a si&#x119;: {0}</value>
+  </data>
+
+  <!-- Dialog Titles -->
+  <data name="DialogSystemDriveProtected" xml:space="preserve">
+    <value>Dysk systemowy chroniony</value>
+  </data>
+  <data name="DialogConfirmSurfaceCheck" xml:space="preserve">
+    <value>Potwierd&#x17A; kontrol&#x119; powierzchni</value>
+  </data>
+  <data name="DialogConfirmWipe" xml:space="preserve">
+    <value>Potwierd&#x17A; wymazanie</value>
+  </data>
+  <data name="DialogFinalConfirmation" xml:space="preserve">
+    <value>Ostateczne potwierdzenie</value>
+  </data>
+  <data name="DialogConfirmCheckWipe" xml:space="preserve">
+    <value>Potwierd&#x17A; kontrol&#x119; i wymazanie</value>
+  </data>
+  <data name="DialogIssuesFoundContinue" xml:space="preserve">
+    <value>Wykryto problemy &#x2014; kontynuowa&#x107; wymazywanie?</value>
+  </data>
+
+  <!-- Dialog Messages -->
+  <data name="DialogSystemDriveExcluded" xml:space="preserve">
+    <value>Nast&#x119;puj&#x105;ce dyski systemowe zosta&#x142;y wykluczone ze wzgl&#x119;d&#xF3;w bezpiecze&#x144;stwa:
+
+{0}</value>
+  </data>
+  <data name="DialogSurfaceCheckConfirm" xml:space="preserve">
+    <value>Uruchomi&#x107; {0}-minutow&#x105; kontrol&#x119; powierzchni na {1} dysku(-ach)?
+
+{2}
+
+Operacja jest tylko do odczytu i nie modyfikuje &#x17C;adnych danych.</value>
+  </data>
+  <data name="DialogWipeConfirm" xml:space="preserve">
+    <value>WSZYSTKIE DANE ZOSTAN&#x104; TRWALE ZNISZCZONE
+
+Tryb: {0}
+Wype&#x142;nienie: {1}
+Przebiegi: {2}{3}
+
+Dyski do wymazania:
+{4}
+
+Tej operacji NIE MO&#x17B;NA cofn&#x105;&#x107;. Kontynuowa&#x107;?</value>
+  </data>
+  <data name="DialogWipeFinalConfirm" xml:space="preserve">
+    <value>OSTATNIE OSTRZE&#x17B;ENIE
+
+Czy na pewno chcesz trwale usun&#x105;&#x107; dane z {0} dysku(-&#xF3;w)?
+
+Kliknij TAK tylko je&#x15B;li jeste&#x15B; pewien.</value>
+  </data>
+  <data name="DialogCheckWipeConfirm" xml:space="preserve">
+    <value>KONTROLA I WYMAZANIE &#x2014; Operacja dwufazowa
+
+1. Kontrola powierzchni ({0} min na dysk)
+2. {1} (je&#x15B;li kontrola przejdzie pomy&#x15B;lnie)
+
+Dyski:
+{2}
+
+Je&#x15B;li kontrola powierzchni wykryje b&#x142;&#x119;dy, zostaniesz zapytany czy kontynuowa&#x107;.
+
+Kontynuowa&#x107;?</value>
+  </data>
+  <data name="DialogIssuesFoundMessage" xml:space="preserve">
+    <value>Kontrola powierzchni wykry&#x142;a problemy na {0} dysku(-ach):
+
+{1}
+
+Czy nadal chcesz kontynuowa&#x107; wymazywanie WSZYSTKICH wybranych dysk&#xF3;w?</value>
+  </data>
+  <data name="DialogVerifyWillRun" xml:space="preserve">
+    <value>
+Przebieg weryfikacyjny zostanie uruchomiony po wymazaniu.</value>
+  </data>
+
+  <!-- Dashboard -->
+  <data name="DashboardDrivesComplete" xml:space="preserve">
+    <value>{0} z {1} dysk(&#xF3;w) uko&#x144;czono</value>
+  </data>
+
+  <!-- Engine Status Messages -->
+  <data name="EngineSampling" xml:space="preserve">
+    <value>Pr&#xF3;bkowanie... {0} sektor&#xF3;w sprawdzonych</value>
+  </data>
+  <data name="EngineHeadWipe" xml:space="preserve">
+    <value>Wymazywanie pocz&#x105;tku (Przebieg {0}/{1})</value>
+  </data>
+  <data name="EngineTailWipe" xml:space="preserve">
+    <value>Wymazywanie ko&#x144;ca (Przebieg {0}/{1})</value>
+  </data>
+  <data name="EngineScatterWipe" xml:space="preserve">
+    <value>Wymazywanie rozproszone (Przebieg {0}/{1})... {2}%</value>
+  </data>
+  <data name="EngineWiping" xml:space="preserve">
+    <value>Wymazywanie... {0}%</value>
+  </data>
+  <data name="EngineWipingPass" xml:space="preserve">
+    <value>Wymazywanie (Przebieg {0}/{1})... {2}%</value>
+  </data>
+  <data name="EngineVerifying" xml:space="preserve">
+    <value>Weryfikacja... {0}%</value>
+  </data>
+  <data name="EngineComplete" xml:space="preserve">
+    <value>Zako&#x144;czono</value>
+  </data>
+  <data name="EngineSmartWipeComplete" xml:space="preserve">
+    <value>Inteligentne wymazywanie zako&#x144;czone</value>
+  </data>
+  <data name="EngineWipeComplete" xml:space="preserve">
+    <value>Wymazywanie zako&#x144;czone</value>
+  </data>
+  <data name="EngineOpenReadError" xml:space="preserve">
+    <value>Nie mo&#x17C;na otworzy&#x107; dysku {0} do odczytu (b&#x142;&#x105;d Win32 {1}). Uruchom jako Administrator.</value>
+  </data>
+  <data name="EngineOpenWriteError" xml:space="preserve">
+    <value>Nie mo&#x17C;na otworzy&#x107; dysku {0} do zapisu (b&#x142;&#x105;d Win32 {1}). Uruchom jako Administrator.</value>
+  </data>
+
+  <!-- Report -->
+  <data name="ReportSurfaceCheckTitle" xml:space="preserve">
+    <value>DRIVEFLIP &#x2014; RAPORT KONTROLI POWIERZCHNI</value>
+  </data>
+  <data name="ReportWipeTitle" xml:space="preserve">
+    <value>DRIVEFLIP &#x2014; RAPORT WYMAZYWANIA</value>
+  </data>
+  <data name="ReportDrive" xml:space="preserve">
+    <value>Dysk:</value>
+  </data>
+  <data name="ReportSerial" xml:space="preserve">
+    <value>Numer seryjny:</value>
+  </data>
+  <data name="ReportSize" xml:space="preserve">
+    <value>Rozmiar:</value>
+  </data>
+  <data name="ReportDate" xml:space="preserve">
+    <value>Data:</value>
+  </data>
+  <data name="ReportDuration" xml:space="preserve">
+    <value>Czas trwania:</value>
+  </data>
+  <data name="ReportResults" xml:space="preserve">
+    <value>Wyniki</value>
+  </data>
+  <data name="ReportSectorsSampled" xml:space="preserve">
+    <value>Pr&#xF3;bkowane sektory:</value>
+  </data>
+  <data name="ReportCoverage" xml:space="preserve">
+    <value>Pokrycie:</value>
+  </data>
+  <data name="ReportReadErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy odczytu:</value>
+  </data>
+  <data name="ReportSectorsWithData" xml:space="preserve">
+    <value>Sektory z danymi:</value>
+  </data>
+  <data name="ReportEmptySectors" xml:space="preserve">
+    <value>Puste sektory:</value>
+  </data>
+  <data name="ReportWarnReadErrors" xml:space="preserve">
+    <value>OSTRZE&#x17B;ENIE: Wykryto b&#x142;&#x119;dy odczytu. Dysk mo&#x17C;e mie&#x107; uszkodzone sektory.
+    Rozwa&#x17C; wymian&#x119; tego dysku przed sprzeda&#x17C;&#x105;.</value>
+  </data>
+  <data name="ReportOkNoErrors" xml:space="preserve">
+    <value>OK: Nie wykryto b&#x142;&#x119;d&#xF3;w odczytu. Powierzchnia dysku wygl&#x105;da na zdrow&#x105;.</value>
+  </data>
+  <data name="ReportNoteDataPresence" xml:space="preserve">
+    <value>UWAGA: {0}% pr&#xF3;bkowanych sektor&#xF3;w zawiera dane.
+    Zalecane wymazanie przed sprzeda&#x17C;&#x105;.</value>
+  </data>
+  <data name="ReportInfoMinimalData" xml:space="preserve">
+    <value>INFO: {0}% pr&#xF3;bkowanych sektor&#xF3;w zawiera dane (minimalna ilo&#x15B;&#x107;).</value>
+  </data>
+  <data name="ReportOkClean" xml:space="preserve">
+    <value>OK: Dysk wygl&#x105;da na czysty &#x2014; nie znaleziono danych w pr&#xF3;bkowanych sektorach.</value>
+  </data>
+  <data name="ReportWipeMode" xml:space="preserve">
+    <value>Tryb wymazywania:</value>
+  </data>
+  <data name="ReportFillMethod" xml:space="preserve">
+    <value>Metoda wype&#x142;niania:</value>
+  </data>
+  <data name="ReportSectorsWritten" xml:space="preserve">
+    <value>Zapisane sektory:</value>
+  </data>
+  <data name="ReportWriteErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy zapisu:</value>
+  </data>
+  <data name="ReportCompleted" xml:space="preserve">
+    <value>Uko&#x144;czono:</value>
+  </data>
+  <data name="ReportCompletedYes" xml:space="preserve">
+    <value>Tak</value>
+  </data>
+  <data name="ReportCompletedNo" xml:space="preserve">
+    <value>Nie &#x2014; Przerwano</value>
+  </data>
+  <data name="ReportVerificationPassed" xml:space="preserve">
+    <value>Weryfikacja:    ZALICZONA &#x2014; wszystkie sektory zweryfikowane jako czyste</value>
+  </data>
+  <data name="ReportVerificationFailed" xml:space="preserve">
+    <value>Weryfikacja:    {0} sektor&#xF3;w nie przesz&#x142;o weryfikacji</value>
+  </data>
+  <data name="ReportWipeSuccess" xml:space="preserve">
+    <value>OK: Dysk zosta&#x142; pomy&#x15B;lnie wymazany.</value>
+  </data>
+  <data name="ReportWipeWithErrors" xml:space="preserve">
+    <value>OSTRZE&#x17B;ENIE: Wymazywanie zako&#x144;czone z b&#x142;&#x119;dami. Niekt&#xF3;re sektory mog&#x142;y nie zosta&#x107; nadpisane.</value>
+  </data>
+  <data name="ReportMethodZero" xml:space="preserve">
+    <value>Wype&#x142;nienie zerami (jeden przebieg)</value>
+  </data>
+  <data name="ReportMethodRandom" xml:space="preserve">
+    <value>Losowe wype&#x142;nienie (jeden przebieg)</value>
+  </data>
+  <data name="ReportMethodRandomZero" xml:space="preserve">
+    <value>Losowe + zerowe wype&#x142;nienie (dwa przebiegi)</value>
+  </data>
+  <data name="ReportModeSmartDetail" xml:space="preserve">
+    <value>Inteligentne wymazywanie (pocz&#x105;tek + koniec + rozproszone)</value>
+  </data>
+  <data name="ReportModeFullDetail" xml:space="preserve">
+    <value>Pe&#x142;ne wymazywanie (ka&#x17C;dy sektor)</value>
+  </data>
+
+  <!-- Listing Export -->
+  <data name="ListingReportHeader" xml:space="preserve">
+    <value>DRIVEFLIP &#x2014; RAPORT DYSK&#xD3;W</value>
+  </data>
+  <data name="ListingReportFooter" xml:space="preserve">
+    <value>Przetestowano z DriveFlip &#xB7; {0}</value>
+  </data>
+  <data name="ListingDialogTitle" xml:space="preserve">
+    <value>Eksportuj do og&#x142;oszenia</value>
+  </data>
+  <data name="ListingMoveUp" xml:space="preserve">
+    <value>Przesu&#x144; pole w g&#xF3;r&#x119;</value>
+  </data>
+  <data name="ListingMoveDown" xml:space="preserve">
+    <value>Przesu&#x144; pole w d&#xF3;&#x142;</value>
+  </data>
+  <data name="ListingCancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="ListingCopy" xml:space="preserve">
+    <value>Kopiuj</value>
+  </data>
+
+  <!-- Display Formatter -->
+  <data name="FormatNotAvailable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="FormatSsdNoSpindle" xml:space="preserve">
+    <value>SSD (brak wrzeciona)</value>
+  </data>
+  <data name="FormatSector512e" xml:space="preserve">
+    <value>512e (512 / 4096)</value>
+  </data>
+  <data name="FormatEnabled" xml:space="preserve">
+    <value>W&#x142;&#x105;czono</value>
+  </data>
+  <data name="FormatDisabled" xml:space="preserve">
+    <value>Wy&#x142;&#x105;czono</value>
+  </data>
+  <data name="FormatYes" xml:space="preserve">
+    <value>Tak</value>
+  </data>
+  <data name="FormatNo" xml:space="preserve">
+    <value>Nie</value>
+  </data>
+
+  <!-- Risk Levels -->
+  <data name="RiskGoodToSell" xml:space="preserve">
+    <value>GOTOWY DO SPRZEDA&#x17B;Y</value>
+  </data>
+  <data name="RiskReviewNeeded" xml:space="preserve">
+    <value>WYMAGA PRZEGL&#x104;DU</value>
+  </data>
+  <data name="RiskDoNotSell" xml:space="preserve">
+    <value>NIE SPRZEDAWA&#x106;</value>
+  </data>
+  <data name="RiskNotAssessed" xml:space="preserve">
+    <value>NIE OCENIONO</value>
+  </data>
+  <data name="RiskUnknown" xml:space="preserve">
+    <value>NIEZNANY</value>
+  </data>
+
+  <!-- PhysicalDrive Display -->
+  <data name="DriveUsedSuffix" xml:space="preserve">
+    <value>u&#x17C;yto</value>
+  </data>
+  <data name="DriveNoVolumes" xml:space="preserve">
+    <value>Brak wolumin&#xF3;w</value>
+  </data>
+  <data name="DriveNoPartitions" xml:space="preserve">
+    <value>Brak partycji</value>
+  </data>
+  <data name="DrivePartitionSingular" xml:space="preserve">
+    <value>1 partycja</value>
+  </data>
+  <data name="DrivePartitionsPlural" xml:space="preserve">
+    <value>{0} partycji</value>
+  </data>
+
+  <!-- Listing Field Labels -->
+  <data name="FieldStatus" xml:space="preserve">
+    <value>Stan</value>
+  </data>
+  <data name="FieldManufacturer" xml:space="preserve">
+    <value>Producent</value>
+  </data>
+  <data name="FieldModel" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="FieldCapacity" xml:space="preserve">
+    <value>Pojemno&#x15B;&#x107;</value>
+  </data>
+  <data name="FieldInterface" xml:space="preserve">
+    <value>Interfejs</value>
+  </data>
+  <data name="FieldTransferMode" xml:space="preserve">
+    <value>Tryb transferu</value>
+  </data>
+  <data name="FieldSerialNumber" xml:space="preserve">
+    <value>Numer seryjny</value>
+  </data>
+  <data name="FieldFirmware" xml:space="preserve">
+    <value>Firmware</value>
+  </data>
+  <data name="FieldHealth" xml:space="preserve">
+    <value>Kondycja</value>
+  </data>
+  <data name="FieldTemperature" xml:space="preserve">
+    <value>Temperatura</value>
+  </data>
+  <data name="FieldPowerOnHours" xml:space="preserve">
+    <value>Godziny pracy</value>
+  </data>
+  <data name="FieldReadErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy odczytu</value>
+  </data>
+  <data name="FieldWriteErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy zapisu</value>
+  </data>
+  <data name="FieldSsdWear" xml:space="preserve">
+    <value>Zu&#x17C;ycie SSD</value>
+  </data>
+  <data name="FieldSpindleSpeed" xml:space="preserve">
+    <value>Pr&#x119;dko&#x15B;&#x107; obrotowa</value>
+  </data>
+  <data name="FieldMediaType" xml:space="preserve">
+    <value>Typ no&#x15B;nika</value>
+  </data>
+  <data name="FieldFeatures" xml:space="preserve">
+    <value>Funkcje</value>
+  </data>
+  <data name="FieldPartNumber" xml:space="preserve">
+    <value>Numer katalogowy</value>
+  </data>
+  <data name="FieldManufactureDate" xml:space="preserve">
+    <value>Data produkcji</value>
+  </data>
+  <data name="FieldSectorSize" xml:space="preserve">
+    <value>Rozmiar sektora</value>
+  </data>
+  <data name="FieldPartitionStyle" xml:space="preserve">
+    <value>Styl partycji</value>
+  </data>
+
+  <!-- Phase Names -->
+  <data name="PhaseSurfaceCheck" xml:space="preserve">
+    <value>Kontrola powierzchni</value>
+  </data>
+  <data name="PhaseHeadWipe" xml:space="preserve">
+    <value>Wymazywanie pocz&#x105;tku</value>
+  </data>
+  <data name="PhaseTailWipe" xml:space="preserve">
+    <value>Wymazywanie ko&#x144;ca</value>
+  </data>
+  <data name="PhaseScatterWipe" xml:space="preserve">
+    <value>Wymazywanie rozproszone</value>
+  </data>
+  <data name="PhaseFullWipe" xml:space="preserve">
+    <value>Pe&#x142;ne wymazywanie</value>
+  </data>
+  <data name="PhaseVerification" xml:space="preserve">
+    <value>Weryfikacja</value>
+  </data>
+
+  <!-- Save Dialog -->
+  <data name="JsonFilter" xml:space="preserve">
+    <value>Pliki JSON (*.json)|*.json</value>
+  </data>
+
+  <!-- Additional UI strings -->
+  <data name="Remaining" xml:space="preserve">
+    <value>pozosta&#x142;o</value>
+  </data>
+  <data name="CancelOperation" xml:space="preserve">
+    <value>Anuluj operacj&#x119;</value>
+  </data>
+  <data name="LicenseActivation" xml:space="preserve">
+    <value>Aktywacja licencji</value>
+  </data>
+  <data name="Licensee" xml:space="preserve">
+    <value>Licencjobiorca</value>
+  </data>
+  <data name="Edition" xml:space="preserve">
+    <value>Edycja</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Wyga&#x15B;ni&#x119;cie</value>
+  </data>
+  <data name="ActivatingLicense" xml:space="preserve">
+    <value>Aktywowanie licencji...</value>
+  </data>
+  <data name="RequiresAdministrator" xml:space="preserve">
+    <value>Wymaga uprawnien Administratora</value>
+  </data>
+  <data name="ExtendedCounters" xml:space="preserve">
+    <value>Rozszerzone liczniki</value>
+  </data>
+  <data name="LoadingHealthData" xml:space="preserve">
+    <value>&#x141;adowanie danych o kondycji...</value>
+  </data>
+  <data name="ReadingSmartData" xml:space="preserve">
+    <value>Odczytywanie i interpretacja danych SMART...</value>
+  </data>
+  <data name="LabelReadWriteErrors" xml:space="preserve">
+    <value>B&#x142;&#x119;dy odczytu / zapisu</value>
+  </data>
+  <data name="LabelSize" xml:space="preserve">
+    <value>Rozmiar</value>
+  </data>
+  <data name="LabelDriveLetters" xml:space="preserve">
+    <value>Litery dysk&#xF3;w</value>
+  </data>
+  <data name="LabelStatus" xml:space="preserve">
+    <value>Stan</value>
+  </data>
+  <data name="LabelPartitionStyle" xml:space="preserve">
+    <value>Styl partycji</value>
+  </data>
+  <data name="WipeModeSmartWipeDesc" xml:space="preserve">
+    <value>Inteligentne wymazywanie (pocz&#x105;tek + koniec + rozproszone)</value>
+  </data>
+  <data name="WipeModeFullWipeDesc" xml:space="preserve">
+    <value>Pe&#x142;ne wymazywanie (ka&#x17C;dy sektor)</value>
+  </data>
+  <data name="WipeMethodZeroFillDesc" xml:space="preserve">
+    <value>Wype&#x142;nienie zerami (szybkie)</value>
+  </data>
+  <data name="WipeMethodRandomFillDesc" xml:space="preserve">
+    <value>Losowe wype&#x142;nienie</value>
+  </data>
+  <data name="WipeMethodRandomZeroDesc" xml:space="preserve">
+    <value>Losowe + zerowe (2 przebiegi)</value>
+  </data>
+  <data name="WipeModeColon" xml:space="preserve">
+    <value>Tryb wymazywania:</value>
+  </data>
+  <data name="FillMethodColon" xml:space="preserve">
+    <value>Metoda wype&#x142;niania:</value>
+  </data>
+  <data name="SurfaceCheckDesc2" xml:space="preserve">
+    <value>Losowo pr&#xF3;bkuje sektory w celu wykrycia b&#x142;&#x119;d&#xF3;w odczytu i resztek danych. Tylko do odczytu.</value>
+  </data>
+  <data name="WipeDesc2" xml:space="preserve">
+    <value>Trwale niszczy wszystkie dane. Operacji nie mo&#x17C;na cofn&#x105;&#x107;.</value>
+  </data>
+  <data name="CheckAndWipeDesc2" xml:space="preserve">
+    <value>Najpierw kontrola powierzchni, potem wymazanie je&#x15B;li dysk przejdzie test.</value>
+  </data>
+  <data name="AboutTaglineText" xml:space="preserve">
+    <value>Pragmatyczny spok&#xF3;j ducha</value>
+  </data>
+  <data name="AboutDescriptionFull" xml:space="preserve">
+    <value>DriveFlip jest stworzony dla &#x201E;wystarczaj&#x105;co dobrej&#x201D; rzeczywisto&#x15B;ci recyklingu sprz&#x119;tu: poniewa&#x17C; dane NAS s&#x105; ju&#x17C; pofragmentowane na wielu dyskach, wymazanie nawet jednego dysku naszym losowym wzorcem sprawia, &#x17C;e rekonstrukcja staje si&#x119; matematycznie wyczerpuj&#x105;ca. Nie obiecujemy fortecy odpornej na analiz&#x119; forensyczn&#x105;; zapewniamy rozs&#x105;dn&#x105;, szybk&#x105; barier&#x119;, kt&#xF3;ra zamienia &#x201E;odzyskiwanie danych&#x201D; w kosztowne, niepraktyczne zadanie dla nast&#x119;pnego w&#x142;a&#x15B;ciciela.</value>
+  </data>
+  <data name="AboutLicenseLabel" xml:space="preserve">
+    <value>Licencja:</value>
+  </data>
+  <data name="AboutRequiresAdmin" xml:space="preserve">
+    <value>Wymaga podniesienia uprawnie&#x144; Administratora</value>
+  </data>
+  <data name="LabelReadErrorsCorrected" xml:space="preserve">
+    <value>B&#x142;&#x119;dy odczytu (skorygowane)</value>
+  </data>
+  <data name="LabelReadErrorsUncorrected" xml:space="preserve">
+    <value>B&#x142;&#x119;dy odczytu (nieskorygowane)</value>
+  </data>
+  <data name="LabelWriteErrorsCorrected" xml:space="preserve">
+    <value>B&#x142;&#x119;dy zapisu (skorygowane)</value>
+  </data>
+  <data name="LabelWriteErrorsUncorrected" xml:space="preserve">
+    <value>B&#x142;&#x119;dy zapisu (nieskorygowane)</value>
+  </data>
+  <data name="LabelMaxReadLatency" xml:space="preserve">
+    <value>Maks. op&#xF3;&#x17A;nienie odczytu</value>
+  </data>
+  <data name="LabelMaxWriteLatency" xml:space="preserve">
+    <value>Maks. op&#xF3;&#x17A;nienie zapisu</value>
+  </data>
+  <data name="LabelMaxFlushLatency" xml:space="preserve">
+    <value>Maks. op&#xF3;&#x17A;nienie flush</value>
+  </data>
+  <data name="SmartNotAvailableFallback" xml:space="preserve">
+    <value>Surowe atrybuty SMART nie s&#x105; dost&#x119;pne dla tego dysku.</value>
+  </data>
+  <data name="VerifyAfterWipe" xml:space="preserve">
+    <value>Weryfikacja po wymazaniu</value>
+  </data>
+  <data name="SettingCrashReport" xml:space="preserve">
+    <value>Wysyłaj raporty o błędach</value>
+  </data>
+  <data name="SettingCrashReportTooltip" xml:space="preserve">
+    <value>Automatycznie wysyłaj raporty o błędach, aby ulepszyć DriveFlip</value>
+  </data>
+  <data name="CrashReportDialogTitle" xml:space="preserve">
+    <value>Raport awarii dostępny</value>
+  </data>
+  <data name="CrashReportDialogMessage" xml:space="preserve">
+    <value>DriveFlip uległ nieoczekiwanemu zamknięciu podczas ostatniej sesji. Czy chcesz wysłać raport awarii, aby pomóc nam zbadać problem?
+
+Raport zawiera wersję aplikacji, informacje o systemie operacyjnym, szczegóły błędu, specyfikacje sprzętowe podłączonych dysków oraz ostatnie wpisy dziennika. Numery seryjne i dane osobowe nie są uwzględniane.</value>
+  </data>
+
+  <!-- Format Result -->
+  <data name="DialogFormatFailedTitle" xml:space="preserve">
+    <value>Formatowanie nie powiod&#x142;o si&#x119; &#x2014; Dysk {0}</value>
+  </data>
+  <data name="DialogFormatFailedMessage" xml:space="preserve">
+    <value>Wymazywanie zako&#x144;czy&#x142;o si&#x119; pomy&#x15B;lnie, ale formatowanie po wymazaniu nie powiod&#x142;o si&#x119; dla {0}:
+
+{1}
+
+Mo&#x17C;esz sformatowa&#x107; dysk r&#x119;cznie za pomoc&#x105; Zarz&#x105;dzania dyskami.</value>
+  </data>
+
+  <!-- Close Prevention -->
+  <data name="DialogCannotCloseTitle" xml:space="preserve">
+    <value>Operacja w toku</value>
+  </data>
+  <data name="DialogCannotCloseMessage" xml:space="preserve">
+    <value>DriveFlip wykonuje obecnie operacj&#x119; dyskow&#x105;. Anuluj operacj&#x119; przed zamkni&#x119;ciem aplikacji.</value>
+  </data>
+
+</root>

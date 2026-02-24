@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using DriveFlip.Localization;
 using DriveFlip.Models;
 
 namespace DriveFlip.Converters;
@@ -141,13 +142,13 @@ public class RiskLevelToTextConverter : IValueConverter
         {
             return level switch
             {
-                DriveRiskLevel.Good => "GOOD TO SELL",
-                DriveRiskLevel.Warning => "REVIEW NEEDED",
-                DriveRiskLevel.Critical => "DO NOT SELL",
-                _ => "UNKNOWN"
+                DriveRiskLevel.Good => Loc.Get("RiskGoodToSell"),
+                DriveRiskLevel.Warning => Loc.Get("RiskReviewNeeded"),
+                DriveRiskLevel.Critical => Loc.Get("RiskDoNotSell"),
+                _ => Loc.Get("RiskUnknown")
             };
         }
-        return "UNKNOWN";
+        return Loc.Get("RiskUnknown");
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -159,7 +160,7 @@ public class LicenseTooltipConverter : IValueConverter
     public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is bool unlicensed && unlicensed)
-            return "License required to use this feature";
+            return Loc.Get("LicenseTooltip");
         return null;
     }
 

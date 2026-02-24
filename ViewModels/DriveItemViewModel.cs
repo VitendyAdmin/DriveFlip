@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using DriveFlip.Localization;
 using DriveFlip.Models;
 
 namespace DriveFlip.ViewModels;
@@ -160,26 +161,26 @@ public class DriveItemViewModel : INotifyPropertyChanged
         Phases.Clear();
 
         if (isCheckAndWipe)
-            Phases.Add(new WipePhaseItem("Surface check", "sampl"));
+            Phases.Add(new WipePhaseItem(Loc.Get("PhaseSurfaceCheck"), "sampl"));
 
         if (isSurfaceCheck && !isCheckAndWipe)
         {
-            Phases.Add(new WipePhaseItem("Surface check", "sampl"));
+            Phases.Add(new WipePhaseItem(Loc.Get("PhaseSurfaceCheck"), "sampl"));
         }
         else if (!isSurfaceCheck || isCheckAndWipe)
         {
             if (isSmartWipe)
             {
-                Phases.Add(new WipePhaseItem("Head wipe", "head"));
-                Phases.Add(new WipePhaseItem("Tail wipe", "tail"));
-                Phases.Add(new WipePhaseItem("Scatter wipe", "scatter"));
+                Phases.Add(new WipePhaseItem(Loc.Get("PhaseHeadWipe"), "head"));
+                Phases.Add(new WipePhaseItem(Loc.Get("PhaseTailWipe"), "tail"));
+                Phases.Add(new WipePhaseItem(Loc.Get("PhaseScatterWipe"), "scatter"));
             }
             else
             {
-                Phases.Add(new WipePhaseItem("Full wipe", "wip"));
+                Phases.Add(new WipePhaseItem(Loc.Get("PhaseFullWipe"), "wip"));
             }
             if (verifyAfterWipe)
-                Phases.Add(new WipePhaseItem("Verification", "verif"));
+                Phases.Add(new WipePhaseItem(Loc.Get("PhaseVerification"), "verif"));
         }
 
         if (Phases.Count > 0)

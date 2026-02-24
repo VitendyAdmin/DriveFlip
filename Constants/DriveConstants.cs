@@ -28,7 +28,6 @@ public static class Wmi
         public const string PartNumber = "PartNumber";
         public const string HealthStatus = "HealthStatus";
         public const string MediaType = "MediaType";
-        public const string SpindleSpeed = "SpindleSpeed";
         public const string IsWriteCacheEnabled = "IsWriteCacheEnabled";
         public const string IsPowerProtected = "IsPowerProtected";
     }

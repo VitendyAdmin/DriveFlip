@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using DriveFlip.Localization;
 using DriveFlip.Services;
 
 namespace DriveFlip.Models;
@@ -35,17 +36,46 @@ public class PhysicalDrive
     public string UsbBridgeChip { get; set; } = "";
     public string PnpDeviceId { get; set; } = "";
 
+    public long UsedBytes { get; set; }
+
     public string SectorSizeDisplay => DisplayFormatter.FormatSectorSize(PhysicalSectorSize, LogicalSectorSize);
 
     public string DisplaySize => DisplayFormatter.FormatSize(SizeBytes);
 
     public string DisplayName => $"Disk {DeviceNumber}: {Model} ({DisplaySize})";
 
+    public double UsedPercent => SizeBytes > 0 ? (double)UsedBytes / SizeBytes * 100.0 : 0;
+
+    public string CapacitySummary
+    {
+        get
+        {
+            if (DriveLetters.Count == 0) return $"{DisplaySize}";
+            if (UsedBytes <= 0) return $"{DisplaySize}";
+            return $"{DisplayFormatter.FormatSize(UsedBytes)} / {DisplaySize} {Loc.Get("DriveUsedSuffix")}";
+        }
+    }
+
     public string SerialSuffix =>
         SerialNumber.Length >= 4 ? $"s/n \u2026{SerialNumber[^4..]}" : "";
 
     public string DriveLettersSummary =>
-        DriveLetters.Count > 0 ? string.Join(", ", DriveLetters) : "No volumes";
+        DriveLetters.Count > 0 ? string.Join(", ", DriveLetters) : Loc.Get("DriveNoVolumes");
+
+    public string PartitionSummary
+    {
+        get
+        {
+            if (Partitions.Count == 0) return Loc.Get("DriveNoPartitions");
+            var style = !string.IsNullOrEmpty(PartitionStyle) ? PartitionStyle : "";
+            var label = Partitions.Count == 1
+                ? Loc.Get("DrivePartitionSingular")
+                : Loc.Format("DrivePartitionsPlural", Partitions.Count);
+            return style.Length > 0 ? $"{label} ({style})" : label;
+        }
+    }
+
+    public bool HasVolumes => DriveLetters.Count > 0;
 }
 
 public enum DriveRiskLevel
@@ -74,7 +104,6 @@ public class DriveHealthInfo
     public string HealthStatus { get; set; } = "N/A";
     public string MediaType { get; set; } = "N/A";
     public string BusType { get; set; } = "N/A";
-    public int? SpindleSpeed { get; set; }
     public int? Temperature { get; set; }
     public long? PowerOnHours { get; set; }
     public long? ReadErrors { get; set; }
@@ -124,7 +153,6 @@ public class DriveHealthInfo
     public string RiskSummary { get; set; } = "";
 
     // ── Display helpers (basic) ──
-    public string SpindleSpeedDisplay => DisplayFormatter.FormatSpindleSpeed(SpindleSpeed);
     public string TemperatureDisplay => DisplayFormatter.FormatTemperature(Temperature);
     public string PowerOnHoursDisplay => DisplayFormatter.FormatPowerOnHours(PowerOnHours);
     public string ReadErrorsDisplay => DisplayFormatter.FormatCount(ReadErrors);
@@ -143,7 +171,7 @@ public class DriveHealthInfo
 
     // ── Display helpers (enhanced) ──
     public string TemperatureDisplayEnhanced => DisplayFormatter.FormatTemperatureEnhanced(Temperature, TemperatureMax);
-    public string WriteCacheDisplay => DisplayFormatter.FormatBool(IsWriteCacheEnabled, "Enabled", "Disabled");
+    public string WriteCacheDisplay => DisplayFormatter.FormatBool(IsWriteCacheEnabled, Loc.Get("FormatEnabled"), Loc.Get("FormatDisabled"));
     public string PowerProtectionDisplay => DisplayFormatter.FormatBool(IsPowerProtected);
     public string LoadUnloadCycleCountDisplay => DisplayFormatter.FormatCountWithMax(LoadUnloadCycleCount, LoadUnloadCycleCountMax);
     public string StartStopCycleCountEnhancedDisplay => DisplayFormatter.FormatCountWithMax(StartStopCycleCount, StartStopCycleCountMax);
@@ -277,41 +305,40 @@ public class ListingField : INotifyPropertyChanged
 
     public static List<ListingField> CreateDefaultFields() =>
     [
-        new("status", "Status", true, d => d.Health?.RiskLevel switch
+        new("status", Loc.Get("FieldStatus"), true, d => d.Health?.RiskLevel switch
         {
-            DriveRiskLevel.Good => "GOOD TO SELL",
-            DriveRiskLevel.Warning => "REVIEW NEEDED",
-            DriveRiskLevel.Critical => "DO NOT SELL",
-            _ => "NOT ASSESSED"
+            DriveRiskLevel.Good => Loc.Get("RiskGoodToSell"),
+            DriveRiskLevel.Warning => Loc.Get("RiskReviewNeeded"),
+            DriveRiskLevel.Critical => Loc.Get("RiskDoNotSell"),
+            _ => Loc.Get("RiskNotAssessed")
         }),
-        new("manufacturer", "Manufacturer", true, d =>
+        new("manufacturer", Loc.Get("FieldManufacturer"), true, d =>
             string.IsNullOrEmpty(d.Manufacturer) ? null : d.Manufacturer),
-        new("model", "Model", true, d => d.Model),
-        new("capacity", "Capacity", true, d => d.DisplaySize),
-        new("interface", "Interface", true, d => d.InterfaceType),
-        new("transfer", "Transfer Mode", true, d =>
+        new("model", Loc.Get("FieldModel"), true, d => d.Model),
+        new("capacity", Loc.Get("FieldCapacity"), true, d => d.DisplaySize),
+        new("interface", Loc.Get("FieldInterface"), true, d => d.InterfaceType),
+        new("transfer", Loc.Get("FieldTransferMode"), true, d =>
             string.IsNullOrEmpty(d.NegotiatedSpeed) ? null : d.NegotiatedSpeed),
-        new("serial", "Serial Number", false, d =>
+        new("serial", Loc.Get("FieldSerialNumber"), false, d =>
             string.IsNullOrEmpty(d.SerialNumber) ? null : d.SerialNumber),
-        new("firmware", "Firmware", false, d =>
+        new("firmware", Loc.Get("FieldFirmware"), false, d =>
             string.IsNullOrEmpty(d.FirmwareVersion) ? null : d.FirmwareVersion),
-        new("health", "Health", true, d => d.Health?.HealthStatus),
-        new("temperature", "Temperature", true, d => d.Health?.TemperatureDisplay),
-        new("powerOn", "Power-On Hours", true, d => d.Health?.PowerOnHoursDisplay),
-        new("readErrors", "Read Errors", true, d => d.Health?.ReadErrorsDisplay),
-        new("writeErrors", "Write Errors", true, d => d.Health?.WriteErrorsDisplay),
-        new("ssdWear", "SSD Wear", false, d => d.Health?.Wear.HasValue == true ? d.Health.WearDisplay : null),
-        new("spindle", "Spindle Speed", false, d => d.Health?.SpindleSpeedDisplay),
-        new("mediaType", "Media Type", false, d => d.Health?.MediaType),
-        new("features", "Features", false, d =>
+        new("health", Loc.Get("FieldHealth"), true, d => d.Health?.HealthStatus),
+        new("temperature", Loc.Get("FieldTemperature"), true, d => d.Health?.TemperatureDisplay),
+        new("powerOn", Loc.Get("FieldPowerOnHours"), true, d => d.Health?.PowerOnHoursDisplay),
+        new("readErrors", Loc.Get("FieldReadErrors"), true, d => d.Health?.ReadErrorsDisplay),
+        new("writeErrors", Loc.Get("FieldWriteErrors"), true, d => d.Health?.WriteErrorsDisplay),
+        new("ssdWear", Loc.Get("FieldSsdWear"), false, d => d.Health?.Wear.HasValue == true ? d.Health.WearDisplay : null),
+        new("mediaType", Loc.Get("FieldMediaType"), false, d => d.Health?.MediaType),
+        new("features", Loc.Get("FieldFeatures"), false, d =>
             string.IsNullOrEmpty(d.SupportedFeatures) ? null : d.SupportedFeatures),
-        new("partNumber", "Part Number", false, d =>
+        new("partNumber", Loc.Get("FieldPartNumber"), false, d =>
             string.IsNullOrEmpty(d.PartNumber) ? null : d.PartNumber),
-        new("mfgDate", "Manufacture Date", false, d =>
+        new("mfgDate", Loc.Get("FieldManufactureDate"), false, d =>
             string.IsNullOrEmpty(d.ManufactureDate) ? null : d.ManufactureDate),
-        new("sectorSize", "Sector Size", false, d =>
+        new("sectorSize", Loc.Get("FieldSectorSize"), false, d =>
             d.PhysicalSectorSize > 0 ? d.SectorSizeDisplay : null),
-        new("partStyle", "Partition Style", false, d =>
+        new("partStyle", Loc.Get("FieldPartitionStyle"), false, d =>
             string.IsNullOrEmpty(d.PartitionStyle) ? null : d.PartitionStyle),
     ];
 }

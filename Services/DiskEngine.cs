@@ -6,6 +6,7 @@ using System.Runtime.Versioning;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using DriveFlip.Localization;
 using DriveFlip.Models;
 using Microsoft.Win32.SafeHandles;
 
@@ -91,8 +92,10 @@ public class DiskEngine : IDisposable
             {
                 int err = Marshal.GetLastWin32Error();
                 throw new UnauthorizedAccessException(
-                    $"Could not open Disk {drive.DeviceNumber} for reading (Win32 error {err}). Run as Administrator.");
+                    Loc.Format("EngineOpenReadError", drive.DeviceNumber, err));
             }
+
+            LockAndDismountVolumes(drive);
 
             using var stream = new FileStream(handle, FileAccess.Read, bufferSize, false);
             var buffer = new byte[bufferSize];
@@ -158,7 +161,7 @@ public class DiskEngine : IDisposable
                         Elapsed = sw.Elapsed,
                         EstimatedRemaining = remaining,
                         SpeedMBps = speedMBps,
-                        StatusMessage = $"Sampling... {report.TotalSectorsSampled:N0} sectors checked"
+                        StatusMessage = Loc.Format("EngineSampling", report.TotalSectorsSampled.ToString("N0"))
                     });
                 }
             }
@@ -179,7 +182,7 @@ public class DiskEngine : IDisposable
             ErrorCount = report.ReadErrors,
             DataSectorsFound = report.SectorsWithData,
             Elapsed = sw.Elapsed,
-            StatusMessage = cancellation.IsCancellationRequested ? "Cancelled" : "Complete"
+            StatusMessage = cancellation.IsCancellationRequested ? Loc.Get("StatusCancelled") : Loc.Get("EngineComplete")
         });
 
         return report;
@@ -231,7 +234,7 @@ public class DiskEngine : IDisposable
             {
                 int err = Marshal.GetLastWin32Error();
                 throw new UnauthorizedAccessException(
-                    $"Could not open Disk {drive.DeviceNumber} for writing (Win32 error {err}). Run as Administrator.");
+                    Loc.Format("EngineOpenWriteError", drive.DeviceNumber, err));
             }
 
             LockAndDismountVolumes(drive);
@@ -255,7 +258,7 @@ public class DiskEngine : IDisposable
                 Logger.Info($"Disk {drive.DeviceNumber} pass {pass + 1}: Phase 1 — Head wipe ({headSectors} sectors)");
                 WriteSequentialRegion(stream, 0, headSectors, buffer, bufferSize, bytesPerSector,
                     useRandom, report, drive.DeviceNumber, passBase, totalWork, sw, progress, cancellation,
-                    $"Head wipe (Pass {pass + 1}/{settings.NumberOfPasses})");
+                    Loc.Format("EngineHeadWipe", pass + 1, settings.NumberOfPasses));
 
                 if (cancellation.IsCancellationRequested) break;
 
@@ -264,7 +267,7 @@ public class DiskEngine : IDisposable
                 Logger.Info($"Disk {drive.DeviceNumber} pass {pass + 1}: Phase 2 — Tail wipe ({tailSectors} sectors from sector {tailStart})");
                 WriteSequentialRegion(stream, tailStart, tailSectors, buffer, bufferSize, bytesPerSector,
                     useRandom, report, drive.DeviceNumber, passBase + headSectors, totalWork, sw, progress, cancellation,
-                    $"Tail wipe (Pass {pass + 1}/{settings.NumberOfPasses})");
+                    Loc.Format("EngineTailWipe", pass + 1, settings.NumberOfPasses));
 
                 if (cancellation.IsCancellationRequested) break;
 
@@ -318,7 +321,7 @@ public class DiskEngine : IDisposable
                                 ErrorCount = report.WriteErrors,
                                 Elapsed = sw.Elapsed,
                                 SpeedMBps = speed,
-                                StatusMessage = $"Scatter wipe (Pass {pass + 1}/{settings.NumberOfPasses})... {pct:F1}%"
+                                StatusMessage = Loc.Format("EngineScatterWipe", pass + 1, settings.NumberOfPasses, $"{pct:F1}")
                             });
                         }
                     }
@@ -342,7 +345,7 @@ public class DiskEngine : IDisposable
             IsComplete = true,
             WasCancelled = cancellation.IsCancellationRequested,
             Elapsed = sw.Elapsed,
-            StatusMessage = cancellation.IsCancellationRequested ? "Cancelled" : "Smart wipe complete"
+            StatusMessage = cancellation.IsCancellationRequested ? Loc.Get("StatusCancelled") : Loc.Get("EngineSmartWipeComplete")
         });
 
         return report;
@@ -384,7 +387,7 @@ public class DiskEngine : IDisposable
             {
                 int err = Marshal.GetLastWin32Error();
                 throw new UnauthorizedAccessException(
-                    $"Could not open Disk {drive.DeviceNumber} for writing (Win32 error {err}). Run as Administrator.");
+                    Loc.Format("EngineOpenWriteError", drive.DeviceNumber, err));
             }
 
             LockAndDismountVolumes(drive);
@@ -441,7 +444,9 @@ public class DiskEngine : IDisposable
                             ? TimeSpan.FromSeconds((totalWork - doneWork) * bytesPerSector / 1_048_576.0 / speed)
                             : TimeSpan.Zero;
 
-                        var passLabel = passes > 1 ? $" (Pass {pass + 1}/{passes})" : "";
+                        var statusMsg = passes > 1
+                            ? Loc.Format("EngineWipingPass", pass + 1, passes, $"{pct:F1}")
+                            : Loc.Format("EngineWiping", $"{pct:F1}");
                         progress?.Report(new OperationProgress
                         {
                             DriveNumber = drive.DeviceNumber,
@@ -453,7 +458,7 @@ public class DiskEngine : IDisposable
                             Elapsed = elapsed,
                             EstimatedRemaining = estRemaining,
                             SpeedMBps = speed,
-                            StatusMessage = $"Wiping{passLabel}... {pct:F1}%"
+                            StatusMessage = statusMsg
                         });
                     }
                 }
@@ -491,7 +496,7 @@ public class DiskEngine : IDisposable
             IsComplete = true,
             WasCancelled = cancellation.IsCancellationRequested,
             Elapsed = sw.Elapsed,
-            StatusMessage = cancellation.IsCancellationRequested ? "Cancelled" : "Wipe complete"
+            StatusMessage = cancellation.IsCancellationRequested ? Loc.Get("StatusCancelled") : Loc.Get("EngineWipeComplete")
         });
 
         return report;
@@ -621,7 +626,7 @@ public class DiskEngine : IDisposable
                     TotalSectorsToProcess = totalSectors,
                     ErrorCount = report.VerificationErrors,
                     Elapsed = sw.Elapsed,
-                    StatusMessage = $"Verifying... {pct:F1}%"
+                    StatusMessage = Loc.Format("EngineVerifying", $"{pct:F1}")
                 });
             }
         }

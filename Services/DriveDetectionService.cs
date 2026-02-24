@@ -5,6 +5,7 @@ using System.Linq;
 using System.Management;
 using System.Runtime.Versioning;
 using System.Text.Json;
+using System.Threading;
 using DriveFlip.Constants;
 using DriveFlip.Models;
 
@@ -243,9 +244,6 @@ public class DriveDetectionService
             var bt = SafeNullableInt(physDisk, Wmi.PhysicalDisk.BusType);
             if (bt.HasValue) info.BusType = ((StorageBusType)bt.Value).ToDisplayName();
 
-            var spindle = SafeNullableLong(physDisk, Wmi.PhysicalDisk.SpindleSpeed);
-            if (spindle.HasValue) info.SpindleSpeed = (int)Math.Min(spindle.Value, int.MaxValue);
-
             info.IsWriteCacheEnabled = SafeBool(physDisk, Wmi.PhysicalDisk.IsWriteCacheEnabled);
             info.IsPowerProtected = SafeBool(physDisk, Wmi.PhysicalDisk.IsPowerProtected);
         }
@@ -381,6 +379,20 @@ public class DriveDetectionService
             if (drive.DriveLetters.Count > 0)
                 Logger.Info($"Disk {drive.DeviceNumber}: MSFT fallback found letters [{string.Join(", ", drive.DriveLetters)}]");
         }
+
+        // Query used space across all mounted volumes
+        long usedTotal = 0;
+        foreach (var letter in drive.DriveLetters)
+        {
+            try
+            {
+                var di = new System.IO.DriveInfo(letter);
+                if (di.IsReady)
+                    usedTotal += di.TotalSize - di.TotalFreeSpace;
+            }
+            catch { }
+        }
+        drive.UsedBytes = usedTotal;
     }
 
     // ── Partition Style ──
@@ -772,12 +784,12 @@ public class DriveDetectionService
 
     // ── Initialize, Format & Assign Letter (static — mutating operation, not on provider) ──
 
-    public static (bool Success, string? DriveLetter, string? Error) InitializeFormatAndAssignLetter(int deviceNumber)
+    public static (bool Success, string? DriveLetter, string? Error) InitializeFormatAndAssignLetter(int deviceNumber, bool assignLetter = true)
     {
         try
         {
             var scope = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
-            scope.Options.Timeout = TimeSpan.FromSeconds(15);
+            scope.Options.Timeout = TimeSpan.FromSeconds(30);
             scope.Connect();
 
             // Find the MSFT_Disk for this device
@@ -794,6 +806,26 @@ public class DriveDetectionService
             if (msftDisk == null)
                 return (false, null, $"MSFT_Disk not found for disk {deviceNumber}.");
 
+            // 0. Ensure disk is Online and Read-Write (wipe + dismount can leave it offline)
+            try
+            {
+                var isOffline = Convert.ToBoolean(msftDisk["IsOffline"]);
+                var isReadOnly = Convert.ToBoolean(msftDisk["IsReadOnly"]);
+                if (isOffline || isReadOnly)
+                {
+                    Logger.Info($"Disk {deviceNumber}: Setting Online and Read-Write (was offline={isOffline}, readOnly={isReadOnly})...");
+                    var attrParams = msftDisk.GetMethodParameters("SetAttributes");
+                    attrParams["IsOffline"] = false;
+                    attrParams["IsReadOnly"] = false;
+                    msftDisk.InvokeMethod("SetAttributes", attrParams, null);
+                    Thread.Sleep(1000); // Let the OS settle after state change
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning($"Disk {deviceNumber}: SetAttributes failed (non-fatal): {ex.Message}");
+            }
+
             // 1. Initialize as GPT (PartitionStyle 2 = GPT)
             Logger.Info($"Disk {deviceNumber}: Initializing as GPT...");
             var initParams = msftDisk.GetMethodParameters("Initialize");
@@ -806,11 +838,11 @@ public class DriveDetectionService
                 return (false, null, $"Disk initialize failed (code {initRet}).");
             }
 
-            // 2. Create max-size partition with auto drive letter
-            Logger.Info($"Disk {deviceNumber}: Creating partition...");
+            // 2. Create max-size partition (optionally assign drive letter)
+            Logger.Info($"Disk {deviceNumber}: Creating partition (assignLetter={assignLetter})...");
             var partParams = msftDisk.GetMethodParameters("CreatePartition");
             partParams["UseMaximumSize"] = true;
-            partParams["AssignDriveLetter"] = true;
+            partParams["AssignDriveLetter"] = assignLetter;
             var partResult = msftDisk.InvokeMethod("CreatePartition", partParams, null);
             var partRet = Convert.ToUInt32(partResult["ReturnValue"]);
             if (partRet != 0)
@@ -819,60 +851,74 @@ public class DriveDetectionService
                 return (false, null, $"Partition creation failed (code {partRet}).");
             }
 
-            // 3. Find the created partition and its volume, then format
-            var scope2 = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
-            scope2.Options.Timeout = TimeSpan.FromSeconds(15);
-            scope2.Connect();
+            // 3. Wait for OS to register the new partition and volume
+            Logger.Info($"Disk {deviceNumber}: Waiting for volume to appear...");
+            Thread.Sleep(2000);
 
-            string? assignedLetter = null;
-            var diskQuery2 = new ObjectQuery($"SELECT * FROM MSFT_Disk WHERE Number = {deviceNumber}");
-            using var diskSearcher2 = new ManagementObjectSearcher(scope2, diskQuery2);
-
-            foreach (ManagementObject disk in diskSearcher2.Get())
+            // 4. Find the created partition and its volume, then format (with retry)
+            for (int attempt = 1; attempt <= 3; attempt++)
             {
-                var partitions = disk.GetRelated("MSFT_Partition");
-                foreach (ManagementObject partition in partitions)
+                var scope2 = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
+                scope2.Options.Timeout = TimeSpan.FromSeconds(15);
+                scope2.Connect();
+
+                string? assignedLetter = null;
+                var diskQuery2 = new ObjectQuery($"SELECT * FROM MSFT_Disk WHERE Number = {deviceNumber}");
+                using var diskSearcher2 = new ManagementObjectSearcher(scope2, diskQuery2);
+
+                foreach (ManagementObject disk in diskSearcher2.Get())
                 {
-                    var letterObj = partition["DriveLetter"];
-                    if (letterObj == null) continue;
-                    var letter = Convert.ToChar(letterObj);
-                    if (letter == '\0') continue;
-
-                    assignedLetter = $"{letter}:";
-
-                    try
+                    var partitions = disk.GetRelated("MSFT_Partition");
+                    foreach (ManagementObject partition in partitions)
                     {
-                        var volumes = partition.GetRelated("MSFT_Volume");
-                        foreach (ManagementObject volume in volumes)
+                        var letterObj = partition["DriveLetter"];
+                        if (letterObj == null) continue;
+                        var letter = Convert.ToChar(letterObj);
+                        if (letter == '\0') continue;
+
+                        assignedLetter = $"{letter}:";
+
+                        try
                         {
-                            Logger.Info($"Disk {deviceNumber}: Quick formatting volume {assignedLetter} as NTFS...");
-                            var fmtParams = volume.GetMethodParameters("Format");
-                            fmtParams["FileSystem"] = "NTFS";
-                            fmtParams["FileSystemLabel"] = "";
-                            fmtParams["Full"] = false;
-                            var fmtResult = volume.InvokeMethod("Format", fmtParams, null);
-                            var fmtRet = Convert.ToUInt32(fmtResult["ReturnValue"]);
-                            if (fmtRet != 0)
+                            var volumes = partition.GetRelated("MSFT_Volume");
+                            foreach (ManagementObject volume in volumes)
                             {
-                                Logger.Warning($"Disk {deviceNumber}: Format returned {fmtRet}");
-                                return (false, assignedLetter, $"Format failed (code {fmtRet}). Partition created as {assignedLetter}.");
+                                Logger.Info($"Disk {deviceNumber}: Quick formatting volume {assignedLetter} as NTFS...");
+                                var fmtParams = volume.GetMethodParameters("Format");
+                                fmtParams["FileSystem"] = "NTFS";
+                                fmtParams["FileSystemLabel"] = "";
+                                fmtParams["Full"] = false;
+                                var fmtResult = volume.InvokeMethod("Format", fmtParams, null);
+                                var fmtRet = Convert.ToUInt32(fmtResult["ReturnValue"]);
+                                if (fmtRet != 0)
+                                {
+                                    Logger.Warning($"Disk {deviceNumber}: Format returned {fmtRet}");
+                                    return (false, assignedLetter, $"Format failed (code {fmtRet}). Partition created as {assignedLetter}.");
+                                }
+                                Logger.Info($"Disk {deviceNumber}: Formatted successfully as {assignedLetter}");
+                                return (true, assignedLetter, null);
                             }
-                            Logger.Info($"Disk {deviceNumber}: Formatted successfully as {assignedLetter}");
-                            return (true, assignedLetter, null);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Warning($"Disk {deviceNumber}: Volume format failed: {ex.Message}");
+                            return (false, assignedLetter, $"Format failed: {ex.Message}. Partition created as {assignedLetter}.");
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Logger.Warning($"Disk {deviceNumber}: Volume format failed: {ex.Message}");
-                        return (false, assignedLetter, $"Format failed: {ex.Message}. Partition created as {assignedLetter}.");
-                    }
+                }
+
+                if (assignedLetter != null)
+                    return (false, assignedLetter, "Partition created but volume not found for formatting.");
+
+                // Volume not yet visible — retry after a delay
+                if (attempt < 3)
+                {
+                    Logger.Info($"Disk {deviceNumber}: Volume not found yet, retrying ({attempt}/3)...");
+                    Thread.Sleep(2000);
                 }
             }
 
-            if (assignedLetter != null)
-                return (false, assignedLetter, "Partition created but volume not found for formatting.");
-
-            return (false, null, "Partition created but no drive letter was assigned.");
+            return (false, null, "Partition created but no drive letter was assigned after 3 attempts.");
         }
         catch (Exception ex)
         {

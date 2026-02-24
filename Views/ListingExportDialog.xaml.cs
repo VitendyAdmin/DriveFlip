@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using DriveFlip.Localization;
 using DriveFlip.Models;
 
 namespace DriveFlip.Views;
@@ -19,17 +23,78 @@ public partial class ListingExportDialog : Window
 
     private static Rectangle? _overlay;
 
+    private static readonly string SettingsPath = System.IO.Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "DriveFlip", "listing_fields.json");
+
     private ListingExportDialog(PhysicalDrive drive)
     {
         InitializeComponent();
         _drive = drive;
-        _fields = new ObservableCollection<ListingField>(ListingField.CreateDefaultFields());
+        _fields = new ObservableCollection<ListingField>(LoadFieldSettings());
         FieldList.ItemsSource = _fields;
 
         foreach (var field in _fields)
             field.PropertyChanged += (_, _) => RefreshPreview();
 
         RefreshPreview();
+    }
+
+    // ── Settings persistence ──
+
+    private record FieldSetting(string Key, bool IsIncluded);
+
+    private static List<ListingField> LoadFieldSettings()
+    {
+        var defaults = ListingField.CreateDefaultFields();
+        try
+        {
+            if (!File.Exists(SettingsPath))
+                return defaults;
+
+            var json = File.ReadAllText(SettingsPath);
+            var saved = JsonSerializer.Deserialize<List<FieldSetting>>(json);
+            if (saved == null || saved.Count == 0)
+                return defaults;
+
+            var lookup = defaults.ToDictionary(f => f.Key);
+            var result = new List<ListingField>();
+
+            // Restore saved order and inclusion state
+            foreach (var s in saved)
+            {
+                if (lookup.TryGetValue(s.Key, out var field))
+                {
+                    field.IsIncluded = s.IsIncluded;
+                    result.Add(field);
+                    lookup.Remove(s.Key);
+                }
+            }
+
+            // Append any new fields not in saved settings
+            foreach (var remaining in lookup.Values)
+                result.Add(remaining);
+
+            return result;
+        }
+        catch
+        {
+            return defaults;
+        }
+    }
+
+    private void SaveFieldSettings()
+    {
+        try
+        {
+            var dir = System.IO.Path.GetDirectoryName(SettingsPath)!;
+            Directory.CreateDirectory(dir);
+
+            var settings = _fields.Select(f => new FieldSetting(f.Key, f.IsIncluded)).ToList();
+            var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(SettingsPath, json);
+        }
+        catch { /* non-critical */ }
     }
 
     private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragMove();
@@ -50,7 +115,7 @@ public partial class ListingExportDialog : Window
         var bar = new string('\u2550', 38);
 
         sb.AppendLine(bar);
-        sb.AppendLine("  DRIVEFLIP DRIVE REPORT");
+        sb.AppendLine($"  {Loc.Get("ListingReportHeader")}");
         sb.AppendLine(bar);
 
         foreach (var item in included)
@@ -60,7 +125,7 @@ public partial class ListingExportDialog : Window
         }
 
         sb.AppendLine(bar);
-        sb.AppendLine($"  Tested with DriveFlip \u00b7 {DateTime.Now:yyyy-MM-dd}");
+        sb.AppendLine($"  {Loc.Format("ListingReportFooter", DateTime.Now.ToString("yyyy-MM-dd"))}");
         sb.AppendLine(bar);
 
         return sb.ToString();
@@ -91,6 +156,7 @@ public partial class ListingExportDialog : Window
 
     private void Cancel_Click(object sender, RoutedEventArgs e)
     {
+        SaveFieldSettings();
         Copied = false;
         Close();
     }
@@ -100,6 +166,7 @@ public partial class ListingExportDialog : Window
         var text = BuildText();
         if (!string.IsNullOrEmpty(text))
             Clipboard.SetText(text);
+        SaveFieldSettings();
         Copied = true;
         Close();
     }

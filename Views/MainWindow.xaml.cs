@@ -1,8 +1,12 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
+using DriveFlip.Localization;
 using DriveFlip.ViewModels;
 using Wpf.Ui.Controls;
 
@@ -10,6 +14,20 @@ namespace DriveFlip.Views;
 
 public partial class MainWindow : FluentWindow
 {
+    private const int WM_SETICON = 0x0080;
+    private const int ICON_SMALL = 0;
+    private const int ICON_BIG = 1;
+    private const int LR_DEFAULTSIZE = 0x0040;
+    private const int LR_LOADFROMFILE = 0x0010;
+    private const int IMAGE_ICON = 1;
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    private static extern IntPtr LoadImage(IntPtr hInst, string name, uint type,
+        int cx, int cy, uint fuLoad);
+
     private static readonly char[] HexChars = "0123456789abcdefABCDEF".ToCharArray();
     private static readonly int[] HyphenPositions = [8, 13, 18, 23]; // GUID format: 8-4-4-4-12
 
@@ -17,20 +35,90 @@ public partial class MainWindow : FluentWindow
     {
         InitializeComponent();
 
-        if (DataContext is MainViewModel vm)
+        DataContextChanged += (_, _) =>
         {
-            vm.PropertyChanged += (_, e) =>
+            if (DataContext is MainViewModel vm)
             {
-                if (e.PropertyName == nameof(MainViewModel.IsRefreshing) && !vm.IsRefreshing)
-                    Dispatcher.InvokeAsync(() => AdjustWindowHeight(vm.Drives.Count));
-            };
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName == nameof(MainViewModel.IsRefreshing) && !vm.IsRefreshing)
+                        Dispatcher.InvokeAsync(() => AdjustWindowHeight(vm.Drives.Count));
+                };
+            }
+        };
+
+        // Ctrl+Plus / Ctrl+Minus for detail pane zoom
+        PreviewKeyDown += (_, e) =>
+        {
+            if (DataContext is not MainViewModel vm) return;
+            if (Keyboard.Modifiers != ModifierKeys.Control) return;
+
+            if (e.Key is Key.OemPlus or Key.Add)
+            {
+                vm.ZoomInCommand.Execute(null);
+                e.Handled = true;
+            }
+            else if (e.Key is Key.OemMinus or Key.Subtract)
+            {
+                vm.ZoomOutCommand.Execute(null);
+                e.Handled = true;
+            }
+            else if (e.Key is Key.D0 or Key.NumPad0)
+            {
+                vm.ZoomResetCommand.Execute(null);
+                e.Handled = true;
+            }
+        };
+    }
+
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && vm.IsScanning)
+        {
+            e.Cancel = true;
+            StyledDialog.ShowInfo(
+                Loc.Get("DialogCannotCloseTitle"),
+                Loc.Get("DialogCannotCloseMessage"));
+            return;
         }
+        base.OnClosing(e);
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        // FluentWindow with ExtendsContentIntoTitleBar removes WS_SYSMENU,
+        // which strips the Win32-level icon. Write the embedded .ico to a temp
+        // file and use LoadImage so it works in both debug and release builds.
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero) return;
+
+        try
+        {
+            var iconUri = new Uri("pack://application:,,,/Assets/logo-icon.ico", UriKind.Absolute);
+            var info = Application.GetResourceStream(iconUri);
+            if (info == null) return;
+
+            var tempIcon = Path.Combine(Path.GetTempPath(), "DriveFlip_icon.ico");
+            using (var fs = File.Create(tempIcon))
+                info.Stream.CopyTo(fs);
+
+            var hBig = LoadImage(IntPtr.Zero, tempIcon, IMAGE_ICON, 256, 256, LR_LOADFROMFILE);
+            var hSmall = LoadImage(IntPtr.Zero, tempIcon, IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+
+            if (hBig != IntPtr.Zero)
+                SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_BIG, hBig);
+            if (hSmall != IntPtr.Zero)
+                SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_SMALL, hSmall);
+        }
+        catch { }
     }
 
     private void AdjustWindowHeight(int driveCount)
     {
-        const double chromeHeight = 520; // title bar, header, drive list header, info panel, status bar, margins
-        const double driveCardHeight = 66;
+        const double chromeHeight = 340; // title bar, header, status bar, margins (no bottom info panel)
+        const double driveCardHeight = 58; // compact drive cards
         const int maxVisibleDrives = 4;
 
         int visibleDrives = Math.Max(1, Math.Min(driveCount, maxVisibleDrives));

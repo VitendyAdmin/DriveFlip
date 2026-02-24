@@ -1,0 +1,1251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML://headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Coverage" type="System.Int32, mscorlib">0</data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">[base64 mime encoded string representing a byte array form of the .NET Framework object]</data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    temporary storage of the resource file that the data needs to be
+    persisted. This is a problem because some types of data cannot
+    be serialized and stored in this fashion.
+
+    There is also a requirement not to store data in the RESX file
+    that would make the file dependent on a specific platform. That
+    is, don't include type references in the RESX file, so that the
+    data can be cross-platform compatible.
+  -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Window/Header -->
+  <data name="WindowTitle" xml:space="preserve">
+    <value>DriveFlip — Felületellenőrzés &amp; meghajtó-előkészítés</value>
+  </data>
+  <data name="AppSubtitle" xml:space="preserve">
+    <value>Nincs idő lassúságra. Véletlenszerű törlés, és mehet.</value>
+  </data>
+  <data name="TooltipAbout" xml:space="preserve">
+    <value>Névjegy</value>
+  </data>
+  <data name="TooltipSettings" xml:space="preserve">
+    <value>Beállítások</value>
+  </data>
+
+  <!-- Settings Panel -->
+  <data name="Settings" xml:space="preserve">
+    <value>Beállítások</value>
+  </data>
+  <data name="SettingSurfaceCheck" xml:space="preserve">
+    <value>Felületellenőrzés:</value>
+  </data>
+  <data name="SettingHeadTailWipe" xml:space="preserve">
+    <value>Eleje/vége törlés:</value>
+  </data>
+  <data name="SettingScatterWipe" xml:space="preserve">
+    <value>Szórt törlés:</value>
+  </data>
+  <data name="SettingPasses" xml:space="preserve">
+    <value>Menetek:</value>
+  </data>
+  <data name="SettingProtectSystem" xml:space="preserve">
+    <value>Rendszermeghajtó védelme</value>
+  </data>
+  <data name="SettingProtectSystemTooltip" xml:space="preserve">
+    <value>Megakadályozza a rendszermeghajtó (C:) kiválasztását műveletekhez.</value>
+  </data>
+  <data name="SettingProtectInternal" xml:space="preserve">
+    <value>Belső meghajtók védelme</value>
+  </data>
+  <data name="SettingProtectInternalTooltip" xml:space="preserve">
+    <value>Megakadályozza az összes nem cserélhető (belső) meghajtó kiválasztását műveletekhez.</value>
+  </data>
+  <data name="SettingAdvanced" xml:space="preserve">
+    <value>Speciális</value>
+  </data>
+  <data name="SettingDebugExport" xml:space="preserve">
+    <value>Hibakeresési exportálás gomb megjelenítése</value>
+  </data>
+  <data name="SettingDebugExportTooltip" xml:space="preserve">
+    <value>Megjeleníti a hibakeresési adatexportálás gombot a meghajtó részletek panelen.</value>
+  </data>
+  <data name="SettingQuickFormat" xml:space="preserve">
+    <value>Gyorsformázás törlés után</value>
+  </data>
+  <data name="SettingQuickFormatTooltip" xml:space="preserve">
+    <value>Sikeres törlés után GPT-ként inicializálja a lemezt és egyetlen NTFS partíciót hoz létre.</value>
+  </data>
+  <data name="SettingAssignLetter" xml:space="preserve">
+    <value>Meghajtóbetűjel hozzárendelése törlés után</value>
+  </data>
+  <data name="SettingAssignLetterTooltip" xml:space="preserve">
+    <value>Formázás után a következő elérhető meghajtóbetűjelet rendeli hozzá.</value>
+  </data>
+  <data name="SettingLogLevel" xml:space="preserve">
+    <value>Naplózási szint:</value>
+  </data>
+  <data name="SettingLogLevelTooltip" xml:space="preserve">
+    <value>Meghatározza, mennyi részlet kerüljön a naplófájlba. Alacsonyabb szint több kimenetet eredményez.</value>
+  </data>
+  <data name="SettingLanguage" xml:space="preserve">
+    <value>Nyelv:</value>
+  </data>
+
+  <!-- License Banner -->
+  <data name="LicenseRequired" xml:space="preserve">
+    <value>Licenc szükséges</value>
+  </data>
+  <data name="LicenseBannerText" xml:space="preserve">
+    <value>Aktiváljon licencet a felületellenőrzés, törlés és ellenőrzés &amp; törlés műveletek feloldásához.</value>
+  </data>
+  <data name="ActivateLicense" xml:space="preserve">
+    <value>Licenc aktiválása</value>
+  </data>
+  <data name="LicenseTooltip" xml:space="preserve">
+    <value>A funkció használatához licenc szükséges</value>
+  </data>
+
+  <!-- Drive List -->
+  <data name="Drives" xml:space="preserve">
+    <value>Meghajtók</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Frissítés</value>
+  </data>
+  <data name="ExternalOnly" xml:space="preserve">
+    <value>Csak külső</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Mind</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Egyik sem</value>
+  </data>
+  <data name="BadgeSys" xml:space="preserve">
+    <value>RDSZ</value>
+  </data>
+  <data name="BadgePass" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="BadgeFail" xml:space="preserve">
+    <value>HIBA</value>
+  </data>
+  <data name="SelectDrivePlaceholder" xml:space="preserve">
+    <value>Válasszon meghajtót a részletek megtekintéséhez</value>
+  </data>
+
+  <!-- Center Pane - Drive Info -->
+  <data name="DriveInfo" xml:space="preserve">
+    <value>Meghajtó adatai</value>
+  </data>
+  <data name="CopyInfo" xml:space="preserve">
+    <value>Adatok másolása</value>
+  </data>
+  <data name="DumpRawData" xml:space="preserve">
+    <value>Nyers adatok mentése</value>
+  </data>
+  <data name="TooltipZoomIn" xml:space="preserve">
+    <value>Szöveg nagyítása (Ctrl++)</value>
+  </data>
+  <data name="TooltipZoomOut" xml:space="preserve">
+    <value>Szöveg kicsinyítése (Ctrl+-)</value>
+  </data>
+  <data name="TooltipZoomReset" xml:space="preserve">
+    <value>Szövegméret visszaállítása</value>
+  </data>
+
+  <!-- Center Pane - Drive Info Grid Labels -->
+  <data name="LabelManufacturer" xml:space="preserve">
+    <value>Gyártó</value>
+  </data>
+  <data name="LabelModel" xml:space="preserve">
+    <value>Modell</value>
+  </data>
+  <data name="LabelSerial" xml:space="preserve">
+    <value>Sorozatszám</value>
+  </data>
+  <data name="LabelFirmware" xml:space="preserve">
+    <value>Firmware</value>
+  </data>
+  <data name="LabelPartNumber" xml:space="preserve">
+    <value>Cikkszám</value>
+  </data>
+  <data name="LabelMfgDate" xml:space="preserve">
+    <value>Gyártási dátum</value>
+  </data>
+  <data name="LabelInterface" xml:space="preserve">
+    <value>Csatolófelület</value>
+  </data>
+  <data name="LabelMediaType" xml:space="preserve">
+    <value>Adathordozó típusa</value>
+  </data>
+  <data name="LabelSectorSize" xml:space="preserve">
+    <value>Szektorméret</value>
+  </data>
+  <data name="LabelPartitions" xml:space="preserve">
+    <value>Partíciók</value>
+  </data>
+  <data name="LabelVolumes" xml:space="preserve">
+    <value>Kötetek</value>
+  </data>
+  <data name="LabelCapacity" xml:space="preserve">
+    <value>Kapacitás</value>
+  </data>
+  <data name="LabelBusType" xml:space="preserve">
+    <value>Busz típusa</value>
+  </data>
+  <data name="LabelTransferMode" xml:space="preserve">
+    <value>Átviteli mód</value>
+  </data>
+  <data name="LabelFeatures" xml:space="preserve">
+    <value>Jellemzők</value>
+  </data>
+  <data name="LabelUsbBridge" xml:space="preserve">
+    <value>USB Bridge</value>
+  </data>
+
+  <!-- Center Pane - Health -->
+  <data name="Health" xml:space="preserve">
+    <value>Állapot</value>
+  </data>
+  <data name="HealthSummary" xml:space="preserve">
+    <value>Állapot összefoglalás</value>
+  </data>
+  <data name="GetSmartData" xml:space="preserve">
+    <value>SMART adatok lekérése</value>
+  </data>
+  <data name="LoadingSmartData" xml:space="preserve">
+    <value>SMART adatok lekérdezése...</value>
+  </data>
+  <data name="SmartNotAvailable" xml:space="preserve">
+    <value>A nyers SMART attribútumok nem érhetők el ehhez a meghajtóhoz.</value>
+  </data>
+  <data name="SmartAttributes" xml:space="preserve">
+    <value>SMART attribútumok</value>
+  </data>
+  <data name="NvmeHealthLog" xml:space="preserve">
+    <value>NVMe állapotnapló</value>
+  </data>
+
+  <!-- Health Grid Labels -->
+  <data name="LabelHealthStatus" xml:space="preserve">
+    <value>Állapot</value>
+  </data>
+  <data name="LabelTemperature" xml:space="preserve">
+    <value>Hőmérséklet</value>
+  </data>
+  <data name="LabelPowerOnHours" xml:space="preserve">
+    <value>Üzemórák</value>
+  </data>
+  <data name="LabelReadErrors" xml:space="preserve">
+    <value>Olvasási hibák</value>
+  </data>
+  <data name="LabelWriteErrors" xml:space="preserve">
+    <value>Írási hibák</value>
+  </data>
+  <data name="LabelSsdWear" xml:space="preserve">
+    <value>SSD kopás</value>
+  </data>
+  <data name="LabelSpindleSpeed" xml:space="preserve">
+    <value>Orsósebesség</value>
+  </data>
+  <data name="LabelReadCorrected" xml:space="preserve">
+    <value>Javított olvasás</value>
+  </data>
+  <data name="LabelReadUncorrected" xml:space="preserve">
+    <value>Javítatlan olvasás</value>
+  </data>
+  <data name="LabelWriteCorrected" xml:space="preserve">
+    <value>Javított írás</value>
+  </data>
+  <data name="LabelWriteUncorrected" xml:space="preserve">
+    <value>Javítatlan írás</value>
+  </data>
+  <data name="LabelReadLatencyMax" xml:space="preserve">
+    <value>Max. olvasási késleltetés</value>
+  </data>
+  <data name="LabelWriteLatencyMax" xml:space="preserve">
+    <value>Max. írási késleltetés</value>
+  </data>
+  <data name="LabelFlushLatencyMax" xml:space="preserve">
+    <value>Max. kiürítési késleltetés</value>
+  </data>
+  <data name="LabelStartStopCycles" xml:space="preserve">
+    <value>Indítás/leállítás ciklusok</value>
+  </data>
+  <data name="LabelWriteCache" xml:space="preserve">
+    <value>Írási gyorsítótár</value>
+  </data>
+  <data name="LabelPowerProtection" xml:space="preserve">
+    <value>Áramkimaradás-védelem</value>
+  </data>
+  <data name="LabelLoadUnloadCycles" xml:space="preserve">
+    <value>Betöltés/kirakás ciklusok</value>
+  </data>
+
+  <!-- NVMe Health Labels -->
+  <data name="LabelNvmeAvailableSpare" xml:space="preserve">
+    <value>Elérhető tartalék</value>
+  </data>
+  <data name="LabelNvmePercentUsed" xml:space="preserve">
+    <value>Felhasznált százalék</value>
+  </data>
+  <data name="LabelNvmeDataWritten" xml:space="preserve">
+    <value>Írt adatmennyiség</value>
+  </data>
+  <data name="LabelNvmeDataRead" xml:space="preserve">
+    <value>Olvasott adatmennyiség</value>
+  </data>
+  <data name="LabelNvmePowerCycles" xml:space="preserve">
+    <value>Bekapcsolási ciklusok</value>
+  </data>
+  <data name="LabelNvmeUnsafeShutdowns" xml:space="preserve">
+    <value>Nem biztonságos leállítások</value>
+  </data>
+  <data name="LabelNvmeMediaErrors" xml:space="preserve">
+    <value>Adathordozó hibák</value>
+  </data>
+  <data name="LabelNvmeBusyTime" xml:space="preserve">
+    <value>Vezérlő elfoglalt</value>
+  </data>
+
+  <!-- SMART Table Headers -->
+  <data name="SmartHeaderId" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="SmartHeaderName" xml:space="preserve">
+    <value>Attribútum</value>
+  </data>
+  <data name="SmartHeaderCurrent" xml:space="preserve">
+    <value>Akt.</value>
+  </data>
+  <data name="SmartHeaderWorst" xml:space="preserve">
+    <value>Legr.</value>
+  </data>
+  <data name="SmartHeaderThreshold" xml:space="preserve">
+    <value>Küszöb</value>
+  </data>
+  <data name="SmartHeaderRaw" xml:space="preserve">
+    <value>Nyers érték</value>
+  </data>
+
+  <!-- Risk Summary -->
+  <data name="RiskSummaryLabel" xml:space="preserve">
+    <value>Kockázati összefoglalás</value>
+  </data>
+
+  <!-- Progress Section -->
+  <data name="Progress" xml:space="preserve">
+    <value>Folyamat</value>
+  </data>
+  <data name="LabelErrors" xml:space="preserve">
+    <value>Hibák</value>
+  </data>
+  <data name="LabelDataPresence" xml:space="preserve">
+    <value>Adatok</value>
+  </data>
+  <data name="LabelSpeed" xml:space="preserve">
+    <value>Sebesség</value>
+  </data>
+
+  <!-- Right Pane - Actions -->
+  <data name="SurfaceCheck" xml:space="preserve">
+    <value>Felületellenőrzés</value>
+  </data>
+  <data name="SurfaceCheckDesc" xml:space="preserve">
+    <value>Csak olvasási teszt, amely véletlenszerű szektorokat mintáz az olvasási hibák és adatjelenlét észleléséhez.</value>
+  </data>
+  <data name="RunSurfaceCheck" xml:space="preserve">
+    <value>Felületellenőrzés futtatása</value>
+  </data>
+  <data name="Wipe" xml:space="preserve">
+    <value>Törlés</value>
+  </data>
+  <data name="WipeDesc" xml:space="preserve">
+    <value>Véglegesen megsemmisíti az összes adatot a meghajtószektorok felülírásával.</value>
+  </data>
+  <data name="WipeSelectedDrives" xml:space="preserve">
+    <value>Kiválasztott meghajtók törlése</value>
+  </data>
+  <data name="CheckAndWipe" xml:space="preserve">
+    <value>Ellenőrzés &amp; törlés</value>
+  </data>
+  <data name="CheckAndWipeDesc" xml:space="preserve">
+    <value>Kétfázisú művelet: először felületellenőrzés, majd törlés, ha az ellenőrzés sikeres.</value>
+  </data>
+  <data name="RunCheckAndWipe" xml:space="preserve">
+    <value>Ellenőrzés &amp; törlés futtatása</value>
+  </data>
+
+  <!-- Wipe Options -->
+  <data name="WipeModeLabel" xml:space="preserve">
+    <value>Mód</value>
+  </data>
+  <data name="WipeModeSmartWipe" xml:space="preserve">
+    <value>Intelligens törlés</value>
+  </data>
+  <data name="WipeModeFullWipe" xml:space="preserve">
+    <value>Teljes törlés</value>
+  </data>
+  <data name="WipeMethodLabel" xml:space="preserve">
+    <value>Kitöltés</value>
+  </data>
+  <data name="WipeMethodZeroFill" xml:space="preserve">
+    <value>Nullás kitöltés</value>
+  </data>
+  <data name="WipeMethodRandomFill" xml:space="preserve">
+    <value>Véletlenszerű kitöltés</value>
+  </data>
+  <data name="WipeMethodRandomZero" xml:space="preserve">
+    <value>Véletlenszerű + nullás</value>
+  </data>
+  <data name="WipeVerifyLabel" xml:space="preserve">
+    <value>Ellenőrzés törlés után</value>
+  </data>
+
+  <!-- Operations Dashboard -->
+  <data name="TimeRemaining" xml:space="preserve">
+    <value>Hátralévő idő</value>
+  </data>
+  <data name="MBps" xml:space="preserve">
+    <value>MB/s</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Mégse</value>
+  </data>
+
+  <!-- About Modal -->
+  <data name="AboutTitle" xml:space="preserve">
+    <value>DriveFlip</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Felületellenőrzés &amp; meghajtó-előkészítés</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Verzió {0}</value>
+  </data>
+  <data name="AboutTagline" xml:space="preserve">
+    <value>Gyakorlatias nyugalom</value>
+  </data>
+  <data name="AboutDescription" xml:space="preserve">
+    <value>A DriveFlip feltárja, ami számít — állapotadatok, kockázati jelzők és használható információk —, hogy magabiztosan árazhasson, hatékonyan törölhessen, és olyan meghajtókat szállíthasson, amelyek nem jönnek vissza.</value>
+  </data>
+  <data name="AboutVersionPrefix" xml:space="preserve">
+    <value>Verzió </value>
+  </data>
+  <data name="AboutClose" xml:space="preserve">
+    <value>Bezárás</value>
+  </data>
+
+  <!-- License Modal -->
+  <data name="LicenseKeyLabel" xml:space="preserve">
+    <value>Licenckulcs</value>
+  </data>
+  <data name="LicenseKeyPlaceholder" xml:space="preserve">
+    <value>Adja meg a licenckulcsot...</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Aktiválás</value>
+  </data>
+  <data name="Activating" xml:space="preserve">
+    <value>Aktiválás...</value>
+  </data>
+  <data name="LicenseTo" xml:space="preserve">
+    <value>Licenc tulajdonosa:</value>
+  </data>
+  <data name="LicenseEdition" xml:space="preserve">
+    <value>Kiadás:</value>
+  </data>
+  <data name="LicenseExpires" xml:space="preserve">
+    <value>Lejárat:</value>
+  </data>
+  <data name="Revalidate" xml:space="preserve">
+    <value>Újraérvényesítés</value>
+  </data>
+  <data name="LicenseSettingsLabel" xml:space="preserve">
+    <value>Licencbeállítások</value>
+  </data>
+  <data name="EndpointUrl" xml:space="preserve">
+    <value>Végpont URL</value>
+  </data>
+
+  <!-- Global Status Messages -->
+  <data name="StatusReady" xml:space="preserve">
+    <value>Válasszon meghajtókat és válasszon műveletet.</value>
+  </data>
+  <data name="StatusDetectingDrives" xml:space="preserve">
+    <value>Meghajtók felderítése...</value>
+  </data>
+  <data name="StatusFoundDrivesQuerying" xml:space="preserve">
+    <value>{0} meghajtó található. Állapotadatok lekérdezése...</value>
+  </data>
+  <data name="StatusFoundDrivesReady" xml:space="preserve">
+    <value>{0} fizikai meghajtó található. Válasszon meghajtókat és válasszon műveletet.</value>
+  </data>
+  <data name="StatusErrorDetecting" xml:space="preserve">
+    <value>Hiba a meghajtók felderítésekor: {0}</value>
+  </data>
+  <data name="StatusNoSelection" xml:space="preserve">
+    <value>Nincs kiválasztva nem rendszermeghajtó.</value>
+  </data>
+  <data name="StatusRunningSurfaceCheck" xml:space="preserve">
+    <value>Felületellenőrzés futtatása...</value>
+  </data>
+  <data name="StatusSurfaceCheckComplete" xml:space="preserve">
+    <value>Felületellenőrzés kész.</value>
+  </data>
+  <data name="StatusWipingDrives" xml:space="preserve">
+    <value>Meghajtók törlése...</value>
+  </data>
+  <data name="StatusWipeComplete" xml:space="preserve">
+    <value>Törlési művelet kész.</value>
+  </data>
+  <data name="StatusCheckWipeCancelled" xml:space="preserve">
+    <value>Ellenőrzés &amp; törlés megszakítva.</value>
+  </data>
+  <data name="StatusCheckWipeStopped" xml:space="preserve">
+    <value>Ellenőrzés &amp; törlés leállt a felületellenőrzés után. Tekintse át a fenti eredményeket.</value>
+  </data>
+  <data name="StatusCheckWipeComplete" xml:space="preserve">
+    <value>Ellenőrzés &amp; törlés kész.</value>
+  </data>
+  <data name="StatusPhase1" xml:space="preserve">
+    <value>1. fázis: Felületellenőrzés futtatása...</value>
+  </data>
+  <data name="StatusPhase2" xml:space="preserve">
+    <value>2. fázis: Meghajtók törlése...</value>
+  </data>
+  <data name="StatusCancelling" xml:space="preserve">
+    <value>Megszakítás...</value>
+  </data>
+  <data name="StatusDumpingData" xml:space="preserve">
+    <value>Adatok mentése a(z) {0}. lemezhez...</value>
+  </data>
+  <data name="StatusDataDumped" xml:space="preserve">
+    <value>Adatok mentve ide: {0}</value>
+  </data>
+  <data name="StatusDataDumpCancelled" xml:space="preserve">
+    <value>Adatmentés megszakítva.</value>
+  </data>
+  <data name="StatusListingCopied" xml:space="preserve">
+    <value>Meghajtólista vágólapra másolva.</value>
+  </data>
+  <data name="StatusFormatting" xml:space="preserve">
+    <value>Formázás...</value>
+  </data>
+  <data name="StatusWipeFormatted" xml:space="preserve">
+    <value>Törlés kész — formázva mint {0}</value>
+  </data>
+  <data name="StatusWipeFormatFailed" xml:space="preserve">
+    <value>Törlés kész — formázás sikertelen: {0}</value>
+  </data>
+  <data name="StatusWipeCompleteShort" xml:space="preserve">
+    <value>Törlés kész</value>
+  </data>
+  <data name="StatusWipeIncomplete" xml:space="preserve">
+    <value>Törlés befejezetlen</value>
+  </data>
+  <data name="StatusHealthy" xml:space="preserve">
+    <value>Egészséges</value>
+  </data>
+  <data name="StatusErrorsFound" xml:space="preserve">
+    <value>Hibák találhatók</value>
+  </data>
+  <data name="StatusCancelled" xml:space="preserve">
+    <value>Megszakítva</value>
+  </data>
+  <data name="StatusAccessDenied" xml:space="preserve">
+    <value>Hozzáférés megtagadva — futtassa rendszergazdaként</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>Hiba: {0}</value>
+  </data>
+  <data name="StatusQueryFailed" xml:space="preserve">
+    <value>Lekérdezés sikertelen</value>
+  </data>
+  <data name="StatusSmartQueryFailed" xml:space="preserve">
+    <value>SMART lekérdezés sikertelen a(z) {0}. lemezhez: {1}</value>
+  </data>
+
+  <!-- License Status -->
+  <data name="LicenseStatusLicensed" xml:space="preserve">
+    <value>Licencelve</value>
+  </data>
+  <data name="LicenseStatusCachedOffline" xml:space="preserve">
+    <value>Licencelve (offline)</value>
+  </data>
+  <data name="LicenseStatusExpired" xml:space="preserve">
+    <value>Licenc lejárt</value>
+  </data>
+  <data name="LicenseStatusInvalid" xml:space="preserve">
+    <value>Érvénytelen licenc</value>
+  </data>
+  <data name="LicenseStatusUnlicensed" xml:space="preserve">
+    <value>Licenc nélkül</value>
+  </data>
+  <data name="LicenseActivated" xml:space="preserve">
+    <value>Licenc sikeresen aktiválva!</value>
+  </data>
+  <data name="LicenseRevalidating" xml:space="preserve">
+    <value>Licenc újraérvényesítése...</value>
+  </data>
+  <data name="LicenseRevalidated" xml:space="preserve">
+    <value>Licenc újraérvényesítve.</value>
+  </data>
+  <data name="LicenseRevalidationFailed" xml:space="preserve">
+    <value>Újraérvényesítés sikertelen.</value>
+  </data>
+  <data name="LicenseRevalidationError" xml:space="preserve">
+    <value>Újraérvényesítési hiba: {0}</value>
+  </data>
+  <data name="LicenseTooManyAttempts" xml:space="preserve">
+    <value>Túl sok próbálkozás. Próbálja újra {0}p {1}mp múlva.</value>
+  </data>
+  <data name="LicenseTooManyAttemptsMinutes" xml:space="preserve">
+    <value>Túl sok próbálkozás. Próbálja újra {0} perc múlva.</value>
+  </data>
+  <data name="LicenseNoEndpoint" xml:space="preserve">
+    <value>Nincs licencvégpont konfigurálva.</value>
+  </data>
+  <data name="LicenseKeyExpired" xml:space="preserve">
+    <value>Ez a licenckulcs lejárt.</value>
+  </data>
+  <data name="LicenseKeyInvalid" xml:space="preserve">
+    <value>Érvénytelen licenckulcs vagy az aláírás-ellenőrzés sikertelen.</value>
+  </data>
+  <data name="LicenseActivationFailed" xml:space="preserve">
+    <value>Aktiválás sikertelen: {0}</value>
+  </data>
+
+  <!-- Dialog Titles -->
+  <data name="DialogSystemDriveProtected" xml:space="preserve">
+    <value>Rendszermeghajtó védett</value>
+  </data>
+  <data name="DialogConfirmSurfaceCheck" xml:space="preserve">
+    <value>Felületellenőrzés megerősítése</value>
+  </data>
+  <data name="DialogConfirmWipe" xml:space="preserve">
+    <value>Törlés megerősítése</value>
+  </data>
+  <data name="DialogFinalConfirmation" xml:space="preserve">
+    <value>Végső megerősítés</value>
+  </data>
+  <data name="DialogConfirmCheckWipe" xml:space="preserve">
+    <value>Ellenőrzés &amp; törlés megerősítése</value>
+  </data>
+  <data name="DialogIssuesFoundContinue" xml:space="preserve">
+    <value>Problémák találhatók — Folytatja a törlést?</value>
+  </data>
+
+  <!-- Dialog Messages -->
+  <data name="DialogSystemDriveExcluded" xml:space="preserve">
+    <value>A következő rendszermeghajtó(k) biztonsági okokból kizárásra kerültek:
+
+{0}</value>
+  </data>
+  <data name="DialogSurfaceCheckConfirm" xml:space="preserve">
+    <value>{0} perces felületellenőrzés futtatása {1} meghajtón?
+
+{2}
+
+Ez csak olvasás, nem módosít semmilyen adatot.</value>
+  </data>
+  <data name="DialogWipeConfirm" xml:space="preserve">
+    <value>MINDEN ADAT VÉGLEGESEN MEGSEMMISÜL
+
+Mód: {0}
+Kitöltés: {1}
+Menetek: {2}{3}
+
+Törlendő meghajtók:
+{4}
+
+Ez a művelet NEM vonható vissza. Folytatja?</value>
+  </data>
+  <data name="DialogWipeFinalConfirm" xml:space="preserve">
+    <value>VÉGSŐ FIGYELMEZTETÉS
+
+Biztosan véglegesen törölni szeretne {0} meghajtót?
+
+Csak akkor kattintson az IGEN gombra, ha teljesen biztos benne.</value>
+  </data>
+  <data name="DialogCheckWipeConfirm" xml:space="preserve">
+    <value>ELLENŐRZÉS &amp; TÖRLÉS — Kétfázisú művelet
+
+1. Felületellenőrzés ({0} perc meghajtónként)
+2. {1} (ha az ellenőrzés sikeres)
+
+Meghajtók:
+{2}
+
+Ha a felületellenőrzés hibákat talál, a rendszer megkérdezi, hogy kívánja-e folytatni.
+
+Folytatja?</value>
+  </data>
+  <data name="DialogIssuesFoundMessage" xml:space="preserve">
+    <value>A felületellenőrzés problémákat talált {0} meghajtón:
+
+{1}
+
+Továbbra is folytatni kívánja az ÖSSZES kiválasztott meghajtó törlését?</value>
+  </data>
+  <data name="DialogVerifyWillRun" xml:space="preserve">
+    <value>
+Ellenőrzési menet fut a törlés után.</value>
+  </data>
+
+  <!-- Dashboard -->
+  <data name="DashboardDrivesComplete" xml:space="preserve">
+    <value>{0} / {1} meghajtó kész</value>
+  </data>
+
+  <!-- Engine Status Messages -->
+  <data name="EngineSampling" xml:space="preserve">
+    <value>Mintavétel... {0} szektor ellenőrizve</value>
+  </data>
+  <data name="EngineHeadWipe" xml:space="preserve">
+    <value>Eleje törlés ({0}/{1}. menet)</value>
+  </data>
+  <data name="EngineTailWipe" xml:space="preserve">
+    <value>Vége törlés ({0}/{1}. menet)</value>
+  </data>
+  <data name="EngineScatterWipe" xml:space="preserve">
+    <value>Szórt törlés ({0}/{1}. menet)... {2}%</value>
+  </data>
+  <data name="EngineWiping" xml:space="preserve">
+    <value>Törlés... {0}%</value>
+  </data>
+  <data name="EngineWipingPass" xml:space="preserve">
+    <value>Törlés ({0}/{1}. menet)... {2}%</value>
+  </data>
+  <data name="EngineVerifying" xml:space="preserve">
+    <value>Ellenőrzés... {0}%</value>
+  </data>
+  <data name="EngineComplete" xml:space="preserve">
+    <value>Kész</value>
+  </data>
+  <data name="EngineSmartWipeComplete" xml:space="preserve">
+    <value>Intelligens törlés kész</value>
+  </data>
+  <data name="EngineWipeComplete" xml:space="preserve">
+    <value>Törlés kész</value>
+  </data>
+  <data name="EngineOpenReadError" xml:space="preserve">
+    <value>Nem sikerült megnyitni a(z) {0}. lemezt olvasásra (Win32 hiba: {1}). Futtassa rendszergazdaként.</value>
+  </data>
+  <data name="EngineOpenWriteError" xml:space="preserve">
+    <value>Nem sikerült megnyitni a(z) {0}. lemezt írásra (Win32 hiba: {1}). Futtassa rendszergazdaként.</value>
+  </data>
+
+  <!-- Report -->
+  <data name="ReportSurfaceCheckTitle" xml:space="preserve">
+    <value>DRIVEFLIP — FELÜLETELLENŐRZÉSI JELENTÉS</value>
+  </data>
+  <data name="ReportWipeTitle" xml:space="preserve">
+    <value>DRIVEFLIP — TÖRLÉSI JELENTÉS</value>
+  </data>
+  <data name="ReportDrive" xml:space="preserve">
+    <value>Meghajtó:</value>
+  </data>
+  <data name="ReportSerial" xml:space="preserve">
+    <value>Sorozatszám:</value>
+  </data>
+  <data name="ReportSize" xml:space="preserve">
+    <value>Méret:</value>
+  </data>
+  <data name="ReportDate" xml:space="preserve">
+    <value>Dátum:</value>
+  </data>
+  <data name="ReportDuration" xml:space="preserve">
+    <value>Időtartam:</value>
+  </data>
+  <data name="ReportResults" xml:space="preserve">
+    <value>Eredmények</value>
+  </data>
+  <data name="ReportSectorsSampled" xml:space="preserve">
+    <value>Mintázott szektorok:</value>
+  </data>
+  <data name="ReportCoverage" xml:space="preserve">
+    <value>Lefedettség:</value>
+  </data>
+  <data name="ReportReadErrors" xml:space="preserve">
+    <value>Olvasási hibák:</value>
+  </data>
+  <data name="ReportSectorsWithData" xml:space="preserve">
+    <value>Adatos szektorok:</value>
+  </data>
+  <data name="ReportEmptySectors" xml:space="preserve">
+    <value>Üres szektorok:</value>
+  </data>
+  <data name="ReportWarnReadErrors" xml:space="preserve">
+    <value>FIGYELMEZTETÉS: Olvasási hibák észlelve. A meghajtón hibás szektorok lehetnek.
+    Fontolja meg a meghajtó cseréjét értékesítés előtt.</value>
+  </data>
+  <data name="ReportOkNoErrors" xml:space="preserve">
+    <value>OK: Nem észlelhetők olvasási hibák. A meghajtó felülete egészségesnek tűnik.</value>
+  </data>
+  <data name="ReportNoteDataPresence" xml:space="preserve">
+    <value>MEGJEGYZÉS: A mintázott szektorok {0}%-a tartalmaz adatot.
+    Javasolt törlés futtatása értékesítés előtt.</value>
+  </data>
+  <data name="ReportInfoMinimalData" xml:space="preserve">
+    <value>INFO: A mintázott szektorok {0}%-a tartalmaz adatot (minimális).</value>
+  </data>
+  <data name="ReportOkClean" xml:space="preserve">
+    <value>OK: A meghajtó tisztának tűnik — nem található adat a mintázott szektorokban.</value>
+  </data>
+  <data name="ReportWipeMode" xml:space="preserve">
+    <value>Törlési mód:</value>
+  </data>
+  <data name="ReportFillMethod" xml:space="preserve">
+    <value>Kitöltési módszer:</value>
+  </data>
+  <data name="ReportSectorsWritten" xml:space="preserve">
+    <value>Írt szektorok:</value>
+  </data>
+  <data name="ReportWriteErrors" xml:space="preserve">
+    <value>Írási hibák:</value>
+  </data>
+  <data name="ReportCompleted" xml:space="preserve">
+    <value>Befejezve:</value>
+  </data>
+  <data name="ReportCompletedYes" xml:space="preserve">
+    <value>Igen</value>
+  </data>
+  <data name="ReportCompletedNo" xml:space="preserve">
+    <value>Nem — Megszakítva</value>
+  </data>
+  <data name="ReportVerificationPassed" xml:space="preserve">
+    <value>Ellenőrzés:    SIKERES — minden szektor tisztának igazolva</value>
+  </data>
+  <data name="ReportVerificationFailed" xml:space="preserve">
+    <value>Ellenőrzés:    {0} szektor nem felelt meg az ellenőrzésen</value>
+  </data>
+  <data name="ReportWipeSuccess" xml:space="preserve">
+    <value>OK: A meghajtó sikeresen törölve.</value>
+  </data>
+  <data name="ReportWipeWithErrors" xml:space="preserve">
+    <value>FIGYELMEZTETÉS: A törlés hibákkal fejeződött be. Egyes szektorok esetleg nem lettek felülírva.</value>
+  </data>
+  <data name="ReportMethodZero" xml:space="preserve">
+    <value>Nullás kitöltés (egymenetes)</value>
+  </data>
+  <data name="ReportMethodRandom" xml:space="preserve">
+    <value>Véletlenszerű adatkitöltés (egymenetes)</value>
+  </data>
+  <data name="ReportMethodRandomZero" xml:space="preserve">
+    <value>Véletlenszerű + nullás kitöltés (kétmenetes)</value>
+  </data>
+  <data name="ReportModeSmartDetail" xml:space="preserve">
+    <value>Intelligens törlés (eleje + vége + szórt)</value>
+  </data>
+  <data name="ReportModeFullDetail" xml:space="preserve">
+    <value>Teljes törlés (minden szektor)</value>
+  </data>
+
+  <!-- Listing Export -->
+  <data name="ListingReportHeader" xml:space="preserve">
+    <value>DRIVEFLIP MEGHAJTÓJELENTÉS</value>
+  </data>
+  <data name="ListingReportFooter" xml:space="preserve">
+    <value>Tesztelve a DriveFlip alkalmazással · {0}</value>
+  </data>
+  <data name="ListingDialogTitle" xml:space="preserve">
+    <value>Exportálás hirdetéshez</value>
+  </data>
+  <data name="ListingMoveUp" xml:space="preserve">
+    <value>Mező mozgatása felfelé</value>
+  </data>
+  <data name="ListingMoveDown" xml:space="preserve">
+    <value>Mező mozgatása lefelé</value>
+  </data>
+  <data name="ListingCancel" xml:space="preserve">
+    <value>Mégse</value>
+  </data>
+  <data name="ListingCopy" xml:space="preserve">
+    <value>Másolás</value>
+  </data>
+
+  <!-- Display Formatter -->
+  <data name="FormatNotAvailable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="FormatSsdNoSpindle" xml:space="preserve">
+    <value>SSD (nincs orsó)</value>
+  </data>
+  <data name="FormatSector512e" xml:space="preserve">
+    <value>512e (512 / 4096)</value>
+  </data>
+  <data name="FormatEnabled" xml:space="preserve">
+    <value>Engedélyezve</value>
+  </data>
+  <data name="FormatDisabled" xml:space="preserve">
+    <value>Letiltva</value>
+  </data>
+  <data name="FormatYes" xml:space="preserve">
+    <value>Igen</value>
+  </data>
+  <data name="FormatNo" xml:space="preserve">
+    <value>Nem</value>
+  </data>
+
+  <!-- Risk Levels -->
+  <data name="RiskGoodToSell" xml:space="preserve">
+    <value>ELADHATÓ</value>
+  </data>
+  <data name="RiskReviewNeeded" xml:space="preserve">
+    <value>FELÜLVIZSGÁLAT SZÜKSÉGES</value>
+  </data>
+  <data name="RiskDoNotSell" xml:space="preserve">
+    <value>NE ADJA EL</value>
+  </data>
+  <data name="RiskNotAssessed" xml:space="preserve">
+    <value>NEM ÉRTÉKELT</value>
+  </data>
+  <data name="RiskUnknown" xml:space="preserve">
+    <value>ISMERETLEN</value>
+  </data>
+
+  <!-- PhysicalDrive Display -->
+  <data name="DriveUsedSuffix" xml:space="preserve">
+    <value>használt</value>
+  </data>
+  <data name="DriveNoVolumes" xml:space="preserve">
+    <value>Nincsenek kötetek</value>
+  </data>
+  <data name="DriveNoPartitions" xml:space="preserve">
+    <value>Nincsenek partíciók</value>
+  </data>
+  <data name="DrivePartitionSingular" xml:space="preserve">
+    <value>1 partíció</value>
+  </data>
+  <data name="DrivePartitionsPlural" xml:space="preserve">
+    <value>{0} partíció</value>
+  </data>
+
+  <!-- Listing Field Labels -->
+  <data name="FieldStatus" xml:space="preserve">
+    <value>Állapot</value>
+  </data>
+  <data name="FieldManufacturer" xml:space="preserve">
+    <value>Gyártó</value>
+  </data>
+  <data name="FieldModel" xml:space="preserve">
+    <value>Modell</value>
+  </data>
+  <data name="FieldCapacity" xml:space="preserve">
+    <value>Kapacitás</value>
+  </data>
+  <data name="FieldInterface" xml:space="preserve">
+    <value>Csatolófelület</value>
+  </data>
+  <data name="FieldTransferMode" xml:space="preserve">
+    <value>Átviteli mód</value>
+  </data>
+  <data name="FieldSerialNumber" xml:space="preserve">
+    <value>Sorozatszám</value>
+  </data>
+  <data name="FieldFirmware" xml:space="preserve">
+    <value>Firmware</value>
+  </data>
+  <data name="FieldHealth" xml:space="preserve">
+    <value>Állapot</value>
+  </data>
+  <data name="FieldTemperature" xml:space="preserve">
+    <value>Hőmérséklet</value>
+  </data>
+  <data name="FieldPowerOnHours" xml:space="preserve">
+    <value>Üzemórák</value>
+  </data>
+  <data name="FieldReadErrors" xml:space="preserve">
+    <value>Olvasási hibák</value>
+  </data>
+  <data name="FieldWriteErrors" xml:space="preserve">
+    <value>Írási hibák</value>
+  </data>
+  <data name="FieldSsdWear" xml:space="preserve">
+    <value>SSD kopás</value>
+  </data>
+  <data name="FieldSpindleSpeed" xml:space="preserve">
+    <value>Orsósebesség</value>
+  </data>
+  <data name="FieldMediaType" xml:space="preserve">
+    <value>Adathordozó típusa</value>
+  </data>
+  <data name="FieldFeatures" xml:space="preserve">
+    <value>Jellemzők</value>
+  </data>
+  <data name="FieldPartNumber" xml:space="preserve">
+    <value>Cikkszám</value>
+  </data>
+  <data name="FieldManufactureDate" xml:space="preserve">
+    <value>Gyártási dátum</value>
+  </data>
+  <data name="FieldSectorSize" xml:space="preserve">
+    <value>Szektorméret</value>
+  </data>
+  <data name="FieldPartitionStyle" xml:space="preserve">
+    <value>Partícióstílus</value>
+  </data>
+
+  <!-- Phase Names -->
+  <data name="PhaseSurfaceCheck" xml:space="preserve">
+    <value>Felületellenőrzés</value>
+  </data>
+  <data name="PhaseHeadWipe" xml:space="preserve">
+    <value>Eleje törlés</value>
+  </data>
+  <data name="PhaseTailWipe" xml:space="preserve">
+    <value>Vége törlés</value>
+  </data>
+  <data name="PhaseScatterWipe" xml:space="preserve">
+    <value>Szórt törlés</value>
+  </data>
+  <data name="PhaseFullWipe" xml:space="preserve">
+    <value>Teljes törlés</value>
+  </data>
+  <data name="PhaseVerification" xml:space="preserve">
+    <value>Ellenőrzés</value>
+  </data>
+
+  <!-- Save Dialog -->
+  <data name="JsonFilter" xml:space="preserve">
+    <value>JSON fájlok (*.json)|*.json</value>
+  </data>
+
+  <!-- Additional UI strings -->
+  <data name="Remaining" xml:space="preserve">
+    <value>hátralévő</value>
+  </data>
+  <data name="CancelOperation" xml:space="preserve">
+    <value>Művelet megszakítása</value>
+  </data>
+  <data name="LicenseActivation" xml:space="preserve">
+    <value>Licenc aktiválása</value>
+  </data>
+  <data name="Licensee" xml:space="preserve">
+    <value>Licenctulajdonos</value>
+  </data>
+  <data name="Edition" xml:space="preserve">
+    <value>Kiadás</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Lejárat</value>
+  </data>
+  <data name="ActivatingLicense" xml:space="preserve">
+    <value>Licenc aktiválása...</value>
+  </data>
+  <data name="RequiresAdministrator" xml:space="preserve">
+    <value>Rendszergazdai jogosultság szükséges</value>
+  </data>
+  <data name="ExtendedCounters" xml:space="preserve">
+    <value>Bővített számlálók</value>
+  </data>
+  <data name="LoadingHealthData" xml:space="preserve">
+    <value>Állapotadatok betöltése...</value>
+  </data>
+  <data name="ReadingSmartData" xml:space="preserve">
+    <value>SMART adatok olvasása és értelmezése...</value>
+  </data>
+  <data name="LabelReadWriteErrors" xml:space="preserve">
+    <value>Olvasási / Írási hibák</value>
+  </data>
+  <data name="LabelSize" xml:space="preserve">
+    <value>Méret</value>
+  </data>
+  <data name="LabelDriveLetters" xml:space="preserve">
+    <value>Meghajtóbetűjelek</value>
+  </data>
+  <data name="LabelStatus" xml:space="preserve">
+    <value>Állapot</value>
+  </data>
+  <data name="LabelPartitionStyle" xml:space="preserve">
+    <value>Partícióstílus</value>
+  </data>
+  <data name="WipeModeSmartWipeDesc" xml:space="preserve">
+    <value>Intelligens törlés (eleje + vége + szórt)</value>
+  </data>
+  <data name="WipeModeFullWipeDesc" xml:space="preserve">
+    <value>Teljes törlés (minden szektor)</value>
+  </data>
+  <data name="WipeMethodZeroFillDesc" xml:space="preserve">
+    <value>Nullás kitöltés (gyors)</value>
+  </data>
+  <data name="WipeMethodRandomFillDesc" xml:space="preserve">
+    <value>Véletlenszerű kitöltés</value>
+  </data>
+  <data name="WipeMethodRandomZeroDesc" xml:space="preserve">
+    <value>Véletlenszerű + nullás (2 menet)</value>
+  </data>
+  <data name="WipeModeColon" xml:space="preserve">
+    <value>Törlési mód:</value>
+  </data>
+  <data name="FillMethodColon" xml:space="preserve">
+    <value>Kitöltési módszer:</value>
+  </data>
+  <data name="SurfaceCheckDesc2" xml:space="preserve">
+    <value>Véletlenszerűen mintáz szektorokat olvasási hibák és maradék adatok észleléséhez. Csak olvasás.</value>
+  </data>
+  <data name="WipeDesc2" xml:space="preserve">
+    <value>Véglegesen megsemmisíti az összes adatot. Nem vonható vissza.</value>
+  </data>
+  <data name="CheckAndWipeDesc2" xml:space="preserve">
+    <value>Először felületellenőrzés, majd törlés, ha a meghajtó átmegy.</value>
+  </data>
+  <data name="AboutTaglineText" xml:space="preserve">
+    <value>Gyakorlatias nyugalom</value>
+  </data>
+  <data name="AboutDescriptionFull" xml:space="preserve">
+    <value>A DriveFlip a hardver-újrahasznosítás &#x201E;elég jó&#x201D; valóságára épül: mivel a NAS adatok eleve több lemez között vannak szétosztva, akár egyetlen meghajtó törlése véletlenszerű mintázatú menetünkkel matematikailag kimerítővé teszi a helyreállítást. Nem ígérünk kriminalisztikai bizonyítékoknak ellenálló erődöt; ésszerű, nagy sebességű akadályt biztosítunk, amely az &#x201E;adataid visszaszerzését&#x201D; költséges, gyakorlatilag kivitelezhetetlen bolondok útjává teszi a következő tulajdonos számára.</value>
+  </data>
+  <data name="AboutLicenseLabel" xml:space="preserve">
+    <value>Licenc:</value>
+  </data>
+  <data name="AboutRequiresAdmin" xml:space="preserve">
+    <value>Rendszergazdai jogosultságszint szükséges</value>
+  </data>
+  <data name="LabelReadErrorsCorrected" xml:space="preserve">
+    <value>Olvasási hibák (javított)</value>
+  </data>
+  <data name="LabelReadErrorsUncorrected" xml:space="preserve">
+    <value>Olvasási hibák (javítatlan)</value>
+  </data>
+  <data name="LabelWriteErrorsCorrected" xml:space="preserve">
+    <value>Írási hibák (javított)</value>
+  </data>
+  <data name="LabelWriteErrorsUncorrected" xml:space="preserve">
+    <value>Írási hibák (javítatlan)</value>
+  </data>
+  <data name="LabelMaxReadLatency" xml:space="preserve">
+    <value>Max. olvasási késleltetés</value>
+  </data>
+  <data name="LabelMaxWriteLatency" xml:space="preserve">
+    <value>Max. írási késleltetés</value>
+  </data>
+  <data name="LabelMaxFlushLatency" xml:space="preserve">
+    <value>Max. kiürítési késleltetés</value>
+  </data>
+  <data name="SmartNotAvailableFallback" xml:space="preserve">
+    <value>A nyers SMART attribútumok nem érhetők el ehhez a meghajtóhoz.</value>
+  </data>
+  <data name="VerifyAfterWipe" xml:space="preserve">
+    <value>Ellenőrzés törlés után</value>
+  </data>
+  <data name="SettingCrashReport" xml:space="preserve">
+    <value>Hibajelentések küldése</value>
+  </data>
+  <data name="SettingCrashReportTooltip" xml:space="preserve">
+    <value>Automatikusan hibajelentéseket küld a DriveFlip fejlesztéséhez</value>
+  </data>
+  <data name="CrashReportDialogTitle" xml:space="preserve">
+    <value>Összeomlási jelentés elérhető</value>
+  </data>
+  <data name="CrashReportDialogMessage" xml:space="preserve">
+    <value>A DriveFlip váratlanul leállt az előző munkamenet során. Szeretne összeomlási jelentést küldeni a hiba kivizsgálásához?
+
+A jelentés tartalmazza az alkalmazás verzióját, az operációs rendszer adatait, a hiba részleteit, a csatlakoztatott meghajtók hardver-specifikációit és a legutóbbi naplóbejegyzéseket. Sorozatszámok és személyes adatok nem szerepelnek benne.</value>
+  </data>
+
+  <!-- Format Result -->
+  <data name="DialogFormatFailedTitle" xml:space="preserve">
+    <value>Form&#xE1;z&#xE1;s sikertelen &#x2014; Lemez {0}</value>
+  </data>
+  <data name="DialogFormatFailedMessage" xml:space="preserve">
+    <value>A t&#xF6;rl&#xE9;s sikeresen befejez&#x151;d&#xF6;tt, de a t&#xF6;rl&#xE9;s ut&#xE1;ni form&#xE1;z&#xE1;s sikertelen volt ({0}):
+
+{1}
+
+A meghajt&#xF3;t manu&#xE1;lisan form&#xE1;zhatja a Lemezkezel&#x151;ben.</value>
+  </data>
+
+  <!-- Close Prevention -->
+  <data name="DialogCannotCloseTitle" xml:space="preserve">
+    <value>Művelet folyamatban</value>
+  </data>
+  <data name="DialogCannotCloseMessage" xml:space="preserve">
+    <value>A DriveFlip jelenleg lemezműveletet hajt végre. Kérjük, szakítsa meg a műveletet az alkalmazás bezárása előtt.</value>
+  </data>
+
+</root>

@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveFlip UI Mockup — 3-Pane Layout</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; color: #ccc; font-family: 'Segoe UI', system-ui, sans-serif; padding: 32px; }
+
+  :root {
+    --bg-window: #1E1E2E;
+    --bg-card: #2B2B3D;
+    --bg-card-hover: #33334A;
+    --bg-dark: #1a1a2a;
+    --border: #50506A;
+    --accent-blue: #4A8AC4;
+    --accent-green: #388E3C;
+    --accent-red: #D32F2F;
+    --accent-amber: #FFC107;
+    --text-primary: #E0E0E0;
+    --text-secondary: #888;
+    --text-muted: #666;
+  }
+
+  h1 { color: var(--accent-blue); font-size: 28px; margin-bottom: 8px; }
+  h3 { color: var(--accent-blue); font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 40px; }
+
+  /* Mockup frame */
+  .mockup-frame {
+    background: var(--bg-window);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  /* Title bar */
+  .titlebar {
+    background: #181825;
+    padding: 8px 16px;
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid #2a2a3a; height: 36px;
+  }
+  .titlebar-dots { display: flex; gap: 6px; }
+  .titlebar-dots span { width: 12px; height: 12px; border-radius: 50%; }
+  .titlebar-dots .r { background: #D32F2F; }
+  .titlebar-dots .y { background: #FFC107; }
+  .titlebar-dots .g { background: #388E3C; }
+  .titlebar-title { color: var(--text-secondary); font-size: 12px; flex: 1; text-align: center; }
+
+  /* Header */
+  .header {
+    padding: 10px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border); background: var(--bg-dark);
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 34px; height: 34px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent-blue), #2a5a8a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: bold; color: #fff;
+  }
+  .brand-name { font-size: 18px; font-weight: 700; color: var(--accent-blue); }
+  .brand-tagline { font-size: 10.5px; color: var(--text-secondary); }
+  .header-right { display: flex; gap: 8px; align-items: center; }
+
+  /* Buttons */
+  .btn {
+    padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border);
+    font-size: 12px; cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-primary { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+  .btn-danger { background: var(--accent-red); color: #fff; border-color: var(--accent-red); }
+  .btn-caution { background: #B8860B; color: #fff; border-color: #B8860B; }
+  .btn-secondary { background: var(--bg-card); color: var(--text-primary); }
+  .btn-ghost { background: transparent; color: var(--text-secondary); border-color: transparent; padding: 6px 8px; }
+  .btn-sm { padding: 4px 10px; font-size: 11px; }
+  .btn-full { width: 100%; justify-content: center; }
+  .btn-icon {
+    width: 30px; height: 30px; border-radius: 4px; border: 1px solid var(--border);
+    background: var(--bg-card); color: var(--text-secondary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+
+  /* 3-pane main */
+  .main-3 {
+    display: flex;
+    height: 600px; /* fixed height so all 3 panes scroll independently */
+  }
+
+  /* ── LEFT PANE: Drive List ── */
+  .pane-drives {
+    width: 240px; min-width: 240px;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    background: var(--bg-dark);
+  }
+  .pane-drives-header {
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .pane-drives-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .pane-drives-list {
+    flex: 1; overflow-y: auto; padding: 6px 8px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .drive-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 5px;
+    padding: 8px 10px; cursor: pointer; position: relative;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .drive-card:hover { background: var(--bg-card-hover); }
+  .drive-card.selected { border-color: var(--accent-blue); background: rgba(74,138,196,0.08); }
+  .drive-checkbox { width: 14px; height: 14px; accent-color: var(--accent-blue); margin-top: 2px; flex-shrink: 0; }
+  .drive-info { flex: 1; min-width: 0; }
+  .drive-name { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+  .drive-meta { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+  .drive-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+  .drive-size { font-size: 10px; color: var(--text-secondary); }
+  .badge { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 9px; font-weight: 600; }
+  .badge-system { background: rgba(255,193,7,0.15); color: var(--accent-amber); }
+  .risk-badge { padding: 1px 6px; border-radius: 3px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+  .risk-low { background: rgba(56,142,60,0.15); color: var(--accent-green); }
+  .risk-medium { background: rgba(255,193,7,0.15); color: var(--accent-amber); }
+  .risk-high { background: rgba(211,47,47,0.15); color: var(--accent-red); }
+
+  .pane-drives-footer {
+    padding: 6px 8px; border-top: 1px solid var(--border);
+    display: flex; gap: 4px; justify-content: center;
+  }
+
+  /* ── CENTER PANE: Drive Details ── */
+  .pane-details {
+    flex: 1; min-width: 0;
+    overflow-y: auto;
+    padding: 16px 20px;
+  }
+
+  .section { margin-bottom: 20px; }
+  .section-header {
+    font-size: 13px; font-weight: 600; color: var(--accent-blue);
+    margin-bottom: 10px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .info-grid {
+    display: grid; grid-template-columns: 130px 1fr; gap: 3px 12px;
+    font-size: 12px;
+  }
+  .info-grid-2col {
+    display: grid; grid-template-columns: 130px 1fr 130px 1fr; gap: 3px 12px;
+    font-size: 12px;
+  }
+  .info-label { color: var(--text-secondary); }
+  .info-value { color: var(--text-primary); }
+
+  /* Health rows */
+  .health-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .health-item {
+    background: var(--bg-card); border-radius: 4px; padding: 8px 10px;
+  }
+  .health-item-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+  .health-item-value { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 2px; }
+  .health-item-value.good { color: var(--accent-green); }
+  .health-item-value.warn { color: var(--accent-amber); }
+  .health-item-value.bad { color: var(--accent-red); }
+
+  /* SMART table */
+  .smart-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .smart-table th {
+    text-align: left; padding: 4px 8px; color: var(--text-secondary);
+    border-bottom: 1px solid var(--border); font-weight: 600; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .smart-table td {
+    padding: 4px 8px; border-bottom: 1px solid #2a2a3a; color: var(--text-primary);
+  }
+  .smart-table tr:hover td { background: rgba(74,138,196,0.04); }
+  .smart-table .failing { color: var(--accent-red); font-weight: 600; }
+
+  /* ── RIGHT PANE: Actions ── */
+  .pane-actions {
+    width: 270px; min-width: 270px;
+    border-left: 1px solid var(--border);
+    padding: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+    overflow-y: auto;
+  }
+
+  .action-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px;
+  }
+  .action-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .action-desc { font-size: 10.5px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.3; }
+
+  .option-group { margin: 6px 0; display: flex; flex-direction: column; gap: 3px; }
+  .option-group label { font-size: 11px; color: var(--text-primary); display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  .option-group input { accent-color: var(--accent-blue); }
+
+  .sep { height: 1px; background: var(--border); }
+
+  /* Status bar */
+  .statusbar {
+    padding: 6px 16px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; background: #181825;
+  }
+  .statusbar-left { color: var(--text-secondary); }
+  .statusbar-right { display: flex; align-items: center; gap: 10px; }
+  .license-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .license-green { background: rgba(56,142,60,0.2); color: var(--accent-green); }
+  .admin-text { color: var(--text-muted); font-size: 10px; }
+
+  /* No-drive-selected placeholder */
+  .placeholder {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; color: var(--text-muted); font-size: 13px;
+  }
+
+  /* Operation dashboard (replaces actions during scan) */
+  .op-dashboard {
+    text-align: center; padding: 12px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+  }
+  .op-time { font-size: 28px; font-weight: 600; color: var(--text-primary); }
+  .op-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; }
+  .op-bar { height: 6px; background: #333; border-radius: 3px; overflow: hidden; margin: 8px 0; }
+  .op-bar-fill { height: 100%; background: var(--accent-blue); border-radius: 3px; width: 42%; }
+  .op-summary { font-size: 11px; color: var(--text-secondary); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .desc-block { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; line-height: 1.5; max-width: 900px; }
+  .callout {
+    display: inline-block; padding: 3px 10px; border-radius: 4px;
+    font-size: 11px; font-weight: 600;
+    background: rgba(74,138,196,0.12); color: var(--accent-blue);
+    margin-bottom: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>DriveFlip — 3-Pane Layout</h1>
+<p class="subtitle">Drives | Details | Actions &mdash; everything visible, everything scrolls independently.</p>
+
+<!-- ============================================================ -->
+<!-- MOCKUP 1: Normal state (drive selected, Info + Health + SMART stacked) -->
+<!-- ============================================================ -->
+
+<div class="callout">IDLE STATE</div>
+<p class="desc-block">
+  <strong>Left pane</strong> is a narrow drive list &mdash; just enough for model name, size, risk badge.<br>
+  <strong>Center pane</strong> scrolls vertically with all sections stacked: Info &rarr; Health &rarr; SMART. No tabs, no height cap.<br>
+  <strong>Right pane</strong> has the three action cards with collapsible wipe options.
+  Copy for Listing and Dump Raw Data buttons move into the center pane's Info section header.
+</p>
+
+<div class="mockup-frame">
+  <div class="titlebar">
+    <div class="titlebar-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+    <div class="titlebar-title">DriveFlip &mdash; Surface Check & Drive Prep</div>
+  </div>
+
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-icon">D</div>
+      <div>
+        <div class="brand-name">DriveFlip</div>
+        <div class="brand-tagline">No Time for Slow. Random Wipe and Go.</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-secondary btn-sm">&#x21bb; Refresh</button>
+      <button class="btn-icon" title="About">&#x2139;</button>
+      <button class="btn-icon" title="Settings">&#x2699;</button>
+    </div>
+  </div>
+
+  <div class="main-3">
+
+    <!-- ── LEFT: Drive List ── -->
+    <div class="pane-drives">
+      <div class="pane-drives-header">
+        <span class="pane-drives-title">Drives</span>
+        <button class="btn btn-sm btn-ghost" style="font-size: 10px; padding: 2px 6px;">External Only</button>
+      </div>
+      <div class="pane-drives-list">
+
+        <div class="drive-card selected">
+          <input type="checkbox" class="drive-checkbox" checked>
+          <div class="drive-info">
+            <div class="drive-name">Samsung 870 EVO 500GB</div>
+            <div class="drive-meta">SATA &middot; D: &middot; USB</div>
+            <div class="drive-bottom">
+              <span class="drive-size">465 GB</span>
+              <span class="risk-badge risk-low">Low</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drive-card">
+          <input type="checkbox" class="drive-checkbox">
+          <div class="drive-info">
+            <div class="drive-name">WD Blue SN570 1TB</div>
+            <div class="drive-meta">NVMe &middot; E:</div>
+            <div class="drive-bottom">
+              <span class="drive-size">931 GB</span>
+              <span class="risk-badge risk-low">Low</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drive-card">
+          <input type="checkbox" class="drive-checkbox" disabled>
+          <div class="drive-info">
+            <div class="drive-name">Seagate Barracuda 2TB</div>
+            <div class="drive-meta">SATA &middot; C: <span class="badge badge-system">SYS</span></div>
+            <div class="drive-bottom">
+              <span class="drive-size">1.8 TB</span>
+              <span class="risk-badge risk-medium">Med</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drive-card">
+          <input type="checkbox" class="drive-checkbox">
+          <div class="drive-info">
+            <div class="drive-name">Kingston A400 240GB</div>
+            <div class="drive-meta">SATA &middot; F: &middot; USB</div>
+            <div class="drive-bottom">
+              <span class="drive-size">223 GB</span>
+              <span class="risk-badge risk-high">High</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drive-card">
+          <input type="checkbox" class="drive-checkbox">
+          <div class="drive-info">
+            <div class="drive-name">Crucial MX500 1TB</div>
+            <div class="drive-meta">SATA &middot; G: &middot; USB</div>
+            <div class="drive-bottom">
+              <span class="drive-size">931 GB</span>
+              <span class="risk-badge risk-low">Low</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="pane-drives-footer">
+        <button class="btn btn-sm btn-ghost" style="font-size: 10px;">All</button>
+        <button class="btn btn-sm btn-ghost" style="font-size: 10px;">None</button>
+      </div>
+    </div>
+
+    <!-- ── CENTER: Stacked Drive Details ── -->
+    <div class="pane-details">
+
+      <!-- INFO SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <span>&#x1F4CB; Drive Info</span>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-primary btn-sm">Copy for Listing</button>
+            <button class="btn btn-secondary btn-sm">Dump Raw Data</button>
+          </div>
+        </div>
+        <div class="info-grid-2col">
+          <span class="info-label">Manufacturer</span><span class="info-value">Samsung</span>
+          <span class="info-label">Size</span><span class="info-value">465.76 GB</span>
+          <span class="info-label">Model</span><span class="info-value">Samsung 870 EVO 500GB</span>
+          <span class="info-label">Sector Size</span><span class="info-value">512 bytes</span>
+          <span class="info-label">Serial</span><span class="info-value">S6PENX0T8X2K</span>
+          <span class="info-label">Partition Style</span><span class="info-value">GPT</span>
+          <span class="info-label">Part Number</span><span class="info-value">MZ-77E500</span>
+          <span class="info-label">Drive Letters</span><span class="info-value">D:</span>
+          <span class="info-label">Firmware</span><span class="info-value">SVT02B6Q</span>
+          <span class="info-label">Status</span><span class="info-value">OK</span>
+          <span class="info-label">Interface</span><span class="info-value">SATA</span>
+          <span class="info-label">Transfer Mode</span><span class="info-value">SATA/600</span>
+          <span class="info-label">USB Bridge</span><span class="info-value">ASM1153E (174C:55AA)</span>
+          <span class="info-label">Features</span><span class="info-value">NCQ, TRIM, APM</span>
+        </div>
+      </div>
+
+      <!-- HEALTH SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <span>&#x2764; Health</span>
+          <span class="risk-badge risk-low" style="font-size: 10px;">Low Risk</span>
+        </div>
+        <div class="health-grid">
+          <div class="health-item">
+            <div class="health-item-label">Health Status</div>
+            <div class="health-item-value good">Healthy</div>
+          </div>
+          <div class="health-item">
+            <div class="health-item-label">Temperature</div>
+            <div class="health-item-value">34 &deg;C</div>
+          </div>
+          <div class="health-item">
+            <div class="health-item-label">Power-On Hours</div>
+            <div class="health-item-value">12,847 h</div>
+          </div>
+          <div class="health-item">
+            <div class="health-item-label">SSD Wear</div>
+            <div class="health-item-value good">3%</div>
+          </div>
+          <div class="health-item">
+            <div class="health-item-label">Read Errors</div>
+            <div class="health-item-value good">0</div>
+          </div>
+          <div class="health-item">
+            <div class="health-item-label">Write Errors</div>
+            <div class="health-item-value good">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SMART SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <span>&#x1F4CA; SMART Attributes</span>
+        </div>
+        <table class="smart-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Attribute</th>
+              <th>Cur</th>
+              <th>Worst</th>
+              <th>Thresh</th>
+              <th>Raw</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>01</td><td>Read Error Rate</td>
+              <td>100</td><td>100</td><td>50</td><td>0</td>
+            </tr>
+            <tr>
+              <td>05</td><td>Reallocated Sectors</td>
+              <td>100</td><td>100</td><td>10</td><td>0</td>
+            </tr>
+            <tr>
+              <td>09</td><td>Power-On Hours</td>
+              <td>97</td><td>97</td><td>0</td><td>12,847</td>
+            </tr>
+            <tr>
+              <td>0C</td><td>Power Cycle Count</td>
+              <td>99</td><td>99</td><td>0</td><td>1,204</td>
+            </tr>
+            <tr>
+              <td>B1</td><td>SSD Wear Leveling</td>
+              <td>97</td><td>97</td><td>0</td><td>3</td>
+            </tr>
+            <tr>
+              <td>B5</td><td>Program Fail (Total)</td>
+              <td>100</td><td>100</td><td>10</td><td>0</td>
+            </tr>
+            <tr>
+              <td>B6</td><td>Erase Fail (Total)</td>
+              <td>100</td><td>100</td><td>10</td><td>0</td>
+            </tr>
+            <tr class="failing">
+              <td>BB</td><td>Uncorrectable Errors</td>
+              <td>100</td><td>100</td><td>0</td><td>0</td>
+            </tr>
+            <tr>
+              <td>BE</td><td>Temperature</td>
+              <td>66</td><td>52</td><td>0</td><td>34</td>
+            </tr>
+            <tr>
+              <td>F1</td><td>Total LBAs Written</td>
+              <td>99</td><td>99</td><td>0</td><td>14,782,391,040</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT: Actions ── -->
+    <div class="pane-actions">
+      <div class="action-card">
+        <div class="action-title" style="color: var(--accent-blue);">Surface Check</div>
+        <div class="action-desc">Randomly samples sectors to detect read errors and data presence.</div>
+        <button class="btn btn-primary btn-full btn-sm">Run Surface Check</button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-title" style="color: var(--accent-red);">Wipe</div>
+        <div class="action-desc">Overwrites drive data to make recovery impractical.</div>
+        <details style="margin-bottom: 8px;">
+          <summary style="font-size: 10.5px; color: var(--accent-blue); cursor: pointer; margin-bottom: 6px;">
+            Options &mdash; Smart Wipe, Zero Fill, Verify
+          </summary>
+          <div class="option-group">
+            <label><input type="radio" name="mode" checked> Smart Wipe</label>
+            <label><input type="radio" name="mode"> Full Wipe</label>
+          </div>
+          <div class="option-group" style="margin-top: 4px;">
+            <label><input type="radio" name="fill" checked> Zero fill</label>
+            <label><input type="radio" name="fill"> Random fill</label>
+            <label><input type="radio" name="fill"> Random + zero</label>
+          </div>
+          <div style="margin-top: 4px;">
+            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px;">
+              <input type="checkbox" checked style="accent-color: var(--accent-blue);"> Verify
+            </label>
+          </div>
+        </details>
+        <button class="btn btn-danger btn-full btn-sm">Wipe Selected Drives</button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-title" style="color: var(--accent-amber);">Check & Wipe</div>
+        <div class="action-desc">Surface check first, then wipes. Full pipeline.</div>
+        <button class="btn btn-caution btn-full btn-sm">Check & Wipe</button>
+      </div>
+
+      <div style="flex: 1;"></div>
+
+      <!-- Operation dashboard placeholder -->
+      <div style="padding: 10px; border: 1px dashed var(--border); border-radius: 6px; text-align: center;">
+        <span style="color: var(--text-muted); font-size: 10px;">
+          During operations: time remaining, progress bar, cancel button appear here
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="statusbar">
+    <div class="statusbar-left">Samsung 870 EVO 500GB &mdash; D: &mdash; 465 GB</div>
+    <div class="statusbar-right">
+      <span class="license-badge license-green">Licensed</span>
+      <span class="admin-text">Administrator</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- MOCKUP 2: During operation -->
+<!-- ============================================================ -->
+
+<div class="callout">DURING OPERATION</div>
+<p class="desc-block">
+  Right pane transforms to the operation dashboard. Center pane can show a progress tab or stay on details.
+  Drive cards show inline progress bars for each drive being processed.
+</p>
+
+<div class="mockup-frame">
+  <div class="titlebar">
+    <div class="titlebar-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+    <div class="titlebar-title">DriveFlip &mdash; Wiping 2 drives...</div>
+  </div>
+
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-icon">D</div>
+      <div>
+        <div class="brand-name">DriveFlip</div>
+        <div class="brand-tagline">No Time for Slow. Random Wipe and Go.</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-secondary btn-sm" disabled style="opacity: 0.4;">&#x21bb; Refresh</button>
+      <button class="btn-icon" title="About">&#x2139;</button>
+      <button class="btn-icon" title="Settings">&#x2699;</button>
+    </div>
+  </div>
+
+  <div class="main-3">
+
+    <!-- LEFT: Drives with progress -->
+    <div class="pane-drives">
+      <div class="pane-drives-header">
+        <span class="pane-drives-title">Drives</span>
+        <span style="font-size: 10px; color: var(--accent-blue);">2 active</span>
+      </div>
+      <div class="pane-drives-list">
+
+        <div class="drive-card selected">
+          <input type="checkbox" class="drive-checkbox" checked disabled>
+          <div class="drive-info">
+            <div class="drive-name">Samsung 870 EVO 500GB</div>
+            <div class="drive-meta" style="color: var(--accent-blue);">Wiping... 42%</div>
+            <div style="height: 3px; background: #333; border-radius: 2px; margin-top: 4px; overflow: hidden;">
+              <div style="height: 100%; width: 42%; background: var(--accent-blue); border-radius: 2px;"></div>
+            </div>
+            <div class="drive-meta" style="margin-top: 2px;">185 MB/s &middot; 0 errors</div>
+          </div>
+        </div>
+
+        <div class="drive-card">
+          <input type="checkbox" class="drive-checkbox" checked disabled>
+          <div class="drive-info">
+            <div class="drive-name">Kingston A400 240GB</div>
+            <div class="drive-meta" style="color: var(--accent-blue);">Wiping... 67%</div>
+            <div style="height: 3px; background: #333; border-radius: 2px; margin-top: 4px; overflow: hidden;">
+              <div style="height: 100%; width: 67%; background: var(--accent-blue); border-radius: 2px;"></div>
+            </div>
+            <div class="drive-meta" style="margin-top: 2px;">142 MB/s &middot; 0 errors</div>
+          </div>
+        </div>
+
+        <div class="drive-card" style="opacity: 0.5;">
+          <input type="checkbox" class="drive-checkbox" disabled>
+          <div class="drive-info">
+            <div class="drive-name">WD Blue SN570 1TB</div>
+            <div class="drive-meta">NVMe &middot; E:</div>
+            <div class="drive-bottom">
+              <span class="drive-size">931 GB</span>
+              <span class="risk-badge risk-low">Low</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drive-card" style="opacity: 0.5;">
+          <input type="checkbox" class="drive-checkbox" disabled>
+          <div class="drive-info">
+            <div class="drive-name">Seagate Barracuda 2TB</div>
+            <div class="drive-meta">SATA &middot; C: <span class="badge badge-system">SYS</span></div>
+            <div class="drive-bottom">
+              <span class="drive-size">1.8 TB</span>
+              <span class="risk-badge risk-medium">Med</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pane-drives-footer">
+        <button class="btn btn-sm btn-ghost" style="font-size: 10px;" disabled>All</button>
+        <button class="btn btn-sm btn-ghost" style="font-size: 10px;" disabled>None</button>
+      </div>
+    </div>
+
+    <!-- CENTER: still shows selected drive details -->
+    <div class="pane-details">
+      <div class="section">
+        <div class="section-header">
+          <span>&#x1F4CB; Drive Info</span>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-primary btn-sm" disabled style="opacity: 0.4;">Copy for Listing</button>
+          </div>
+        </div>
+        <div class="info-grid-2col">
+          <span class="info-label">Manufacturer</span><span class="info-value">Samsung</span>
+          <span class="info-label">Size</span><span class="info-value">465.76 GB</span>
+          <span class="info-label">Model</span><span class="info-value">Samsung 870 EVO 500GB</span>
+          <span class="info-label">Sector Size</span><span class="info-value">512 bytes</span>
+          <span class="info-label">Serial</span><span class="info-value">S6PENX0T8X2K</span>
+          <span class="info-label">Partition Style</span><span class="info-value">GPT</span>
+          <span class="info-label">Firmware</span><span class="info-value">SVT02B6Q</span>
+          <span class="info-label">Drive Letters</span><span class="info-value">D:</span>
+          <span class="info-label">Interface</span><span class="info-value">SATA</span>
+          <span class="info-label">USB Bridge</span><span class="info-value">ASM1153E</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <span>&#x2764; Health</span>
+          <span class="risk-badge risk-low" style="font-size: 10px;">Low Risk</span>
+        </div>
+        <div class="health-grid">
+          <div class="health-item">
+            <div class="health-item-label">Health Status</div>
+            <div class="health-item-value good">Healthy</div>
+          </div>
+          <div class="health-item">
+            <div class="health-item-label">Temperature</div>
+            <div class="health-item-value">34 &deg;C</div>
+          </div>
+          <div class="health-item">
+            <div class="health-item-label">Power-On Hours</div>
+            <div class="health-item-value">12,847 h</div>
+          </div>
+          <div class="health-item">
+            <div class="health-item-label">SSD Wear</div>
+            <div class="health-item-value good">3%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder for SMART section still visible below -->
+      <div class="section">
+        <div class="section-header"><span>&#x1F4CA; SMART Attributes</span></div>
+        <table class="smart-table">
+          <thead><tr><th>ID</th><th>Attribute</th><th>Cur</th><th>Worst</th><th>Thresh</th><th>Raw</th></tr></thead>
+          <tbody>
+            <tr><td>01</td><td>Read Error Rate</td><td>100</td><td>100</td><td>50</td><td>0</td></tr>
+            <tr><td>05</td><td>Reallocated Sectors</td><td>100</td><td>100</td><td>10</td><td>0</td></tr>
+            <tr><td>09</td><td>Power-On Hours</td><td>97</td><td>97</td><td>0</td><td>12,847</td></tr>
+            <tr><td>B1</td><td>SSD Wear Leveling</td><td>97</td><td>97</td><td>0</td><td>3</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RIGHT: Operation dashboard -->
+    <div class="pane-actions">
+      <div class="op-dashboard">
+        <div class="op-time">14:32</div>
+        <div class="op-label">remaining</div>
+        <div class="op-bar"><div class="op-bar-fill"></div></div>
+        <div class="op-summary">0 of 2 drive(s) complete</div>
+      </div>
+
+      <div style="padding: 10px; background: var(--bg-card); border-radius: 6px; border: 1px solid var(--border);">
+        <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 6px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Overall speed:</span>
+            <span style="color: var(--text-primary);">327 MB/s</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Total errors:</span>
+            <span style="color: var(--accent-green);">0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Mode:</span>
+            <span style="color: var(--text-primary);">Smart Wipe</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex: 1;"></div>
+
+      <button class="btn btn-danger btn-full">Cancel Operation</button>
+    </div>
+
+  </div>
+
+  <div class="statusbar">
+    <div class="statusbar-left" style="color: var(--accent-blue);">Wiping 2 drives &mdash; Smart Wipe, Zero Fill</div>
+    <div class="statusbar-right">
+      <span class="license-badge license-green">Licensed</span>
+      <span class="admin-text">Administrator</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- MOCKUP 3: No drive selected -->
+<!-- ============================================================ -->
+
+<div class="callout">NO DRIVE SELECTED</div>
+<p class="desc-block">
+  Center pane shows a clean placeholder. Actions are still visible but disabled.
+</p>
+
+<div class="mockup-frame">
+  <div class="titlebar">
+    <div class="titlebar-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+    <div class="titlebar-title">DriveFlip &mdash; Surface Check & Drive Prep</div>
+  </div>
+
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-icon">D</div>
+      <div>
+        <div class="brand-name">DriveFlip</div>
+        <div class="brand-tagline">No Time for Slow. Random Wipe and Go.</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-secondary btn-sm">&#x21bb; Refresh</button>
+      <button class="btn-icon" title="About">&#x2139;</button>
+      <button class="btn-icon" title="Settings">&#x2699;</button>
+    </div>
+  </div>
+
+  <div class="main-3">
+    <div class="pane-drives">
+      <div class="pane-drives-header">
+        <span class="pane-drives-title">Drives</span>
+        <button class="btn btn-sm btn-ghost" style="font-size: 10px; padding: 2px 6px;">External Only</button>
+      </div>
+      <div class="pane-drives-list">
+        <div class="drive-card">
+          <input type="checkbox" class="drive-checkbox">
+          <div class="drive-info">
+            <div class="drive-name">Samsung 870 EVO 500GB</div>
+            <div class="drive-meta">SATA &middot; D: &middot; USB</div>
+            <div class="drive-bottom">
+              <span class="drive-size">465 GB</span>
+              <span class="risk-badge risk-low">Low</span>
+            </div>
+          </div>
+        </div>
+        <div class="drive-card">
+          <input type="checkbox" class="drive-checkbox">
+          <div class="drive-info">
+            <div class="drive-name">WD Blue SN570 1TB</div>
+            <div class="drive-meta">NVMe &middot; E:</div>
+            <div class="drive-bottom">
+              <span class="drive-size">931 GB</span>
+              <span class="risk-badge risk-low">Low</span>
+            </div>
+          </div>
+        </div>
+        <div class="drive-card" style="opacity: 0.5;">
+          <input type="checkbox" class="drive-checkbox" disabled>
+          <div class="drive-info">
+            <div class="drive-name">Seagate Barracuda 2TB</div>
+            <div class="drive-meta">SATA &middot; C: <span class="badge badge-system">SYS</span></div>
+            <div class="drive-bottom">
+              <span class="drive-size">1.8 TB</span>
+              <span class="risk-badge risk-medium">Med</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pane-drives-footer">
+        <button class="btn btn-sm btn-ghost" style="font-size: 10px;">All</button>
+        <button class="btn btn-sm btn-ghost" style="font-size: 10px;">None</button>
+      </div>
+    </div>
+
+    <div class="pane-details">
+      <div class="placeholder">
+        <div style="text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 8px; opacity: 0.3;">&#x1F4BF;</div>
+          <div style="color: var(--text-secondary); font-size: 13px;">Select a drive to view details</div>
+          <div style="color: var(--text-muted); font-size: 11px; margin-top: 4px;">Click a drive in the list, or check drives to run operations</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane-actions">
+      <div class="action-card" style="opacity: 0.5;">
+        <div class="action-title" style="color: var(--accent-blue);">Surface Check</div>
+        <div class="action-desc">Randomly samples sectors to detect read errors and data presence.</div>
+        <button class="btn btn-primary btn-full btn-sm" disabled>Run Surface Check</button>
+      </div>
+
+      <div class="action-card" style="opacity: 0.5;">
+        <div class="action-title" style="color: var(--accent-red);">Wipe</div>
+        <div class="action-desc">Overwrites drive data to make recovery impractical.</div>
+        <button class="btn btn-danger btn-full btn-sm" disabled>Wipe Selected Drives</button>
+      </div>
+
+      <div class="action-card" style="opacity: 0.5;">
+        <div class="action-title" style="color: var(--accent-amber);">Check & Wipe</div>
+        <div class="action-desc">Surface check first, then wipes. Full pipeline.</div>
+        <button class="btn btn-caution btn-full btn-sm" disabled>Check & Wipe</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div class="statusbar-left">Select drives and choose an action.</div>
+    <div class="statusbar-right">
+      <span class="license-badge license-green">Licensed</span>
+      <span class="admin-text">Administrator</span>
+    </div>
+  </div>
+</div>
+
+<div style="height: 60px;"></div>
+
+</body>
+</html>
