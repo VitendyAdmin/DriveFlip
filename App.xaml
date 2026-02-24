@@ -26,6 +26,13 @@
             <converters:PhaseStatusToIconConverter x:Key="PhaseIcon"/>
             <converters:AllTrueMultiConverter x:Key="AllTrue"/>
             <converters:NonEmptyStringToVisibilityConverter x:Key="NonEmptyToVis"/>
+            <converters:DriveLogStatusToColorConverter x:Key="DriveLogStatusColor"/>
+            <converters:DriveLogStatusToTextConverter x:Key="DriveLogStatusText"/>
+            <converters:FilePathToThumbnailConverter x:Key="FilePathToThumbnail"/>
+            <converters:NullToAppearanceConverter x:Key="NullToAppearance"/>
+            <converters:BoolToPassFailConverter x:Key="BoolToPassFail"/>
+            <converters:BoolToPassFailColorConverter x:Key="BoolToPassFailColor"/>
+            <converters:ZeroToVisibilityConverter x:Key="ZeroToVis"/>
 
             <!-- App accent colors -->
             <Color x:Key="AccentBlue">#4A8AC4</Color>

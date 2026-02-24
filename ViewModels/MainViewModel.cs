@@ -24,6 +24,7 @@ public class MainViewModel : INotifyPropertyChanged
     private readonly DiskEngine _engine;
     private readonly DriveDetectionService _detection;
     private readonly ILicenseService _license;
+    private readonly DriveLogService _driveLog;
     private CancellationTokenSource? _cts;
 
     // ── Collections ──
@@ -52,6 +53,20 @@ public class MainViewModel : INotifyPropertyChanged
         get => _isAboutOpen;
         set { _isAboutOpen = value; OnPropertyChanged(); if (value) IsSettingsOpen = false; }
     }
+
+    private bool _isDriveLogActive;
+    public bool IsDriveLogActive
+    {
+        get => _isDriveLogActive;
+        set
+        {
+            _isDriveLogActive = value;
+            OnPropertyChanged();
+            if (value) { IsSettingsOpen = false; IsAboutOpen = false; DriveLogVM.Refresh(); }
+        }
+    }
+
+    public DriveLogViewModel DriveLogVM { get; }
 
     public string AppVersion => System.Reflection.Assembly.GetExecutingAssembly()
         .GetName().Version?.ToString(3) ?? "2.0.0";
@@ -421,14 +436,17 @@ public class MainViewModel : INotifyPropertyChanged
     public ICommand ZoomInCommand { get; }
     public ICommand ZoomOutCommand { get; }
     public ICommand ZoomResetCommand { get; }
+    public ICommand ToggleDriveLogCommand { get; }
 
-    public MainViewModel() : this(new DriveDetectionService(), new DiskEngine(), new LicenseService()) { }
+    public MainViewModel() : this(new DriveDetectionService(), new DiskEngine(), new LicenseService(), new DriveLogService()) { }
 
-    public MainViewModel(DriveDetectionService detection, DiskEngine engine, ILicenseService license)
+    public MainViewModel(DriveDetectionService detection, DiskEngine engine, ILicenseService license, DriveLogService driveLog)
     {
         _detection = detection;
         _engine = engine;
         _license = license;
+        _driveLog = driveLog;
+        DriveLogVM = new DriveLogViewModel(driveLog);
         RefreshDrivesCommand = new RelayCommand(async () => await SafeAsync(RefreshDrivesAsync, "RefreshDrives"), () => IsIdle);
         RunSurfaceCheckCommand = new RelayCommand(async () => await SafeAsync(RunSurfaceCheck, "SurfaceCheck"), () => IsIdle && HasSelection && IsLicensed);
         RunWipeCommand = new RelayCommand(async () => await SafeAsync(RunWipe, "Wipe"), () => IsIdle && HasSelection && IsLicensed);
@@ -450,6 +468,7 @@ public class MainViewModel : INotifyPropertyChanged
         ZoomOutCommand = new RelayCommand(() => DetailZoom -= 0.1);
         ZoomResetCommand = new RelayCommand(() => DetailZoom = 1.1);
         ExportForListingCommand = new RelayCommand(ExportForListing, () => HasSelectedDrive);
+        ToggleDriveLogCommand = new RelayCommand(() => IsDriveLogActive = !IsDriveLogActive);
 
         Logger.Info("DriveFlip started.");
         _ = RefreshDrivesAsync();
@@ -706,6 +725,8 @@ public class MainViewModel : INotifyPropertyChanged
                         _detection.QueryDetailedSmartData(devNum, health, busType));
 
                     driveVm.RiskLevel = health.RiskLevel;
+
+                    _driveLog.UpdateHealthSnapshot(driveVm.Drive);
                 }
                 catch (Exception ex)
                 {
@@ -835,6 +856,7 @@ public class MainViewModel : INotifyPropertyChanged
                     driveVm.StatusText = report.Passed ? Loc.Get("StatusHealthy") : Loc.Get("StatusErrorsFound");
                     driveVm.MarkAllPhasesDone();
                 });
+                _driveLog.RecordSurfaceCheck(driveVm.Drive, report);
             }
             catch (OperationCanceledException)
             {
@@ -1019,6 +1041,8 @@ public class MainViewModel : INotifyPropertyChanged
                         driveVm.MarkAllPhasesDone();
                     });
                 }
+
+                _driveLog.RecordWipe(driveVm.Drive, report);
             }
             catch (OperationCanceledException)
             {

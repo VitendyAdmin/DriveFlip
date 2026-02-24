@@ -6,6 +6,7 @@
         xmlns:models="clr-namespace:DriveFlip.Models"
         xmlns:converters="clr-namespace:DriveFlip.Converters"
         xmlns:loc="clr-namespace:DriveFlip.Localization"
+        xmlns:views="clr-namespace:DriveFlip.Views"
         Title="DriveFlip &#x2014; Surface Check &amp; Drive Prep"
         Width="1300" Height="860" MinWidth="1000" MinHeight="740"
         Icon="/Assets/logo-icon.ico"
@@ -50,6 +51,10 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:Button Appearance="Secondary" Padding="8,6" ToolTip="{loc:Loc TooltipDriveLog}"
+                                   Command="{Binding ToggleDriveLogCommand}" Margin="0,0,4,0">
+                            <ui:SymbolIcon Symbol="Archive24"/>
+                        </ui:Button>
                         <ui:Button x:Name="AboutButton" Appearance="Secondary" Padding="8,6" ToolTip="{loc:Loc TooltipAbout}"
                                    Command="{Binding ToggleAboutCommand}" Margin="0,0,4,0">
                             <ui:SymbolIcon Symbol="Info24"/>
@@ -174,8 +179,14 @@
             </Border>
         </Grid>
 
-        <!-- MAIN CONTENT -->
-        <Grid Grid.Row="1" Margin="20,16,20,16">
+        <!-- DRIVE LOG VIEW -->
+        <views:DriveLogView Grid.Row="1" Margin="20,16,20,16"
+                            DataContext="{Binding DriveLogVM}"
+                            Visibility="{Binding DataContext.IsDriveLogActive, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}, Converter={StaticResource BoolToVis}}"/>
+
+        <!-- MAIN CONTENT (Operations View) -->
+        <Grid Grid.Row="1" Margin="20,16,20,16"
+              Visibility="{Binding IsDriveLogActive, Converter={StaticResource BoolToVis}, ConverterParameter=Invert}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

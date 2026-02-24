@@ -1248,4 +1248,95 @@ A meghajt&#xF3;t manu&#xE1;lisan form&#xE1;zhatja a Lemezkezel&#x151;ben.</value
     <value>A DriveFlip jelenleg lemezműveletet hajt végre. Kérjük, szakítsa meg a műveletet az alkalmazás bezárása előtt.</value>
   </data>
 
+  <!-- Drive Log -->
+  <data name="DriveLog" xml:space="preserve">
+    <value>Meghajt&#xF3;napl&#xF3;</value>
+  </data>
+  <data name="TooltipDriveLog" xml:space="preserve">
+    <value>Meghajt&#xF3;napl&#xF3;</value>
+  </data>
+  <data name="DriveLogSearch" xml:space="preserve">
+    <value>Keres&#xE9;s sorozatsz&#xE1;m, modell, jegyzet...</value>
+  </data>
+  <data name="DriveLogSelectEntry" xml:space="preserve">
+    <value>V&#xE1;lasszon meghajt&#xF3;t a r&#xE9;szletek megtekint&#xE9;s&#xE9;hez</value>
+  </data>
+  <data name="DriveLogCount" xml:space="preserve">
+    <value>{0} meghajt&#xF3;</value>
+  </data>
+  <data name="DriveLogExport" xml:space="preserve">
+    <value>Export&#xE1;l&#xE1;s</value>
+  </data>
+  <data name="DriveLogExportFolder" xml:space="preserve">
+    <value>Export mappa kiv&#xE1;laszt&#xE1;sa</value>
+  </data>
+  <data name="DriveLogExportTitle" xml:space="preserve">
+    <value>Napl&#xF3; export&#xE1;l&#xE1;s</value>
+  </data>
+  <data name="DriveLogExportSuccess" xml:space="preserve">
+    <value>Napl&#xF3; export&#xE1;lva ide: {0}</value>
+  </data>
+  <data name="DriveLogDelete" xml:space="preserve">
+    <value>Bejegyz&#xE9;s t&#xF6;rl&#xE9;se</value>
+  </data>
+  <data name="DriveLogDeleteTitle" xml:space="preserve">
+    <value>Napl&#xF3;bejegyz&#xE9;s t&#xF6;rl&#xE9;se</value>
+  </data>
+  <data name="DriveLogDeleteConfirm" xml:space="preserve">
+    <value>T&#xF6;rli a(z) {0} (S/N {1}) bejegyz&#xE9;st? Az &#xF6;sszes f&#xE9;nyk&#xE9;p &#xE9;s jegyzet is t&#xF6;rl&#x151;dik.</value>
+  </data>
+  <data name="DriveLogFirstSeen" xml:space="preserve">
+    <value>Els&#x151; &#xE9;szlel&#xE9;s</value>
+  </data>
+  <data name="DriveLogStatus" xml:space="preserve">
+    <value>&#xC1;llapot</value>
+  </data>
+  <data name="DriveLogHealth" xml:space="preserve">
+    <value>Eg&#xE9;szs&#xE9;g&#xFC;gyi pillanatk&#xE9;p</value>
+  </data>
+  <data name="DriveLogRisk" xml:space="preserve">
+    <value>Kock&#xE1;zati szint</value>
+  </data>
+  <data name="DriveLogNoHealth" xml:space="preserve">
+    <value>M&#xE9;g nincsenek eg&#xE9;szs&#xE9;g&#xFC;gyi adatok.</value>
+  </data>
+  <data name="DriveLogOperations" xml:space="preserve">
+    <value>M&#x171;veleti el&#x151;zm&#xE9;nyek</value>
+  </data>
+  <data name="DriveLogNoOperations" xml:space="preserve">
+    <value>M&#xE9;g nincsenek r&#xF6;gz&#xED;tett m&#x171;veletek.</value>
+  </data>
+  <data name="DriveLogPhotos" xml:space="preserve">
+    <value>F&#xE9;nyk&#xE9;pek</value>
+  </data>
+  <data name="DriveLogDragPhotos" xml:space="preserve">
+    <value>H&#xFA;zza ide a k&#xE9;peket, vagy kattintson a + gombra</value>
+  </data>
+  <data name="DriveLogNotes" xml:space="preserve">
+    <value>Jegyzetek</value>
+  </data>
+  <data name="DriveLogAddNote" xml:space="preserve">
+    <value>Hozz&#xE1;ad&#xE1;s</value>
+  </data>
+  <data name="DriveLogAddNotePlaceholder" xml:space="preserve">
+    <value>Jegyzet hozz&#xE1;ad&#xE1;sa...</value>
+  </data>
+  <data name="DriveLogStatusActive" xml:space="preserve">
+    <value>Aktív</value>
+  </data>
+  <data name="DriveLogStatusInUse" xml:space="preserve">
+    <value>Haszn&#xE1;latban</value>
+  </data>
+  <data name="DriveLogStatusSold" xml:space="preserve">
+    <value>Eladva</value>
+  </data>
+  <data name="DriveLogStatusFailed" xml:space="preserve">
+    <value>Hib&#xE1;s</value>
+  </data>
+  <data name="DriveLogStatusRMA" xml:space="preserve">
+    <value>RMA</value>
+  </data>
+  <data name="DriveLogStatusArchived" xml:space="preserve">
+    <value>Archiv&#xE1;lt</value>
+  </data>
 </root>

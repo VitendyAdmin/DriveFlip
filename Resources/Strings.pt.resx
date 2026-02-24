@@ -1248,4 +1248,95 @@ Voc&#xEA; pode formatar a unidade manualmente pelo Gerenciamento de Disco.</valu
     <value>O DriveFlip est&#xE1; executando uma opera&#xE7;&#xE3;o de disco. Cancele a opera&#xE7;&#xE3;o antes de fechar o aplicativo.</value>
   </data>
 
+  <!-- Drive Log -->
+  <data name="DriveLog" xml:space="preserve">
+    <value>Registro de unidades</value>
+  </data>
+  <data name="TooltipDriveLog" xml:space="preserve">
+    <value>Registro de unidades</value>
+  </data>
+  <data name="DriveLogSearch" xml:space="preserve">
+    <value>Buscar serial, modelo, notas...</value>
+  </data>
+  <data name="DriveLogSelectEntry" xml:space="preserve">
+    <value>Selecione uma unidade para ver detalhes</value>
+  </data>
+  <data name="DriveLogCount" xml:space="preserve">
+    <value>{0} unidade(s)</value>
+  </data>
+  <data name="DriveLogExport" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="DriveLogExportFolder" xml:space="preserve">
+    <value>Selecionar pasta de exporta&#xE7;&#xE3;o</value>
+  </data>
+  <data name="DriveLogExportTitle" xml:space="preserve">
+    <value>Exportar registro</value>
+  </data>
+  <data name="DriveLogExportSuccess" xml:space="preserve">
+    <value>Registro exportado para {0}</value>
+  </data>
+  <data name="DriveLogDelete" xml:space="preserve">
+    <value>Excluir entrada</value>
+  </data>
+  <data name="DriveLogDeleteTitle" xml:space="preserve">
+    <value>Excluir entrada do registro</value>
+  </data>
+  <data name="DriveLogDeleteConfirm" xml:space="preserve">
+    <value>Excluir a entrada de {0} (S/N {1})? Todas as fotos e notas tamb&#xE9;m ser&#xE3;o removidas.</value>
+  </data>
+  <data name="DriveLogFirstSeen" xml:space="preserve">
+    <value>Primeira detec&#xE7;&#xE3;o</value>
+  </data>
+  <data name="DriveLogStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="DriveLogHealth" xml:space="preserve">
+    <value>Resumo de sa&#xFA;de</value>
+  </data>
+  <data name="DriveLogRisk" xml:space="preserve">
+    <value>N&#xED;vel de risco</value>
+  </data>
+  <data name="DriveLogNoHealth" xml:space="preserve">
+    <value>Nenhum dado de sa&#xFA;de capturado.</value>
+  </data>
+  <data name="DriveLogOperations" xml:space="preserve">
+    <value>Hist&#xF3;rico de opera&#xE7;&#xF5;es</value>
+  </data>
+  <data name="DriveLogNoOperations" xml:space="preserve">
+    <value>Nenhuma opera&#xE7;&#xE3;o registrada.</value>
+  </data>
+  <data name="DriveLogPhotos" xml:space="preserve">
+    <value>Fotos</value>
+  </data>
+  <data name="DriveLogDragPhotos" xml:space="preserve">
+    <value>Arraste imagens aqui ou clique em +</value>
+  </data>
+  <data name="DriveLogNotes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="DriveLogAddNote" xml:space="preserve">
+    <value>Adicionar</value>
+  </data>
+  <data name="DriveLogAddNotePlaceholder" xml:space="preserve">
+    <value>Adicionar uma nota...</value>
+  </data>
+  <data name="DriveLogStatusActive" xml:space="preserve">
+    <value>Ativo</value>
+  </data>
+  <data name="DriveLogStatusInUse" xml:space="preserve">
+    <value>Em uso</value>
+  </data>
+  <data name="DriveLogStatusSold" xml:space="preserve">
+    <value>Vendido</value>
+  </data>
+  <data name="DriveLogStatusFailed" xml:space="preserve">
+    <value>Com falha</value>
+  </data>
+  <data name="DriveLogStatusRMA" xml:space="preserve">
+    <value>RMA</value>
+  </data>
+  <data name="DriveLogStatusArchived" xml:space="preserve">
+    <value>Arquivado</value>
+  </data>
 </root>

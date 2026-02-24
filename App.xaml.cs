@@ -57,11 +57,13 @@ public partial class App : Application
         var license = new LicenseService();
         var detection = new DriveDetectionService();
         var engine = new DiskEngine();
+        var driveLog = new DriveLogService();
+        driveLog.Load();
 
         // Load cached license (sync — just file read + RSA verify)
         var (status, payload) = license.LoadCachedLicense();
 
-        var vm = new MainViewModel(detection, engine, license);
+        var vm = new MainViewModel(detection, engine, license, driveLog);
         vm.InitializeLicense(status, payload);
 
         var window = new MainWindow { DataContext = vm };
