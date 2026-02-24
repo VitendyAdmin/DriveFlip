@@ -13,8 +13,8 @@
 
 #define MyAppName      "DriveFlip"
 #define MyAppVersion   "2.0.0"
-#define MyAppPublisher "Vitendy"
-#define MyAppURL       "https://vitendy.com"
+#define MyAppPublisher "Vital Blocs LLC"
+#define MyAppURL       "https://driveflipapp.com"
 #define MyAppExeName   "DriveFlip.exe"
 
 [Setup]
