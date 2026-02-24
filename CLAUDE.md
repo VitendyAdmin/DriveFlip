@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Legal entity:** Vital Blocs LLC (used in copyright, file properties, installer publisher)
 - **Product brand:** DriveFlip (user-facing name — standalone brand, not "Vital Blocs DriveFlip")
 - **Website:** https://driveflipapp.com (product site, downloads, privacy policy, terms)
+- **Licensing server:** https://licensing.driveflipapp.com/
 - **Internal:** DriveFlip is part of the VitalBlocs product portfolio, but externally it presents as its own brand
 
 ## Build & Run
