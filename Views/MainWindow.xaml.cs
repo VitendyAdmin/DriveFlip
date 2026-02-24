@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Navigation;
 using DriveFlip.Localization;
 using DriveFlip.ViewModels;
 using Wpf.Ui.Controls;
@@ -193,6 +195,12 @@ public partial class MainWindow : FluentWindow
             tb.Text = text.Insert(pos, "-");
             tb.CaretIndex = pos + 1;
         }
+    }
+
+    private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+        e.Handled = true;
     }
 
     private void LicenseKey_Pasting(object sender, DataObjectPastingEventArgs e)

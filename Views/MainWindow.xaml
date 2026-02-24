@@ -1254,6 +1254,12 @@
                     </TextBlock>
                     <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Margin="0,4,0,0"
                                Text="{loc:Loc AboutRequiresAdmin}"/>
+                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Margin="0,4,0,0"
+                               Text="© 2025 Vitendy. All rights reserved."/>
+                    <TextBlock FontSize="12" Margin="0,4,0,0">
+                        <Hyperlink NavigateUri="https://vitendy.com" RequestNavigate="Hyperlink_RequestNavigate"
+                                   Foreground="{StaticResource AccentBlueBrush}">vitendy.com</Hyperlink>
+                    </TextBlock>
 
                     <ui:Button Content="{loc:Loc AboutClose}" Appearance="Secondary"
                                Command="{Binding ToggleAboutCommand}"
