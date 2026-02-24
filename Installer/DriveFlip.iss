@@ -14,7 +14,7 @@
 #define MyAppName      "DriveFlip"
 #define MyAppVersion   "2.0.0"
 #define MyAppPublisher "Vital Blocs LLC"
-#define MyAppURL       "https://driveflipapp.com"
+#define MyAppURL       "https://www.driveflipapp.com"
 #define MyAppExeName   "DriveFlip.exe"
 
 [Setup]

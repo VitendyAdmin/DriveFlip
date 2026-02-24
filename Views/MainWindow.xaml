@@ -1257,7 +1257,7 @@
                     <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Margin="0,4,0,0"
                                Text="© 2025 Vital Blocs LLC. All rights reserved."/>
                     <TextBlock FontSize="12" Margin="0,4,0,0">
-                        <Hyperlink NavigateUri="https://driveflipapp.com" RequestNavigate="Hyperlink_RequestNavigate"
+                        <Hyperlink NavigateUri="https://www.driveflipapp.com" RequestNavigate="Hyperlink_RequestNavigate"
                                    Foreground="{StaticResource AccentBlueBrush}">DriveFlipApp.com</Hyperlink>
                     </TextBlock>
 
