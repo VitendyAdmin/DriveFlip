@@ -1,4 +1,6 @@
+using System;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Windows;
 using DriveFlip.Localization;
 using DriveFlip.Services;
@@ -7,12 +9,33 @@ using DriveFlip.Views;
 
 namespace DriveFlip;
 
+/// <summary>
+/// Exit codes for Windows Store installer handling.
+/// </summary>
+internal static class ExitCodes
+{
+    public const int Success = 0;
+    public const int UserCancelled = 1602;
+    public const int AlreadyRunning = 1618;
+}
+
 [SupportedOSPlatform("windows")]
 public partial class App : Application
 {
+    private Mutex? _singleInstanceMutex;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Single-instance check
+        _singleInstanceMutex = new Mutex(true, "Global\\DriveFlip_B7A3F1E0", out bool createdNew);
+        if (!createdNew)
+        {
+            Environment.ExitCode = ExitCodes.AlreadyRunning;
+            Shutdown(ExitCodes.AlreadyRunning);
+            return;
+        }
 
         DispatcherUnhandledException += (_, args) =>
         {
@@ -53,5 +76,12 @@ public partial class App : Application
         {
             _ = vm.RevalidateLicenseInBackgroundAsync();
         }
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        _singleInstanceMutex?.ReleaseMutex();
+        _singleInstanceMutex?.Dispose();
+        base.OnExit(e);
     }
 }

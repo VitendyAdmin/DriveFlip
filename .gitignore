@@ -2,6 +2,8 @@ bin/
 obj/
 .vs/
 binTempBuild/
+publish/
+Installer/Output/
 *.user
 *.suo
 *.DotSettings.user
