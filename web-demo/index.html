@@ -307,16 +307,216 @@
   }
   .toast.show { opacity: 1; }
 
+  /* ═══════════════════════════════════════════════════════════
+     Drive Log View
+     ═══════════════════════════════════════════════════════════ */
+
+  .btn-log-toggle {
+    padding: 6px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--bg-card); color: var(--text-primary); font-size: 12px;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-log-toggle:hover { background: var(--bg-hover); }
+  .btn-log-toggle.active {
+    background: var(--accent-blue); border-color: var(--accent-blue); color: #fff;
+  }
+
+  /* Drive Log two-column layout */
+  .log-view {
+    display: none; flex: 1; overflow: hidden;
+    padding: 14px 20px 14px; gap: 10px;
+  }
+  .log-view.active { display: flex; }
+
+  .log-left {
+    width: 400px; min-width: 300px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+  }
+
+  .log-right {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+  }
+
+  /* Search bar */
+  .log-search {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); background: var(--bg-input);
+    color: var(--text-primary); font-size: 12px; font-family: inherit;
+    outline: none;
+  }
+  .log-search:focus { border-color: var(--accent-blue); }
+  .log-search::placeholder { color: var(--text-muted); }
+
+  /* Status filter chips */
+  .filter-chips {
+    display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 12px 4px;
+  }
+  .filter-chip {
+    padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-secondary); font-size: 10px;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+  }
+  .filter-chip:hover { background: var(--bg-hover); }
+  .filter-chip.active { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+
+  /* Log drive list */
+  .log-drive-list {
+    flex: 1; overflow-y: auto; padding: 4px;
+  }
+  .log-drive-item {
+    border-radius: 5px; padding: 8px 10px; margin: 3px;
+    border: 1px solid var(--border); background: var(--bg-card);
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  }
+  .log-drive-item:hover { background: var(--bg-hover); }
+  .log-drive-item.selected { border-color: var(--accent-blue); border-width: 2px; padding: 7px 9px; }
+  .log-drive-item .log-item-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .log-drive-item .log-item-model {
+    font-size: 12px; font-weight: 600; flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .log-drive-item .log-item-meta {
+    font-size: 10px; color: var(--text-secondary); margin-top: 2px;
+  }
+  .log-drive-item .log-item-meta span { margin-right: 8px; }
+
+  /* Status badges for Drive Log */
+  .status-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 3px;
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+  }
+  .status-active { background: var(--accent-green); color: #fff; }
+  .status-inuse { background: var(--accent-blue); color: #fff; }
+  .status-sold { background: #7B1FA2; color: #fff; }
+  .status-failed { background: var(--accent-red); color: #fff; }
+  .status-rma { background: var(--accent-amber); color: #1a1a1a; }
+  .status-archived { background: var(--text-muted); color: #fff; }
+
+  /* Log footer */
+  .log-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; border-top: 1px solid var(--border-light);
+    font-size: 11px; color: var(--text-secondary);
+  }
+
+  /* Log detail right panel */
+  .log-detail-inner {
+    flex: 1; overflow-y: auto; padding: 16px;
+  }
+
+  .log-detail-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+  }
+  .log-detail-title {
+    font-size: 16px; font-weight: 700; color: var(--text-primary);
+  }
+
+  /* Status dropdown */
+  .status-select {
+    padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--bg-input); color: var(--text-primary); font-size: 11px;
+    font-family: inherit; cursor: pointer; outline: none;
+  }
+  .status-select:focus { border-color: var(--accent-blue); }
+
+  /* Operation history list */
+  .op-history-list { list-style: none; }
+  .op-history-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 6px 0; border-bottom: 1px solid var(--border-light);
+    font-size: 11px;
+  }
+  .op-history-item:last-child { border-bottom: none; }
+  .op-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
+  }
+  .op-dot.pass { background: var(--accent-green); }
+  .op-dot.fail { background: var(--accent-red); }
+  .op-time { font-size: 10px; color: var(--text-muted); }
+  .op-summary { color: var(--text-secondary); font-size: 10px; }
+
+  /* Photo grid */
+  .photo-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;
+  }
+  .photo-thumb {
+    width: 72px; height: 72px; border-radius: var(--radius-sm);
+    background: var(--bg-input); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: var(--text-muted); cursor: pointer;
+    overflow: hidden; position: relative;
+  }
+  .photo-thumb:hover { border-color: var(--accent-blue); }
+  .photo-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .photo-add {
+    width: 72px; height: 72px; border-radius: var(--radius-sm);
+    background: var(--bg-input); border: 1px dashed var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: var(--text-muted); cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .photo-add:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+  /* Notes */
+  .notes-list { list-style: none; }
+  .note-item {
+    padding: 6px 0; border-bottom: 1px solid var(--border-light);
+    font-size: 11px;
+  }
+  .note-item:last-child { border-bottom: none; }
+  .note-time { font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+  .note-text { color: var(--text-primary); }
+  .note-delete {
+    float: right; background: none; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 12px; padding: 0 4px;
+  }
+  .note-delete:hover { color: var(--accent-red); }
+
+  .note-input-row {
+    display: flex; gap: 6px; margin-top: 8px;
+  }
+  .note-input {
+    flex: 1; padding: 6px 8px; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); background: var(--bg-input);
+    color: var(--text-primary); font-size: 12px; font-family: inherit;
+    outline: none;
+  }
+  .note-input:focus { border-color: var(--accent-blue); }
+  .note-input::placeholder { color: var(--text-muted); }
+
+  /* Delete entry */
+  .log-delete-zone {
+    margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border-light);
+  }
+
+  /* View in Drive Log link button */
+  .log-link-btn {
+    padding: 3px 8px; border-radius: var(--radius-sm); border: 1px solid var(--accent-blue);
+    background: transparent; color: var(--accent-blue); font-size: 11px;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .log-link-btn:hover { background: var(--accent-blue); color: #fff; }
+
   /* Responsive: hide right pane on small screens */
   @media (max-width: 860px) {
     .pane-right { display: none; }
     .pane-left { width: 240px; }
+    .log-left { width: 260px; min-width: 200px; }
   }
   @media (max-width: 640px) {
     .panes { flex-direction: column; gap: 8px; padding: 8px; overflow-y: auto; }
     .pane-left, .pane-right { width: 100%; height: auto; max-height: 260px; }
     .pane-center { min-height: 300px; }
     .header { padding: 8px 12px; }
+    .log-view { flex-direction: column; gap: 8px; padding: 8px; overflow-y: auto; }
+    .log-left { width: 100%; max-height: 260px; }
   }
 </style>
 </head>
@@ -335,12 +535,13 @@
     </div>
     <div class="header-actions">
       <button class="btn" onclick="refreshDrives()">Refresh Drives</button>
+      <button class="btn-log-toggle" id="logToggleBtn" onclick="toggleDriveLog()" title="Drive Log">&#128451; Drive Log</button>
       <button class="btn" onclick="toggleSettings()">&#9881;</button>
     </div>
   </div>
 
-  <!-- ═══ 3-Pane Layout ═══ -->
-  <div class="panes">
+  <!-- ═══ 3-Pane Layout (Operations View) ═══ -->
+  <div class="panes" id="opsView">
 
     <!-- ── Left Pane: Drive List ── -->
     <div class="pane-left card">
@@ -368,6 +569,7 @@
           <div class="section-header">
             <div class="section-title">Drive Info</div>
             <div class="section-actions">
+              <button class="log-link-btn" id="viewInLogBtn" onclick="viewDriveInLog()" style="display:none">&#128203; View in Drive Log</button>
               <button class="btn btn-primary btn-sm" onclick="copyInfo()">Copy Info</button>
               <div class="zoom-group">
                 <button class="zoom-btn" onclick="zoomOut()" title="Ctrl+-">&#8722;</button>
@@ -453,6 +655,38 @@
         <div class="action-title" style="color:var(--accent-amber)">Check &amp; Wipe</div>
         <div class="action-desc">Surface check first, then wipes if the drive passes.</div>
         <button class="btn btn-caution btn-full" onclick="runCheckAndWipe()">Check &amp; Wipe</button>
+
+        <div class="separator"></div>
+
+        <!-- Quick Format -->
+        <div class="action-title" style="color:var(--accent-green)">Quick Format</div>
+        <div class="action-desc">Creates a new file system. All existing data will be lost.</div>
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <div style="flex:1">
+            <div style="font-size:10px; color:var(--text-secondary); margin-bottom:2px;">File system</div>
+            <select class="status-select" id="formatFs" style="width:100%">
+              <option value="NTFS" selected>NTFS</option>
+              <option value="exFAT">exFAT</option>
+              <option value="FAT32">FAT32</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:10px; color:var(--text-secondary); margin-bottom:2px;">Volume label</div>
+            <input type="text" class="note-input" id="formatLabel" placeholder="Optional" style="width:100%; padding:4px 8px;">
+          </div>
+        </div>
+        <button class="btn btn-danger btn-full" id="quickFormatBtn" onclick="runQuickFormat()">Quick Format</button>
+
+        <div class="separator"></div>
+
+        <!-- Assign Drive Letter -->
+        <div class="action-title" style="color:var(--accent-blue)">Assign Drive Letter</div>
+        <div class="action-desc">Change or assign a new drive letter to the selected drive.</div>
+        <div style="margin-bottom:8px;">
+          <div style="font-size:10px; color:var(--text-secondary); margin-bottom:2px;">Letter</div>
+          <select class="status-select" id="assignLetter" style="width:100%"></select>
+        </div>
+        <button class="btn btn-primary btn-full" id="assignLetterBtn" onclick="assignDriveLetter()">Assign Drive Letter</button>
       </div>
 
       <!-- Dashboard (hidden, shown during operations) -->
@@ -464,6 +698,42 @@
           <div class="dash-summary" id="dashSummary">Preparing...</div>
           <button class="btn btn-danger btn-full" onclick="cancelOp()">Cancel Operation</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Drive Log View (hidden by default) ═══ -->
+  <div class="log-view" id="logView">
+
+    <!-- ── Left: Drive Inventory List ── -->
+    <div class="log-left card">
+      <div style="padding: 10px 12px; border-bottom: 1px solid var(--border-light);">
+        <input type="text" class="log-search" id="logSearch" placeholder="Search serial, model, notes..." oninput="filterLogDrives()">
+      </div>
+      <div class="filter-chips" id="logFilterChips">
+        <button class="filter-chip active" onclick="setLogFilter('All')">All</button>
+        <button class="filter-chip" onclick="setLogFilter('Active')">Active</button>
+        <button class="filter-chip" onclick="setLogFilter('InUse')">In Use</button>
+        <button class="filter-chip" onclick="setLogFilter('Sold')">Sold</button>
+        <button class="filter-chip" onclick="setLogFilter('Failed')">Failed</button>
+        <button class="filter-chip" onclick="setLogFilter('RMA')">RMA</button>
+        <button class="filter-chip" onclick="setLogFilter('Archived')">Archived</button>
+      </div>
+      <div class="log-drive-list" id="logDriveList"></div>
+      <div class="log-footer">
+        <span id="logDriveCount">0 drives</span>
+        <button class="btn btn-sm" onclick="exportLog()">&#128229; Export</button>
+      </div>
+    </div>
+
+    <!-- ── Right: Drive Detail ── -->
+    <div class="log-right card">
+      <div class="log-detail-inner" id="logDetailPane">
+        <div class="placeholder" id="logNoSelection">
+          <div class="placeholder-icon">&#128451;</div>
+          <div>Select a drive from the inventory</div>
+        </div>
+        <div id="logDetailContent" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -586,12 +856,180 @@ const DRIVES = [
   }
 ];
 
+// ── Drive Log Demo Data ──
+const LOG_ENTRIES = [
+  {
+    serial: "WD-WMC9T0D45R7L",
+    model: "WDC WD2003FZEX-00SRLA0",
+    manufacturer: "Western Digital",
+    size: "2 TB",
+    sizeBytes: 2e12,
+    mediaType: "HDD",
+    interfaceType: "SATA",
+    firmwareVersion: "01.01A01",
+    status: "Active",
+    firstSeen: "2025-11-03T09:14:00Z",
+    lastSeen: "2026-02-20T14:32:00Z",
+    health: {
+      healthStatus: "Healthy", riskLevel: "Warning", temperature: 38,
+      powerOnHours: 22614, readErrors: 0, writeErrors: 0, wearPercent: null
+    },
+    operations: [
+      { type: "SurfaceCheck", start: "2026-02-20T14:22:00Z", end: "2026-02-20T14:28:00Z", passed: true, summary: "Random sampling: 0 errors in 2,048 sectors" },
+      { type: "SmartWipe", start: "2026-01-15T10:05:00Z", end: "2026-01-15T10:42:00Z", passed: true, summary: "SmartWipe (ZeroFill + Verify) completed, 0 errors" },
+      { type: "SurfaceCheck", start: "2025-12-08T08:30:00Z", end: "2025-12-08T08:36:00Z", passed: true, summary: "Random sampling: 0 errors in 2,048 sectors" },
+      { type: "SurfaceCheck", start: "2025-11-03T09:14:00Z", end: "2025-11-03T09:20:00Z", passed: true, summary: "Initial intake check \u2014 0 errors" }
+    ],
+    notes: [
+      { time: "2026-02-20T14:33:00Z", text: "Ready for resale. Clean SMART, passed all checks." },
+      { time: "2026-01-15T10:45:00Z", text: "Wiped for new customer batch." },
+      { time: "2025-11-03T09:22:00Z", text: "Received from warehouse lot #47." }
+    ],
+    photos: []
+  },
+  {
+    serial: "Z501GTFY",
+    model: "Seagate ST3000DM001-1ER166",
+    manufacturer: "Seagate",
+    size: "3 TB",
+    sizeBytes: 3e12,
+    mediaType: "HDD",
+    interfaceType: "SATA",
+    firmwareVersion: "CC45",
+    status: "Failed",
+    firstSeen: "2025-10-18T11:02:00Z",
+    lastSeen: "2026-02-18T16:10:00Z",
+    health: {
+      healthStatus: "Warning", riskLevel: "Critical", temperature: 42,
+      powerOnHours: 48102, readErrors: 14, writeErrors: 2, wearPercent: null
+    },
+    operations: [
+      { type: "SurfaceCheck", start: "2026-02-18T16:00:00Z", end: "2026-02-18T16:08:00Z", passed: false, summary: "14 read errors, 8 pending sectors \u2014 FAIL" },
+      { type: "FullWipe", start: "2026-01-22T13:10:00Z", end: "2026-01-22T15:48:00Z", passed: false, summary: "FullWipe completed with 2 write errors" },
+      { type: "SurfaceCheck", start: "2025-10-18T11:02:00Z", end: "2025-10-18T11:10:00Z", passed: false, summary: "6 read errors detected \u2014 FAIL" }
+    ],
+    notes: [
+      { time: "2026-02-18T16:12:00Z", text: "Confirmed dead. Pulled from inventory. Do not resell." },
+      { time: "2026-01-22T16:00:00Z", text: "Attempted full wipe \u2014 still showing errors. Marking as failed." },
+      { time: "2025-10-18T11:15:00Z", text: "Intake: known bad drive from lot #39. Testing to confirm." }
+    ],
+    photos: []
+  },
+  {
+    serial: "S5Y1NX0T903284K",
+    model: "Samsung 870 EVO",
+    manufacturer: "Samsung",
+    size: "500 GB",
+    sizeBytes: 500e9,
+    mediaType: "SSD",
+    interfaceType: "SATA",
+    firmwareVersion: "SVT02B6Q",
+    status: "Sold",
+    firstSeen: "2025-09-12T14:30:00Z",
+    lastSeen: "2026-02-10T09:15:00Z",
+    health: {
+      healthStatus: "Healthy", riskLevel: "Good", temperature: 34,
+      powerOnHours: 8241, readErrors: 0, writeErrors: 0, wearPercent: 3
+    },
+    operations: [
+      { type: "SmartWipe", start: "2026-02-10T08:50:00Z", end: "2026-02-10T09:12:00Z", passed: true, summary: "SmartWipe (ZeroFill + Verify) completed, 0 errors" },
+      { type: "SurfaceCheck", start: "2026-02-10T08:42:00Z", end: "2026-02-10T08:48:00Z", passed: true, summary: "Pre-sale check: 0 errors in 2,048 sectors" },
+      { type: "SurfaceCheck", start: "2025-09-12T14:30:00Z", end: "2025-09-12T14:35:00Z", passed: true, summary: "Intake check: 0 errors, 3% SSD wear" }
+    ],
+    notes: [
+      { time: "2026-02-10T09:18:00Z", text: "Sold to customer #1042. Invoice #INV-20260210-A." },
+      { time: "2026-02-10T08:40:00Z", text: "Preparing for sale \u2014 running final check + wipe." },
+      { time: "2025-09-12T14:38:00Z", text: "Good SSD, low wear. Holding for resale." }
+    ],
+    photos: []
+  },
+  {
+    serial: "PHYH0291004X480BGN",
+    model: "Intel SSDSC2BW480A4",
+    manufacturer: "Intel",
+    size: "480 GB",
+    sizeBytes: 480e9,
+    mediaType: "SSD",
+    interfaceType: "SATA",
+    firmwareVersion: "DC32",
+    status: "RMA",
+    firstSeen: "2025-12-01T10:00:00Z",
+    lastSeen: "2026-02-05T11:30:00Z",
+    health: {
+      healthStatus: "Degraded", riskLevel: "Warning", temperature: 40,
+      powerOnHours: 31200, readErrors: 0, writeErrors: 3, wearPercent: 78
+    },
+    operations: [
+      { type: "SurfaceCheck", start: "2026-02-05T11:20:00Z", end: "2026-02-05T11:26:00Z", passed: true, summary: "0 read errors, but 78% wear noted" },
+      { type: "SmartWipe", start: "2025-12-15T09:00:00Z", end: "2025-12-15T09:28:00Z", passed: true, summary: "SmartWipe completed, 3 write errors during verify" }
+    ],
+    notes: [
+      { time: "2026-02-05T11:35:00Z", text: "Sent to Intel for RMA. Tracking #1Z999AA10123456784." },
+      { time: "2025-12-15T09:30:00Z", text: "High wear (78%) and write errors. Not suitable for resale." },
+      { time: "2025-12-01T10:05:00Z", text: "Pulled from server decommission batch." }
+    ],
+    photos: []
+  },
+  {
+    serial: "2143P3H7T",
+    model: "Toshiba MG08ACA16TE",
+    manufacturer: "Toshiba",
+    size: "16 TB",
+    sizeBytes: 16e12,
+    mediaType: "HDD",
+    interfaceType: "SATA",
+    firmwareVersion: "0104",
+    status: "Active",
+    firstSeen: "2026-02-22T08:45:00Z",
+    lastSeen: "2026-02-22T09:05:00Z",
+    health: {
+      healthStatus: "Healthy", riskLevel: "Good", temperature: 30,
+      powerOnHours: 1200, readErrors: 0, writeErrors: 0, wearPercent: null
+    },
+    operations: [
+      { type: "SurfaceCheck", start: "2026-02-22T08:50:00Z", end: "2026-02-22T09:02:00Z", passed: true, summary: "Random sampling: 0 errors in 4,096 sectors" }
+    ],
+    notes: [
+      { time: "2026-02-22T09:05:00Z", text: "New intake. Low hours, perfect health. Enterprise drive." }
+    ],
+    photos: []
+  },
+  {
+    serial: "JPW9K0N51SXSAA",
+    model: "Crucial MX500 1TB",
+    manufacturer: "Crucial",
+    size: "1 TB",
+    sizeBytes: 1e12,
+    mediaType: "SSD",
+    interfaceType: "SATA",
+    firmwareVersion: "M3CR046",
+    status: "Archived",
+    firstSeen: "2025-06-10T15:20:00Z",
+    lastSeen: "2025-11-28T12:00:00Z",
+    health: {
+      healthStatus: "Healthy", riskLevel: "Good", temperature: 32,
+      powerOnHours: 5400, readErrors: 0, writeErrors: 0, wearPercent: 12
+    },
+    operations: [
+      { type: "SmartWipe", start: "2025-11-28T11:30:00Z", end: "2025-11-28T11:55:00Z", passed: true, summary: "SmartWipe (ZeroFill + Verify) completed, 0 errors" },
+      { type: "SurfaceCheck", start: "2025-06-10T15:20:00Z", end: "2025-06-10T15:25:00Z", passed: true, summary: "Intake: 0 errors, 12% wear" }
+    ],
+    notes: [
+      { time: "2025-11-28T12:00:00Z", text: "Archived \u2014 customer returned, no issues found. Storing for future use." }
+    ],
+    photos: []
+  }
+];
+
 // ── State ──
 let selectedDrive = null;
 let externalOnly = false;
 let scanning = false;
 let scanInterval = null;
 let zoom = 1.1;
+let driveLogActive = false;
+let selectedLogEntry = null;
+let logStatusFilter = 'All';
 
 // ── Render Drives ──
 function renderDrives() {
@@ -706,6 +1144,19 @@ function renderDetails() {
   document.getElementById('healthGrid').innerHTML = hFields.map(([l, v]) =>
     `<div class="info-label">${l}</div><div class="info-value">${v}</div>`
   ).join('');
+
+  // View in Drive Log button
+  const logBtn = document.getElementById('viewInLogBtn');
+  if (logBtn) {
+    const hasLogEntry = LOG_ENTRIES.some(e => e.serial === d.serial);
+    logBtn.style.display = hasLogEntry ? 'inline-flex' : 'none';
+  }
+
+  // Disable Quick Format + Assign Drive Letter for system drives
+  const qfBtn = document.getElementById('quickFormatBtn');
+  const alBtn = document.getElementById('assignLetterBtn');
+  if (qfBtn) qfBtn.disabled = d.isSystem;
+  if (alBtn) alBtn.disabled = d.isSystem;
 
   // Reset SMART
   document.getElementById('smartSection').style.display = 'none';
@@ -957,9 +1408,370 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
+// ═══════════════════════════════════════════════════════════
+// Drive Log Functions
+// ═══════════════════════════════════════════════════════════
+
+const STATUS_CONFIG = {
+  Active:   { cls: 'status-active',   label: 'Active' },
+  InUse:    { cls: 'status-inuse',    label: 'In Use' },
+  Sold:     { cls: 'status-sold',     label: 'Sold' },
+  Failed:   { cls: 'status-failed',   label: 'Failed' },
+  RMA:      { cls: 'status-rma',      label: 'RMA' },
+  Archived: { cls: 'status-archived', label: 'Archived' }
+};
+
+function toggleDriveLog() {
+  driveLogActive = !driveLogActive;
+  const btn = document.getElementById('logToggleBtn');
+  const opsView = document.getElementById('opsView');
+  const logView = document.getElementById('logView');
+
+  btn.classList.toggle('active', driveLogActive);
+
+  if (driveLogActive) {
+    opsView.style.display = 'none';
+    logView.classList.add('active');
+    renderLogDriveList();
+    renderLogDetail();
+    document.getElementById('globalStatus').textContent = `Drive Log \u2014 ${LOG_ENTRIES.length} drives in inventory.`;
+  } else {
+    opsView.style.display = 'flex';
+    logView.classList.remove('active');
+    document.getElementById('globalStatus').textContent = 'Select drives and choose an action.';
+  }
+}
+
+function getFilteredLogEntries() {
+  const search = (document.getElementById('logSearch')?.value || '').toLowerCase();
+  return LOG_ENTRIES.filter(e => {
+    // Status filter
+    if (logStatusFilter !== 'All' && e.status !== logStatusFilter) return false;
+    // Search filter
+    if (search) {
+      const haystack = `${e.serial} ${e.model} ${e.manufacturer} ${e.notes.map(n => n.text).join(' ')}`.toLowerCase();
+      if (!haystack.includes(search)) return false;
+    }
+    return true;
+  });
+}
+
+function renderLogDriveList() {
+  const list = document.getElementById('logDriveList');
+  const entries = getFilteredLogEntries();
+  list.innerHTML = '';
+
+  if (entries.length === 0) {
+    list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted); font-size:12px;">No drives match the current filter.</div>';
+  } else {
+    entries.forEach(e => {
+      const isSelected = selectedLogEntry && selectedLogEntry.serial === e.serial;
+      const statusCfg = STATUS_CONFIG[e.status] || STATUS_CONFIG.Active;
+      const lastSeen = new Date(e.lastSeen).toLocaleDateString();
+      const html = `
+        <div class="log-drive-item${isSelected ? ' selected' : ''}" onclick="selectLogEntry('${e.serial}')">
+          <div class="log-item-top">
+            <span class="log-item-model">${e.model}</span>
+            <span class="status-badge ${statusCfg.cls}">${statusCfg.label}</span>
+          </div>
+          <div class="log-item-meta">
+            <span>s/n ${e.serial.length > 12 ? '\u2026' + e.serial.slice(-8) : e.serial}</span>
+            <span>${e.size}</span>
+            <span class="muted">${lastSeen}</span>
+          </div>
+        </div>`;
+      list.insertAdjacentHTML('beforeend', html);
+    });
+  }
+
+  document.getElementById('logDriveCount').textContent = `${entries.length} drive${entries.length !== 1 ? 's' : ''}`;
+}
+
+function selectLogEntry(serial) {
+  selectedLogEntry = LOG_ENTRIES.find(e => e.serial === serial) || null;
+  renderLogDriveList();
+  renderLogDetail();
+}
+
+function setLogFilter(filter) {
+  logStatusFilter = filter;
+  // Update chip UI
+  document.querySelectorAll('#logFilterChips .filter-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.textContent.trim() === (filter === 'InUse' ? 'In Use' : filter));
+  });
+  selectedLogEntry = null;
+  renderLogDriveList();
+  renderLogDetail();
+}
+
+function filterLogDrives() {
+  renderLogDriveList();
+}
+
+function renderLogDetail() {
+  const nope = document.getElementById('logNoSelection');
+  const content = document.getElementById('logDetailContent');
+
+  if (!selectedLogEntry) {
+    nope.style.display = 'flex';
+    content.style.display = 'none';
+    return;
+  }
+  nope.style.display = 'none';
+  content.style.display = 'block';
+
+  const e = selectedLogEntry;
+  const statusCfg = STATUS_CONFIG[e.status] || STATUS_CONFIG.Active;
+
+  // Build status options
+  const statusOpts = Object.keys(STATUS_CONFIG).map(k =>
+    `<option value="${k}" ${k === e.status ? 'selected' : ''}>${STATUS_CONFIG[k].label}</option>`
+  ).join('');
+
+  // Identity section
+  let html = `
+    <div class="log-detail-header">
+      <div class="log-detail-title">${e.model}</div>
+      <select class="status-select" onchange="changeLogStatus(this.value)">
+        ${statusOpts}
+      </select>
+    </div>
+    <div class="info-grid">
+      <div class="info-label">Serial Number</div><div class="info-value" style="font-family:monospace">${e.serial}</div>
+      <div class="info-label">Manufacturer</div><div class="info-value">${e.manufacturer}</div>
+      <div class="info-label">Capacity</div><div class="info-value">${e.size}</div>
+      <div class="info-label">Media Type</div><div class="info-value">${e.mediaType}</div>
+      <div class="info-label">Interface</div><div class="info-value">${e.interfaceType}</div>
+      <div class="info-label">Firmware</div><div class="info-value">${e.firmwareVersion}</div>
+      <div class="info-label">First Seen</div><div class="info-value">${fmtDate(e.firstSeen)}</div>
+      <div class="info-label">Last Seen</div><div class="info-value">${fmtDate(e.lastSeen)}</div>
+    </div>`;
+
+  // Health snapshot
+  const h = e.health;
+  if (h) {
+    const riskCls = { Good: 'badge-good', Warning: 'badge-warn', Critical: 'badge-crit' }[h.riskLevel] || '';
+    html += `
+    <div class="separator"></div>
+    <div class="section-header">
+      <div class="section-title">Health Snapshot</div>
+      ${riskCls ? `<span class="badge ${riskCls}">${h.riskLevel.toUpperCase()}</span>` : ''}
+    </div>
+    <div class="info-grid">
+      <div class="info-label">Health Status</div><div class="info-value">${h.healthStatus}</div>
+      <div class="info-label">Temperature</div><div class="info-value">${h.temperature != null ? h.temperature + ' \u00b0C' : 'N/A'}</div>
+      <div class="info-label">Power-On Hours</div><div class="info-value">${h.powerOnHours != null ? h.powerOnHours.toLocaleString() + ' hrs' : 'N/A'}</div>
+      <div class="info-label">Read / Write Errors</div><div class="info-value">${h.readErrors} / ${h.writeErrors}</div>
+      ${h.wearPercent != null ? `<div class="info-label">SSD Wear</div><div class="info-value">${h.wearPercent}%</div>` : ''}
+    </div>`;
+  }
+
+  // Operation history
+  html += `
+    <div class="separator"></div>
+    <div class="section-header">
+      <div class="section-title">Operation History</div>
+      <span style="font-size:11px; color:var(--text-secondary)">${e.operations.length} operation${e.operations.length !== 1 ? 's' : ''}</span>
+    </div>`;
+
+  if (e.operations.length === 0) {
+    html += '<div style="font-size:11px; color:var(--text-muted); padding:8px 0;">No operations recorded.</div>';
+  } else {
+    html += '<ul class="op-history-list">';
+    e.operations.forEach(op => {
+      html += `
+        <li class="op-history-item">
+          <div class="op-dot ${op.passed ? 'pass' : 'fail'}"></div>
+          <div style="flex:1">
+            <div><strong>${op.type}</strong> <span class="badge ${op.passed ? 'badge-pass' : 'badge-fail'}">${op.passed ? 'PASS' : 'FAIL'}</span></div>
+            <div class="op-time">${fmtDate(op.start)}${op.end ? ' \u2014 ' + fmtTime(op.end) : ''}</div>
+            <div class="op-summary">${op.summary}</div>
+          </div>
+        </li>`;
+    });
+    html += '</ul>';
+  }
+
+  // Photos section
+  html += `
+    <div class="separator"></div>
+    <div class="section-header">
+      <div class="section-title">Photos</div>
+    </div>
+    <div class="photo-grid">
+      <div class="photo-add" onclick="addLogPhoto()" title="Add photo">+</div>
+    </div>
+    <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">Click + or drag photos here (demo only)</div>`;
+
+  // Notes section
+  html += `
+    <div class="separator"></div>
+    <div class="section-header">
+      <div class="section-title">Notes</div>
+      <span style="font-size:11px; color:var(--text-secondary)">${e.notes.length} note${e.notes.length !== 1 ? 's' : ''}</span>
+    </div>`;
+
+  if (e.notes.length > 0) {
+    html += '<ul class="notes-list">';
+    e.notes.forEach((n, i) => {
+      html += `
+        <li class="note-item">
+          <button class="note-delete" onclick="removeLogNote(${i})" title="Delete note">\u00d7</button>
+          <div class="note-time">${fmtDate(n.time)}</div>
+          <div class="note-text">${escHtml(n.text)}</div>
+        </li>`;
+    });
+    html += '</ul>';
+  }
+
+  html += `
+    <div class="note-input-row">
+      <input type="text" class="note-input" id="logNoteInput" placeholder="Add a note..." onkeydown="if(event.key==='Enter')addLogNote()">
+      <button class="btn btn-sm btn-primary" onclick="addLogNote()">Add</button>
+    </div>`;
+
+  // Delete entry
+  html += `
+    <div class="log-delete-zone">
+      <button class="btn btn-danger btn-sm" onclick="deleteLogEntry()">Delete Entry</button>
+    </div>`;
+
+  content.innerHTML = html;
+}
+
+function changeLogStatus(newStatus) {
+  if (!selectedLogEntry) return;
+  selectedLogEntry.status = newStatus;
+  renderLogDriveList();
+  showToast(`Status changed to ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
+}
+
+function addLogNote() {
+  if (!selectedLogEntry) return;
+  const input = document.getElementById('logNoteInput');
+  const text = input.value.trim();
+  if (!text) return;
+  selectedLogEntry.notes.unshift({ time: new Date().toISOString(), text });
+  input.value = '';
+  renderLogDetail();
+  showToast('Note added');
+}
+
+function removeLogNote(index) {
+  if (!selectedLogEntry) return;
+  selectedLogEntry.notes.splice(index, 1);
+  renderLogDetail();
+  showToast('Note removed');
+}
+
+function addLogPhoto() {
+  showToast('Photo upload (demo only)');
+}
+
+function deleteLogEntry() {
+  if (!selectedLogEntry) return;
+  const idx = LOG_ENTRIES.indexOf(selectedLogEntry);
+  if (idx !== -1) {
+    LOG_ENTRIES.splice(idx, 1);
+    selectedLogEntry = null;
+    renderLogDriveList();
+    renderLogDetail();
+    showToast('Entry deleted');
+    document.getElementById('globalStatus').textContent = `Drive Log \u2014 ${LOG_ENTRIES.length} drives in inventory.`;
+  }
+}
+
+function exportLog() {
+  showToast('Export Drive Log (demo only)');
+}
+
+// ── Helpers ──
+function fmtDate(iso) {
+  if (!iso) return 'N/A';
+  const d = new Date(iso);
+  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function fmtTime(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ═══════════════════════════════════════════════════════════
+// Quick Format / Assign Drive Letter / View in Drive Log
+// ═══════════════════════════════════════════════════════════
+
+function runQuickFormat() {
+  const checked = getChecked();
+  if (checked.length === 0) { showToast('Select at least one drive.'); return; }
+  const hasSystem = checked.some(n => DRIVES.find(d => d.num === n)?.isSystem);
+  if (hasSystem) { showToast('Cannot format the system drive.'); return; }
+  const fs = document.getElementById('formatFs').value;
+  showToast(`Quick Format (${fs}) completed on ${checked.length} drive(s)`);
+}
+
+function getUsedLetters() {
+  const used = new Set();
+  DRIVES.forEach(d => {
+    if (d.letters) {
+      d.letters.split(',').forEach(l => {
+        const ch = l.trim().charAt(0).toUpperCase();
+        if (ch) used.add(ch);
+      });
+    }
+  });
+  return used;
+}
+
+function populateLetterDropdown() {
+  const select = document.getElementById('assignLetter');
+  if (!select) return;
+  const used = getUsedLetters();
+  select.innerHTML = '';
+  for (let i = 65; i <= 90; i++) {
+    const letter = String.fromCharCode(i);
+    if (!used.has(letter)) {
+      select.insertAdjacentHTML('beforeend', `<option value="${letter}">${letter}:</option>`);
+    }
+  }
+}
+
+function assignDriveLetter() {
+  if (!selectedDrive) { showToast('Select a drive first.'); return; }
+  if (selectedDrive.isSystem) { showToast('Cannot reassign system drive letter.'); return; }
+  const select = document.getElementById('assignLetter');
+  const letter = select.value;
+  if (!letter) { showToast('No available letters.'); return; }
+  selectedDrive.letters = letter + ':';
+  renderDrives();
+  renderDetails();
+  populateLetterDropdown();
+  showToast(`Drive letter ${letter}: assigned to Disk ${selectedDrive.num}`);
+}
+
+function viewDriveInLog(serial) {
+  const s = serial || (selectedDrive ? selectedDrive.serial : null);
+  if (!s) return;
+  const entry = LOG_ENTRIES.find(e => e.serial === s);
+  if (!entry) return;
+  // Activate Drive Log if not active
+  if (!driveLogActive) {
+    toggleDriveLog();
+  }
+  // Select the matching entry
+  selectLogEntry(s);
+}
+
 // ── Init ──
 renderDrives();
 renderDetails();
+populateLetterDropdown();
 </script>
 </body>
 </html>
